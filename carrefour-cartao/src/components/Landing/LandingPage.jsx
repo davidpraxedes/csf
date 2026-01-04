@@ -364,17 +364,17 @@ export default function LandingPage() {
                 <p className="text-xs text-white/70 mt-2">O limite será definido após análise</p>
               </div>
               
-              <div className="grid grid-cols-3 gap-4 text-center">
-                <div>
-                  <p className="text-2xl font-bold text-yellow-300 whitespace-nowrap">Até R$ 5.500</p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-4 text-center">
+                <div className="flex flex-col items-center justify-center min-h-[60px]">
+                  <p className="text-xl sm:text-2xl font-bold text-yellow-300 whitespace-nowrap mb-1">Até R$ 5.500</p>
                   <p className="text-xs text-white/80">Limite Máximo</p>
                 </div>
-                <div>
-                  <p className="text-2xl font-bold text-white">Variável</p>
-                  <p className="text-xs text-white/80">Conforme Perfil</p>
+                <div className="flex flex-col items-center justify-center min-h-[60px]">
+                  <p className="text-xl sm:text-2xl font-bold text-white mb-1">Variável</p>
+                  <p className="text-xs text-white/80 whitespace-nowrap">Conforme Perfil</p>
                 </div>
-                <div>
-                  <p className="text-2xl font-bold text-green-300">Sem SPC</p>
+                <div className="flex flex-col items-center justify-center min-h-[60px]">
+                  <p className="text-xl sm:text-2xl font-bold text-green-300 mb-1">Sem SPC</p>
                   <p className="text-xs text-white/80">Não Consultamos</p>
                 </div>
               </div>
