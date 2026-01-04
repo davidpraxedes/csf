@@ -195,7 +195,7 @@ export default function PaymentPage() {
             <div className="md:col-span-2 space-y-6">
               {/* Timer */}
               {pixGerado && pixCode && tempoRestante > 0 && (
-                <div className="bg-gradient-to-r from-red-600 to-red-700 rounded-lg p-5 text-white shadow-lg">
+                <div className="bg-gradient-to-r from-green-600 to-green-700 rounded-lg p-5 text-white shadow-lg">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <Clock className="w-6 h-6" />
