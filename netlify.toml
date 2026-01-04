@@ -1,0 +1,48 @@
+# Configuração do Netlify para deploy
+# Este arquivo deve estar na RAIZ do repositório
+
+[build]
+  # Diretório base do projeto (onde está o package.json)
+  base = "carrefour-cartao"
+  # Comando para build do projeto
+  command = "npm run build"
+  # Diretório de saída do build (relativo ao base)
+  publish = "carrefour-cartao/dist"
+  # Diretório das Netlify Functions
+  functions = "carrefour-cartao/netlify/functions"
+
+# Variáveis de ambiente (serão configuradas no painel da Netlify)
+# Configure estas variáveis em: Site settings → Environment variables
+# [build.environment]
+#   VITE_VENNOX_SECRET_KEY = "YOUR_SECRET_KEY_HERE"
+#   VITE_VENNOX_COMPANY_ID = "a5d1078f-514b-45c5-a42f-004ab1f19afe"
+#   VITE_FACEBOOK_PIXEL_ID = "1216763333745021"
+
+# Configurações para SPA (Single Page Application)
+# Redireciona todas as rotas para index.html para o React Router funcionar
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Headers de segurança
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# Headers para assets estáticos (cache)
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Headers para imagens
+[[headers]]
+  for = "/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
