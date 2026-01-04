@@ -7,7 +7,7 @@ import { trackPurchase } from '../../services/facebookPixel';
 import ProgressBar from '../Shared/ProgressBar';
 import Logo from '../Shared/Logo';
 import { QRCodeSVG } from 'qrcode.react';
-import { Loader2, Copy, CheckCircle, Shield, CreditCard, Lock, ArrowRight, ChevronDown, ChevronUp, Clock } from 'lucide-react';
+import { Loader2, Copy, CheckCircle, Shield, Lock, ArrowRight, ChevronDown, ChevronUp, Clock, FileText, AlertCircle } from 'lucide-react';
 
 export default function PaymentPage() {
   const navigate = useNavigate();
@@ -28,7 +28,7 @@ export default function PaymentPage() {
   const [pixGerado, setPixGerado] = useState(!!pixCode);
   const [copiado, setCopiado] = useState(false);
   const [qrCodeExpandido, setQrCodeExpandido] = useState(false);
-  const [tempoRestante, setTempoRestante] = useState(30 * 60); // 30 minutos em segundos
+  const [tempoRestante, setTempoRestante] = useState(30 * 60);
 
   // Verificar localStorage ao carregar
   useEffect(() => {
@@ -39,18 +39,15 @@ export default function PaymentPage() {
         const agora = new Date().getTime();
         const expiraEm = new Date(dados.expiresAt).getTime();
         
-        // Verificar se ainda não expirou (com margem de 1 minuto)
         if (expiraEm > agora + 60000) {
           console.log('Reutilizando PIX salvo do localStorage');
           setPixData(dados.pixCode, dados.pixQrCode, dados.transactionId);
           setPixGerado(true);
           
-          // Calcular tempo restante
           const diferenca = Math.max(0, Math.floor((expiraEm - agora) / 1000));
           setTempoRestante(diferenca);
-          return; // Não gerar novo PIX
+          return;
         } else {
-          // PIX expirado, remover do localStorage
           localStorage.removeItem('pix_data');
         }
       } catch (e) {
@@ -59,9 +56,7 @@ export default function PaymentPage() {
       }
     }
 
-    // Se não tem PIX salvo ou expirou, gerar novo
     if (!pixGerado && transactionId) {
-      // Tentar reutilizar transação existente
       handleGerarPIX();
     } else if (!pixGerado) {
       handleGerarPIX();
@@ -85,7 +80,6 @@ export default function PaymentPage() {
     }
   }, [pixGerado, tempoRestante]);
 
-  // Formatar tempo restante
   const formatarTempo = (segundos) => {
     const minutos = Math.floor(segundos / 60);
     const segs = segundos % 60;
@@ -96,7 +90,7 @@ export default function PaymentPage() {
     setLoading(true);
     try {
       const dadosPix = {
-        amount: valorEntrega || 25.50, // Valor padrão atualizado
+        amount: valorEntrega || 25.50,
         customer: {
           name: nomeCompleto || 'Cliente',
           email: '',
@@ -114,19 +108,16 @@ export default function PaymentPage() {
         }
       };
 
-      // Verificar se já existe transação antes de criar nova (evita duplicação)
       const resultado = await gerarPIX(dadosPix, transactionId);
       setPixData(resultado.pixCode, resultado.qrCode, resultado.transactionId);
       setPixGerado(true);
       
-      // Calcular tempo de expiração
       const expiresAt = resultado.expiresAt || new Date(Date.now() + 30 * 60 * 1000).toISOString();
       const expiraEm = new Date(expiresAt).getTime();
       const agora = new Date().getTime();
       const diferenca = Math.max(0, Math.floor((expiraEm - agora) / 1000));
       setTempoRestante(diferenca);
       
-      // Salvar no localStorage para reutilizar ao recarregar
       localStorage.setItem('pix_data', JSON.stringify({
         pixCode: resultado.pixCode,
         pixQrCode: resultado.qrCode,
@@ -135,7 +126,6 @@ export default function PaymentPage() {
         valor: dadosPix.amount
       }));
       
-      // Disparar evento Purchase do Facebook Pixel quando PIX for gerado
       trackPurchase(dadosPix.amount, 'BRL', resultado.transactionId);
     } catch (error) {
       console.error('Erro ao gerar PIX:', error);
@@ -157,189 +147,253 @@ export default function PaymentPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
       <div className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
         <div className="container mx-auto px-4 py-4">
           <Logo size="md" />
         </div>
       </div>
       
-      <div className="container mx-auto px-4 py-6 md:py-8">
+      <div className="container mx-auto px-4 py-8">
         <ProgressBar etapaAtual="payment" />
         
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="max-w-2xl mx-auto mt-6 md:mt-8"
-        >
+        <div className="max-w-4xl mx-auto mt-8">
+          {/* Título Principal */}
           <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-gradient-to-br from-carrefour-blue to-primary-dark rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-              <CreditCard className="w-8 h-8 text-white" />
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
-              Finalize seu Pagamento
-            </h2>
-            <p className="text-base sm:text-lg text-gray-600 max-w-xl mx-auto">
-              Complete o pagamento para ativar seu cartão Carrefour
+            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
+              Pagamento Seguro
+            </h1>
+            <p className="text-base text-gray-600">
+              Complete o pagamento para finalizar a ativação do seu cartão
             </p>
           </div>
 
-          {/* PIX */}
-          {loading ? (
-            <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-12 text-center">
-              <Loader2 className="w-16 h-16 text-carrefour-blue animate-spin mx-auto mb-6" />
-              <p className="text-lg font-semibold text-gray-900 mb-2">Gerando código PIX...</p>
-              <p className="text-sm text-gray-600">Aguarde alguns instantes</p>
-            </div>
-          ) : pixGerado && pixCode ? (
-            <>
-              {/* Timer de Expiração - Verde para urgência */}
-              {tempoRestante > 0 && (
-                <div className="bg-gradient-to-r from-green-600 to-green-700 rounded-xl p-5 sm:p-6 text-white mb-6 shadow-lg">
-                  <div className="flex items-center justify-center gap-4">
-                    <Clock className="w-6 h-6 sm:w-7 sm:h-7 animate-pulse flex-shrink-0" />
-                    <div className="text-center">
-                      <p className="text-xs sm:text-sm text-white/90 mb-1">Tempo restante para pagamento</p>
-                      <p className="text-4xl sm:text-5xl font-bold font-mono tracking-wider">
-                        {formatarTempo(tempoRestante)}
-                      </p>
+          <div className="grid md:grid-cols-3 gap-6">
+            {/* Coluna Principal - PIX */}
+            <div className="md:col-span-2 space-y-6">
+              {/* Timer */}
+              {pixGerado && pixCode && tempoRestante > 0 && (
+                <div className="bg-gradient-to-r from-red-600 to-red-700 rounded-lg p-5 text-white shadow-lg">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <Clock className="w-6 h-6" />
+                      <div>
+                        <p className="text-sm text-white/90">Tempo restante</p>
+                        <p className="text-3xl font-bold font-mono">{formatarTempo(tempoRestante)}</p>
+                      </div>
                     </div>
+                    <AlertCircle className="w-6 h-6 text-white/80" />
                   </div>
                 </div>
               )}
 
-              {/* Código PIX - PRIMEIRO (prioridade mobile) */}
-              <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 sm:p-8 mb-6">
-                <div className="text-center mb-6">
-                  <div className="inline-flex items-center justify-center w-14 h-14 bg-carrefour-blue/10 rounded-full mb-4">
-                    <CreditCard className="w-7 h-7 text-carrefour-blue" />
+              {/* Card de Pagamento */}
+              {loading ? (
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
+                  <Loader2 className="w-12 h-12 text-carrefour-blue animate-spin mx-auto mb-4" />
+                  <p className="text-lg font-semibold text-gray-900">Gerando código de pagamento...</p>
+                  <p className="text-sm text-gray-600 mt-2">Aguarde alguns instantes</p>
+                </div>
+              ) : pixGerado && pixCode ? (
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                  {/* Header do Card */}
+                  <div className="bg-gradient-to-r from-carrefour-blue to-primary-dark px-6 py-4">
+                    <div className="flex items-center justify-between text-white">
+                      <div>
+                        <p className="text-sm text-white/90 mb-1">Pagamento via PIX</p>
+                        <p className="text-2xl font-bold">R$ {(valorEntrega || 25.50).toFixed(2).replace('.', ',')}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-xs text-white/80 mb-1">ID da Transação</p>
+                        <p className="text-sm font-mono">{transactionId?.substring(0, 8) || 'N/A'}...</p>
+                      </div>
+                    </div>
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Pagamento via PIX</h3>
-                  <div className="flex items-center justify-center gap-2 mb-3">
-                    <span className="text-sm text-gray-600">Valor a pagar:</span>
+
+                  <div className="p-6">
+                    {/* Código PIX */}
+                    <div className="mb-6">
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Código PIX (Copie e cole no app do seu banco)
+                      </label>
+                      <div className="bg-gray-50 border-2 border-gray-200 rounded-lg p-4 mb-3">
+                        <p className="text-sm font-mono text-gray-900 break-all select-all leading-relaxed">
+                          {pixCode}
+                        </p>
+                      </div>
+                      <button
+                        onClick={handleCopiarPix}
+                        className="w-full bg-carrefour-blue hover:bg-blue-700 text-white font-semibold py-3.5 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+                      >
+                        {copiado ? (
+                          <>
+                            <CheckCircle className="w-5 h-5" />
+                            Código Copiado
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="w-5 h-5" />
+                            Copiar Código PIX
+                          </>
+                        )}
+                      </button>
+                    </div>
+
+                    {/* QR Code Expansível */}
+                    <div className="border-t border-gray-200 pt-6">
+                      <button
+                        onClick={() => setQrCodeExpandido(!qrCodeExpandido)}
+                        className="w-full flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors"
+                      >
+                        <span className="text-sm font-semibold text-gray-700">QR Code para escanear</span>
+                        {qrCodeExpandido ? (
+                          <ChevronUp className="w-5 h-5 text-gray-500" />
+                        ) : (
+                          <ChevronDown className="w-5 h-5 text-gray-500" />
+                        )}
+                      </button>
+                      
+                      {qrCodeExpandido && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          className="mt-4 pb-4"
+                        >
+                          <div className="bg-white p-6 rounded-lg border-2 border-gray-200 flex justify-center">
+                            <QRCodeSVG value={pixCode} size={240} level="H" />
+                          </div>
+                        </motion.div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ) : null}
+
+              {/* Instruções de Pagamento */}
+              {pixGerado && pixCode && (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-5">
+                  <h3 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-carrefour-blue" />
+                    Como pagar com PIX
+                  </h3>
+                  <ol className="space-y-2 text-sm text-gray-700">
+                    <li className="flex gap-2">
+                      <span className="font-semibold text-carrefour-blue">1.</span>
+                      <span>Abra o app do seu banco e selecione a opção PIX</span>
+                    </li>
+                    <li className="flex gap-2">
+                      <span className="font-semibold text-carrefour-blue">2.</span>
+                      <span>Escolha "Pix Copia e Cola" ou escaneie o QR Code</span>
+                    </li>
+                    <li className="flex gap-2">
+                      <span className="font-semibold text-carrefour-blue">3.</span>
+                      <span>Cole o código ou confirme o valor de <strong>R$ {(valorEntrega || 25.50).toFixed(2).replace('.', ',')}</strong></span>
+                    </li>
+                    <li className="flex gap-2">
+                      <span className="font-semibold text-carrefour-blue">4.</span>
+                      <span>Confirme o pagamento no app do seu banco</span>
+                    </li>
+                  </ol>
+                </div>
+              )}
+            </div>
+
+            {/* Sidebar - Resumo e Informações */}
+            <div className="space-y-6">
+              {/* Resumo do Pedido */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+                <h3 className="text-base font-semibold text-gray-900 mb-4">Resumo do Pedido</h3>
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Taxa de ativação</span>
+                    <span className="font-semibold text-gray-900">R$ {(valorEntrega || 25.50).toFixed(2).replace('.', ',')}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Envio do cartão físico</span>
+                    <span className="text-gray-600">Incluso</span>
+                  </div>
+                  <div className="border-t border-gray-200 pt-3 flex justify-between">
+                    <span className="font-semibold text-gray-900">Total</span>
                     <span className="text-xl font-bold text-carrefour-blue">R$ {(valorEntrega || 25.50).toFixed(2).replace('.', ',')}</span>
                   </div>
-                  <p className="text-sm text-gray-600">Copie o código abaixo e cole no app do seu banco</p>
                 </div>
-                
-                <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-4 sm:p-5 mb-4 border-2 border-dashed border-carrefour-blue/30">
-                  <p className="text-sm sm:text-base text-gray-900 break-all font-mono leading-relaxed select-all text-center">
-                    {pixCode}
-                  </p>
-                </div>
-                
-                <button
-                  onClick={handleCopiarPix}
-                  className="w-full bg-carrefour-blue hover:bg-blue-700 text-white font-semibold text-base sm:text-lg py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-3"
-                >
-                  {copiado ? (
-                    <>
-                      <CheckCircle className="w-5 h-5" />
-                      Código Copiado!
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-5 h-5" />
-                      Copiar Código PIX
-                    </>
-                  )}
-                </button>
               </div>
 
-              {/* QR Code - EXPANSÍVEL */}
-              <div className="bg-white rounded-xl shadow-lg border border-gray-200 mb-6 overflow-hidden">
-                <button
-                  onClick={() => setQrCodeExpandido(!qrCodeExpandido)}
-                  className="w-full p-5 flex items-center justify-between hover:bg-gray-50 transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-carrefour-blue/10 rounded-lg flex items-center justify-center">
-                      <CreditCard className="w-5 h-5 text-carrefour-blue" />
-                    </div>
-                    <div className="text-left">
-                      <h3 className="text-base sm:text-lg font-bold text-gray-900">QR Code para Escanear</h3>
-                      <p className="text-xs sm:text-sm text-gray-600">Clique para {qrCodeExpandido ? 'ocultar' : 'mostrar'} o QR Code</p>
-                    </div>
+              {/* Informações do Cliente */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+                <h3 className="text-base font-semibold text-gray-900 mb-4">Dados do Pagamento</h3>
+                <div className="space-y-2 text-sm">
+                  <div>
+                    <p className="text-gray-600">Pagador</p>
+                    <p className="font-medium text-gray-900">{nomeCompleto || 'N/A'}</p>
                   </div>
-                  {qrCodeExpandido ? (
-                    <ChevronUp className="w-5 h-5 text-carrefour-blue" />
-                  ) : (
-                    <ChevronDown className="w-5 h-5 text-carrefour-blue" />
-                  )}
-                </button>
-                
-                {qrCodeExpandido && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="px-5 pb-5"
-                  >
-                    <div className="bg-white p-6 rounded-lg flex justify-center border-2 border-carrefour-blue/20">
-                      <QRCodeSVG value={pixCode} size={260} level="H" className="w-full max-w-[260px] h-auto" />
+                  <div>
+                    <p className="text-gray-600">CPF</p>
+                    <p className="font-medium text-gray-900">{cpf || 'N/A'}</p>
+                  </div>
+                  {transactionId && (
+                    <div>
+                      <p className="text-gray-600">ID da Transação</p>
+                      <p className="font-mono text-xs text-gray-700">{transactionId}</p>
                     </div>
-                    <p className="text-center text-sm text-gray-600 mt-3">
-                      Escaneie com o app do seu banco
+                  )}
+                </div>
+              </div>
+
+              {/* Segurança */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+                <div className="flex items-center gap-2 mb-3">
+                  <Shield className="w-5 h-5 text-green-600" />
+                  <h3 className="text-base font-semibold text-gray-900">Pagamento Seguro</h3>
+                </div>
+                <div className="space-y-2 text-xs text-gray-600">
+                  <div className="flex items-center gap-2">
+                    <Lock className="w-3 h-3 text-green-600" />
+                    <span>Criptografia SSL 256 bits</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Shield className="w-3 h-3 text-green-600" />
+                    <span>Certificado de Segurança</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-3 h-3 text-green-600" />
+                    <span>Processado por gateway bancário</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Informações Importantes */}
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                <div className="flex items-start gap-2">
+                  <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                  <div className="text-xs text-amber-900">
+                    <p className="font-semibold mb-1">Importante</p>
+                    <p className="leading-relaxed">
+                      O pagamento é processado automaticamente. Após a confirmação, seu cartão será ativado em até 2 minutos.
                     </p>
-                  </motion.div>
-                )}
-              </div>
-            </>
-          ) : null}
-
-          {/* Informação sobre Ativação */}
-          <div className="bg-gradient-to-r from-blue-50 to-blue-100 border border-carrefour-blue/20 rounded-xl p-5 mb-6">
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 bg-carrefour-blue/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                <CheckCircle className="w-5 h-5 text-carrefour-blue" />
-              </div>
-              <div>
-                <p className="font-semibold text-gray-900 mb-2 text-base">Ativação Imediata</p>
-                <p className="text-sm text-gray-700 leading-relaxed">
-                  Após a confirmação do pagamento, seu cartão virtual será ativado automaticamente. 
-                  O cartão físico será enviado para o endereço cadastrado.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Garantias de Segurança */}
-          <div className="bg-gray-50 rounded-xl p-5 mb-6 border border-gray-200">
-            <div className="flex items-center justify-center gap-2 text-gray-700 mb-4">
-              <Shield className="w-5 h-5 text-carrefour-blue" />
-              <span className="font-semibold text-base">Pagamento 100% Seguro</span>
-            </div>
-            <div className="grid grid-cols-3 gap-4 text-center text-sm text-gray-600">
-              <div>
-                <Lock className="w-5 h-5 mx-auto mb-2 text-carrefour-blue" />
-                <p className="text-xs">Criptografia SSL</p>
-              </div>
-              <div>
-                <Shield className="w-5 h-5 mx-auto mb-2 text-carrefour-blue" />
-                <p className="text-xs">Dados Protegidos</p>
-              </div>
-              <div>
-                <CheckCircle className="w-5 h-5 mx-auto mb-2 text-carrefour-blue" />
-                <p className="text-xs">Transação Segura</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Botão Continuar */}
-          <div className="space-y-3">
-            <button
-              onClick={handleContinuar}
-              className="w-full bg-gradient-to-r from-carrefour-blue to-primary-dark hover:from-blue-700 hover:to-blue-800 text-white font-semibold text-lg py-5 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-3"
-            >
-              Finalizar Ativação
-              <ArrowRight className="w-5 h-5" />
-            </button>
-            <p className="text-center text-sm text-gray-500">
-              Após o pagamento, você receberá a confirmação e poderá acessar seu cartão virtual
-            </p>
-          </div>
-        </motion.div>
+          {pixGerado && pixCode && (
+            <div className="mt-8 text-center">
+              <button
+                onClick={handleContinuar}
+                className="bg-gradient-to-r from-carrefour-blue to-primary-dark hover:from-blue-700 hover:to-blue-800 text-white font-semibold text-lg py-4 px-8 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl inline-flex items-center gap-2"
+              >
+                Continuar para Cartão Virtual
+                <ArrowRight className="w-5 h-5" />
+              </button>
+              <p className="text-xs text-gray-500 mt-3">
+                Você pode continuar mesmo antes do pagamento ser confirmado
+              </p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
