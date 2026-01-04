@@ -248,12 +248,29 @@ export const gerarPIX = async (dados, existingTransactionId = null) => {
  */
 export const verificarPagamento = async (transactionId) => {
   try {
-    const response = await fetch(`${VENNOX_API_BASE}/transactions/${transactionId}`, {
+    // Detectar se está em produção e qual plataforma (Vercel ou Netlify)
+    const isProduction = import.meta.env.PROD;
+    const isVercel = typeof window !== 'undefined' && window.location.hostname.includes('vercel.app');
+    
+    // Em produção, usar Serverless Function; em dev, usar API direta
+    const apiUrl = isProduction 
+      ? (isVercel 
+          ? `/api/check-payment?transactionId=${encodeURIComponent(transactionId)}`
+          : `/.netlify/functions/check-payment?transactionId=${encodeURIComponent(transactionId)}`)
+      : `${VENNOX_API_BASE}/transactions/${transactionId}`;
+
+    const headers = isProduction 
+      ? {
+          'Accept': 'application/json',
+        }
+      : {
+          'Authorization': createAuthHeader(),
+          'Content-Type': 'application/json',
+        };
+
+    const response = await fetch(apiUrl, {
       method: 'GET',
-      headers: {
-        'Authorization': createAuthHeader(),
-        'Content-Type': 'application/json',
-      },
+      headers: headers,
     });
 
     if (!response.ok) {
@@ -262,8 +279,12 @@ export const verificarPagamento = async (transactionId) => {
 
     const data = await response.json();
     
-    // Mapear status da API para nosso formato
-    // Estrutura: { data: { status } }
+    // Se já vem formatado da função serverless
+    if (data.paid !== undefined) {
+      return data;
+    }
+    
+    // Mapear status da API para nosso formato (quando vem direto da API)
     const transactionData = data.data || data;
     const status = transactionData.status || data.status || 'pending';
     const paid = status === 'paid' || status === 'approved' || status === 'completed';

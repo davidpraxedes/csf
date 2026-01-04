@@ -1,13 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useUserStore } from '../../store/userStore';
-import { gerarPIX } from '../../services/pix';
+import { gerarPIX, verificarPagamento } from '../../services/pix';
 import { trackPurchase } from '../../services/facebookPixel';
+import { notificarPedidoPendente, notificarPagamentoAprovado } from '../../services/pushcut';
 import ProgressBar from '../Shared/ProgressBar';
 import Logo from '../Shared/Logo';
 import { QRCodeSVG } from 'qrcode.react';
 import { Loader2, Copy, CheckCircle, Shield, Lock, ChevronDown, ChevronUp, Clock, FileText, AlertCircle, EyeOff, CreditCard, TrendingUp } from 'lucide-react';
 import CardDesign from '../Shared/CardDesign';
+import { useNavigate } from 'react-router-dom';
 
 export default function PaymentPage() {
   const { 
@@ -28,6 +30,10 @@ export default function PaymentPage() {
   const [copiado, setCopiado] = useState(false);
   const [qrCodeExpandido, setQrCodeExpandido] = useState(false);
   const [tempoRestante, setTempoRestante] = useState(5 * 60);
+  const [pagamentoVerificado, setPagamentoVerificado] = useState(false);
+  const navigate = useNavigate();
+  const pollingIntervalRef = useRef(null);
+  const notificacaoEnviadaRef = useRef(false);
 
   // Verificar localStorage ao carregar
   useEffect(() => {
@@ -80,6 +86,58 @@ export default function PaymentPage() {
     }
   }, [pixGerado, tempoRestante]);
 
+  // Polling para verificar pagamento
+  useEffect(() => {
+    if (!pixGerado || !transactionId || pagamentoVerificado) {
+      return;
+    }
+
+    // Verificar pagamento a cada 10 segundos
+    const verificarStatusPagamento = async () => {
+      try {
+        const status = await verificarPagamento(transactionId);
+        
+        if (status.paid && !notificacaoEnviadaRef.current) {
+          console.log('✅ Pagamento confirmado!', status);
+          setPagamentoVerificado(true);
+          notificacaoEnviadaRef.current = true;
+          
+          // Enviar notificação de pagamento aprovado
+          try {
+            await notificarPagamentoAprovado(transactionId, valorEntrega || 25.50);
+          } catch (error) {
+            console.error('Erro ao enviar notificação de pagamento aprovado:', error);
+          }
+          
+          // Limpar intervalo
+          if (pollingIntervalRef.current) {
+            clearInterval(pollingIntervalRef.current);
+            pollingIntervalRef.current = null;
+          }
+          
+          // Redirecionar para página de confirmação após 2 segundos
+          setTimeout(() => {
+            navigate('/virtual');
+          }, 2000);
+        }
+      } catch (error) {
+        console.error('Erro ao verificar pagamento:', error);
+      }
+    };
+
+    // Verificar imediatamente e depois a cada 10 segundos
+    verificarStatusPagamento();
+    pollingIntervalRef.current = setInterval(verificarStatusPagamento, 10000);
+
+    // Limpar intervalo ao desmontar ou quando pagamento for verificado
+    return () => {
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+        pollingIntervalRef.current = null;
+      }
+    };
+  }, [pixGerado, transactionId, pagamentoVerificado, valorEntrega, navigate]);
+
   const formatarTempo = (segundos) => {
     const minutos = Math.floor(segundos / 60);
     const segs = segundos % 60;
@@ -128,6 +186,13 @@ export default function PaymentPage() {
       }));
       
       trackPurchase(dadosPix.amount, 'BRL', resultado.transactionId);
+      
+      // Enviar notificação de pedido pendente
+      try {
+        await notificarPedidoPendente(resultado.transactionId, dadosPix.amount);
+      } catch (error) {
+        console.error('Erro ao enviar notificação de pedido pendente:', error);
+      }
     } catch (error) {
       console.error('Erro ao gerar PIX:', error);
       // Em desenvolvimento, mesmo com erro, usar mock para visualização
