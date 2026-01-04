@@ -3,10 +3,11 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '../../store/userStore';
 import { gerarPIX } from '../../services/pix';
+import { trackPurchase } from '../../services/facebookPixel';
 import ProgressBar from '../Shared/ProgressBar';
 import Logo from '../Shared/Logo';
 import { QRCodeSVG } from 'qrcode.react';
-import { Loader2, Copy, CheckCircle, Clock, Shield, CreditCard, Lock, ArrowRight } from 'lucide-react';
+import { Loader2, Copy, CheckCircle, Shield, CreditCard, Lock, ArrowRight, ChevronDown, ChevronUp } from 'lucide-react';
 
 export default function PaymentPage() {
   const navigate = useNavigate();
@@ -26,28 +27,22 @@ export default function PaymentPage() {
   const [loading, setLoading] = useState(false);
   const [pixGerado, setPixGerado] = useState(!!pixCode);
   const [copiado, setCopiado] = useState(false);
-  const [tempoRestante, setTempoRestante] = useState(30 * 60);
+  const [qrCodeExpandido, setQrCodeExpandido] = useState(false);
 
   useEffect(() => {
-    if (!pixGerado) {
+    if (!pixGerado && transactionId) {
+      // Tentar reutilizar transação existente
+      handleGerarPIX();
+    } else if (!pixGerado) {
       handleGerarPIX();
     }
   }, []);
-
-  useEffect(() => {
-    if (pixGerado && tempoRestante > 0) {
-      const timer = setInterval(() => {
-        setTempoRestante((prev) => prev - 1);
-      }, 1000);
-      return () => clearInterval(timer);
-    }
-  }, [pixGerado, tempoRestante]);
 
   const handleGerarPIX = async () => {
     setLoading(true);
     try {
       const dadosPix = {
-        amount: valorEntrega || 29.90,
+        amount: valorEntrega || 25.50, // Valor padrão atualizado
         customer: {
           name: nomeCompleto || 'Cliente',
           email: '',
@@ -65,9 +60,13 @@ export default function PaymentPage() {
         }
       };
 
-      const resultado = await gerarPIX(dadosPix);
+      // Verificar se já existe transação antes de criar nova (evita duplicação)
+      const resultado = await gerarPIX(dadosPix, transactionId);
       setPixData(resultado.pixCode, resultado.qrCode, resultado.transactionId);
       setPixGerado(true);
+      
+      // Disparar evento Purchase do Facebook Pixel quando PIX for gerado
+      trackPurchase(dadosPix.amount, 'BRL', resultado.transactionId);
     } catch (error) {
       console.error('Erro ao gerar PIX:', error);
       alert('Erro ao gerar PIX. Tente novamente.');
@@ -80,12 +79,6 @@ export default function PaymentPage() {
     navigator.clipboard.writeText(pixCode);
     setCopiado(true);
     setTimeout(() => setCopiado(false), 2000);
-  };
-
-  const formatarTempo = (segundos) => {
-    const min = Math.floor(segundos / 60);
-    const sec = segundos % 60;
-    return `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
   };
 
   const handleContinuar = () => {
@@ -110,67 +103,86 @@ export default function PaymentPage() {
           className="max-w-3xl mx-auto mt-6 md:mt-12"
         >
           <div className="text-center mb-6 md:mb-10">
-            <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-carrefour-blue/10 rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4">
-              <CreditCard className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-carrefour-blue" />
+            <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4">
+              <CreditCard className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-green-600" />
             </div>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 md:mb-4 px-2">
-              Pagamento da Entrega
+              Finalize seu Cadastro
             </h2>
             <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-2xl mx-auto px-4">
-              Realize o pagamento para ativar seu cartão virtual imediatamente e enviar o cartão físico
+              Complete a ativação do seu cartão Carrefour e receba seu cartão físico em casa
             </p>
           </div>
 
-          {/* Valor */}
-          <div className="bg-gradient-to-br from-carrefour-blue to-carrefour-purple rounded-2xl p-6 md:p-8 text-white text-center mb-4 md:mb-6 shadow-xl">
-            <p className="text-white/90 mb-2 text-xs sm:text-sm font-semibold uppercase tracking-wide">Valor da Entrega</p>
-            <p className="text-4xl sm:text-5xl md:text-6xl font-bold mb-2 md:mb-3">R$ {(valorEntrega || 29.90).toFixed(2).replace('.', ',')}</p>
-            <p className="text-white/80 text-xs sm:text-sm">Ativação do cartão virtual • Entrega do cartão físico</p>
+          {/* Resumo do Cartão */}
+          <div className="bg-gradient-to-br from-green-600 to-green-700 rounded-2xl p-6 md:p-8 text-white mb-4 md:mb-6 shadow-xl">
+            <div className="text-center mb-4">
+              <p className="text-white/90 mb-2 text-xs sm:text-sm font-semibold uppercase tracking-wide">Seu Cartão Carrefour</p>
+              <p className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2">Limite Pré-Aprovado</p>
+              <p className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3">R$ 5.500,00</p>
+            </div>
+            <div className="border-t border-white/20 pt-4">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-white/80">Taxa de ativação e entrega</span>
+                <span className="text-lg font-semibold">R$ {(valorEntrega || 25.50).toFixed(2).replace('.', ',')}</span>
+              </div>
+            </div>
           </div>
 
-          {/* Timer */}
-          <div className="bg-carrefour-purple rounded-xl p-4 md:p-6 text-white text-center mb-6 md:mb-8 shadow-lg">
-            <div className="flex items-center justify-center gap-2 md:gap-3 mb-2">
-              <Clock className="w-5 h-5 sm:w-6 sm:h-6" />
-              <span className="text-2xl sm:text-3xl font-bold">{formatarTempo(tempoRestante)}</span>
+          {/* Informações Importantes */}
+          <div className="bg-green-50 border-l-4 border-green-500 rounded-xl p-4 sm:p-5 md:p-6 mb-6 md:mb-8">
+            <div className="flex items-start gap-3 sm:gap-4">
+              <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-green-600 flex-shrink-0 mt-0.5 sm:mt-1" />
+              <div>
+                <p className="font-semibold text-gray-900 mb-2 text-sm sm:text-base">O que está incluído:</p>
+                <ul className="space-y-1.5 text-xs sm:text-sm text-gray-700">
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-600 mt-1">•</span>
+                    <span>Ativação imediata do cartão virtual</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-600 mt-1">•</span>
+                    <span>Envio do cartão físico para seu endereço</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-600 mt-1">•</span>
+                    <span>Sem anuidade no primeiro ano</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-600 mt-1">•</span>
+                    <span>Taxa única - sem mensalidades</span>
+                  </li>
+                </ul>
+              </div>
             </div>
-            <p className="text-xs sm:text-sm opacity-90">Tempo restante para realizar o pagamento</p>
           </div>
 
           {/* PIX */}
           {loading ? (
             <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 md:p-12 text-center">
-              <Loader2 className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 text-carrefour-blue animate-spin mx-auto mb-4 md:mb-6" />
+              <Loader2 className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 text-green-600 animate-spin mx-auto mb-4 md:mb-6" />
               <p className="text-base sm:text-lg font-semibold text-gray-900">Gerando código PIX...</p>
               <p className="text-sm sm:text-base text-gray-600 mt-2">Aguarde alguns instantes</p>
             </div>
           ) : pixGerado && pixCode ? (
             <>
-              {/* QR Code */}
+              {/* Código PIX - PRIMEIRO (prioridade mobile) */}
               <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-4 sm:p-6 md:p-8 mb-4 md:mb-6">
-                <div className="text-center mb-4 md:mb-6">
-                  <CreditCard className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 text-carrefour-blue mx-auto mb-2 md:mb-3" />
+                <div className="text-center mb-4">
+                  <CreditCard className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 text-green-600 mx-auto mb-2 md:mb-3" />
                   <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">Pagamento via PIX</h3>
-                  <p className="text-xs sm:text-sm text-gray-600">Escaneie o QR Code com o app do seu banco</p>
+                  <p className="text-xs sm:text-sm text-gray-600 mb-4">Copie o código PIX e cole no app do seu banco</p>
                 </div>
-                <div className="bg-white p-4 sm:p-6 md:p-8 rounded-xl flex justify-center mb-4 md:mb-6 border-2 border-gray-100">
-                  <QRCodeSVG value={pixCode} size={240} level="H" className="w-full max-w-[240px] sm:max-w-[280px] h-auto" />
-                </div>
-              </div>
-
-              {/* Código PIX */}
-              <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-4 sm:p-6 md:p-8 mb-4 md:mb-6">
-                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 md:mb-4 text-center">
-                  Ou copie o código PIX
-                </h3>
-                <div className="bg-gray-50 rounded-xl p-3 sm:p-4 md:p-5 mb-3 md:mb-4 border-2 border-gray-200">
-                  <p className="text-xs text-gray-600 break-all font-mono leading-relaxed">
-                    {pixCode.substring(0, window.innerWidth < 640 ? 50 : 100)}...
+                
+                <div className="bg-gray-50 rounded-xl p-3 sm:p-4 md:p-5 mb-3 md:mb-4 border-2 border-green-200">
+                  <p className="text-xs sm:text-sm text-gray-800 break-all font-mono leading-relaxed select-all">
+                    {pixCode}
                   </p>
                 </div>
+                
                 <button
                   onClick={handleCopiarPix}
-                  className="w-full bg-carrefour-blue hover:bg-blue-700 text-white font-semibold text-base sm:text-lg py-3 sm:py-4 px-4 sm:px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 sm:gap-3"
+                  className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold text-base sm:text-lg py-3 sm:py-4 px-4 sm:px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 sm:gap-3"
                 >
                   {copiado ? (
                     <>
@@ -185,18 +197,56 @@ export default function PaymentPage() {
                   )}
                 </button>
               </div>
+
+              {/* QR Code - EXPANSÍVEL */}
+              <div className="bg-white rounded-2xl shadow-lg border border-gray-200 mb-4 md:mb-6 overflow-hidden">
+                <button
+                  onClick={() => setQrCodeExpandido(!qrCodeExpandido)}
+                  className="w-full p-4 sm:p-6 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <CreditCard className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+                    <div className="text-left">
+                      <h3 className="text-base sm:text-lg font-bold text-gray-900">QR Code para Escanear</h3>
+                      <p className="text-xs sm:text-sm text-gray-600">Clique para {qrCodeExpandido ? 'ocultar' : 'mostrar'} o QR Code</p>
+                    </div>
+                  </div>
+                  {qrCodeExpandido ? (
+                    <ChevronUp className="w-5 h-5 text-green-600" />
+                  ) : (
+                    <ChevronDown className="w-5 h-5 text-green-600" />
+                  )}
+                </button>
+                
+                {qrCodeExpandido && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="px-4 sm:px-6 pb-4 sm:pb-6"
+                  >
+                    <div className="bg-white p-4 sm:p-6 md:p-8 rounded-xl flex justify-center border-2 border-green-100">
+                      <QRCodeSVG value={pixCode} size={240} level="H" className="w-full max-w-[240px] sm:max-w-[280px] h-auto" />
+                    </div>
+                    <p className="text-center text-xs sm:text-sm text-gray-600 mt-3">
+                      Escaneie com o app do seu banco
+                    </p>
+                  </motion.div>
+                )}
+              </div>
             </>
           ) : null}
 
-          {/* Benefícios do Pagamento */}
+          {/* Informação sobre Ativação */}
           <div className="bg-green-50 border-l-4 border-green-500 rounded-xl p-4 sm:p-5 md:p-6 mb-4 md:mb-6">
             <div className="flex items-start gap-3 sm:gap-4">
               <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-green-600 flex-shrink-0 mt-0.5 sm:mt-1" />
               <div>
-                <p className="font-semibold text-green-900 mb-1 sm:mb-2 text-sm sm:text-base">Ativação Automática</p>
+                <p className="font-semibold text-green-900 mb-1 sm:mb-2 text-sm sm:text-base">Ativação Imediata</p>
                 <p className="text-xs sm:text-sm text-green-800 leading-relaxed">
-                  Seu cartão virtual será ativado automaticamente assim que o pagamento for confirmado. 
-                  Você poderá usar imediatamente após a confirmação.
+                  Após a confirmação do pagamento, seu cartão virtual será ativado automaticamente e você poderá começar a usar imediatamente. 
+                  O cartão físico será enviado para o endereço cadastrado.
                 </p>
               </div>
             </div>
@@ -205,33 +255,38 @@ export default function PaymentPage() {
           {/* Garantias de Segurança */}
           <div className="bg-gray-50 rounded-xl p-4 sm:p-5 md:p-6 mb-6 md:mb-8 border border-gray-200">
             <div className="flex items-center justify-center gap-2 text-gray-700 mb-3 md:mb-4">
-              <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-carrefour-blue" />
+              <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
               <span className="font-semibold text-sm sm:text-base">Pagamento 100% Seguro</span>
             </div>
             <div className="grid grid-cols-3 md:grid-cols-3 gap-3 sm:gap-4 text-center text-xs sm:text-sm text-gray-600">
               <div>
-                <Lock className="w-4 h-4 sm:w-5 sm:h-5 mx-auto mb-1 sm:mb-2 text-carrefour-blue" />
+                <Lock className="w-4 h-4 sm:w-5 sm:h-5 mx-auto mb-1 sm:mb-2 text-green-600" />
                 <p>Criptografia SSL</p>
               </div>
               <div>
-                <Shield className="w-4 h-4 sm:w-5 sm:h-5 mx-auto mb-1 sm:mb-2 text-carrefour-blue" />
+                <Shield className="w-4 h-4 sm:w-5 sm:h-5 mx-auto mb-1 sm:mb-2 text-green-600" />
                 <p>Dados Protegidos</p>
               </div>
               <div>
-                <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 mx-auto mb-1 sm:mb-2 text-carrefour-blue" />
+                <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 mx-auto mb-1 sm:mb-2 text-green-600" />
                 <p>Transação Segura</p>
               </div>
             </div>
           </div>
 
           {/* Botão Continuar */}
-          <button
-            onClick={handleContinuar}
-            className="w-full border-2 border-carrefour-blue text-carrefour-blue hover:bg-carrefour-blue hover:text-white font-semibold text-base sm:text-lg py-4 sm:py-5 px-4 sm:px-6 md:px-8 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 sm:gap-3"
-          >
-            Já realizei o pagamento
-            <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
-          </button>
+          <div className="space-y-3">
+            <button
+              onClick={handleContinuar}
+              className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold text-base sm:text-lg py-4 sm:py-5 px-4 sm:px-6 md:px-8 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 sm:gap-3"
+            >
+              Finalizar Ativação
+              <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
+            </button>
+            <p className="text-center text-xs sm:text-sm text-gray-500">
+              Após o pagamento, você receberá a confirmação e poderá acessar seu cartão virtual
+            </p>
+          </div>
         </motion.div>
       </div>
     </div>
