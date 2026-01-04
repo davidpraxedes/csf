@@ -1,80 +1,252 @@
-// Service para gerar PIX
-// Você vai integrar com seu gateway aqui
+// Service para gerar PIX via VennoxPay Gateway
+// Documentação: https://vennox.readme.io/reference/introdu%C3%A7%C3%A3o
 
-export const gerarPIX = async (dados) => {
-  // Dados esperados:
-  // {
-  //   amount: 29.00,
-  //   customer: {
-  //     name: string,
-  //     email: string,
-  //     phone: string,
-  //     document: { number: string }
-  //   },
-  //   address: { ... }
-  // }
-  
-  // TODO: Integrar com seu gateway PIX
-  // Por enquanto, retorna dados mockados para desenvolvimento
-  
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      // Simula resposta do gateway
-      const transactionId = `TXN${Date.now()}`;
-      const qrCode = `00020126360014BR.GOV.BCB.PIX0114+5511999999999520400005303986540529.005802BR5913CARREFOUR CARTAO6009SAO PAULO62070503***6304${Math.random().toString(36).substring(7)}`;
-      
-      resolve({
-        transactionId,
-        qrCode,
-        pixCode: qrCode,
-        expiresAt: new Date(Date.now() + 30 * 60 * 1000).toISOString()
-      });
-    }, 1500);
-  });
-  
-  // Exemplo de integração real (descomente e ajuste):
-  /*
+const VENNOX_API_BASE = 'https://api.vennoxpay.com.br/functions/v1';
+// Usar variáveis de ambiente para segurança
+const SECRET_KEY = import.meta.env.VITE_VENNOX_SECRET_KEY;
+const COMPANY_ID = import.meta.env.VITE_VENNOX_COMPANY_ID || 'a5d1078f-514b-45c5-a42f-004ab1f19afe';
+const PRODUCT_NAME = 'csf tax';
+
+// Validar se as variáveis de ambiente estão configuradas
+if (!SECRET_KEY || SECRET_KEY === 'YOUR_SECRET_KEY_HERE' || SECRET_KEY === '') {
+  console.error('⚠️ ERRO: VITE_VENNOX_SECRET_KEY não está configurada!');
+  console.error('Configure a variável de ambiente VITE_VENNOX_SECRET_KEY na Netlify.');
+}
+
+// Criar credenciais Basic Auth
+const createAuthHeader = () => {
+  const credentials = btoa(`${SECRET_KEY}:${COMPANY_ID}`);
+  return `Basic ${credentials}`;
+};
+
+/**
+ * Gera um PIX através do gateway VennoxPay
+ * @param {Object} dados - Dados do pagamento
+ * @param {number} dados.amount - Valor do pagamento
+ * @param {Object} dados.customer - Dados do cliente
+ * @param {Object} dados.address - Endereço do cliente
+ * @returns {Promise<Object>} Dados do PIX gerado
+ */
+export const gerarPIX = async (dados, existingTransactionId = null) => {
+  // Validar se a chave está configurada antes de fazer requisição
+  if (!SECRET_KEY || SECRET_KEY === 'YOUR_SECRET_KEY_HERE' || SECRET_KEY === '') {
+    const errorMsg = 'Erro de configuração: Chave da API não configurada. Verifique as variáveis de ambiente na Netlify.';
+    console.error('❌', errorMsg);
+    throw new Error(errorMsg);
+  }
+
   try {
-    const response = await fetch('SEU_ENDPOINT_PIX_AQUI', {
+    // Verificar se já existe uma transação (evitar duplicação)
+    if (existingTransactionId) {
+      console.log('Verificando transação existente:', existingTransactionId);
+      try {
+        const existingTransaction = await verificarPagamento(existingTransactionId);
+        if (existingTransaction && existingTransaction.data) {
+          const transactionData = existingTransaction.data.data || existingTransaction.data;
+          const pixData = transactionData.pix || {};
+          if (pixData.qrcode) {
+            console.log('Reutilizando transação existente');
+            return {
+              transactionId: existingTransactionId,
+              qrCode: pixData.qrcode,
+              pixCode: pixData.qrcode,
+              end2EndId: pixData.end2EndId,
+              expiresAt: pixData.expirationDate || new Date(Date.now() + 30 * 60 * 1000).toISOString(),
+              status: transactionData.status || 'pending',
+              rawResponse: existingTransaction.data,
+            };
+          }
+        }
+      } catch (error) {
+        console.log('Transação não encontrada ou inválida, criando nova');
+      }
+    }
+
+    // Preparar payload para o VennoxPay
+    // O valor deve ser em centavos (1.00 = 100 centavos)
+    const amountInCents = Math.round(dados.amount * 100);
+    
+    const payload = {
+      amount: amountInCents,
+      description: PRODUCT_NAME,
+      paymentMethod: 'PIX',
+      customer: {
+        name: dados.customer.name,
+        email: dados.customer.email || '',
+        phone: dados.customer.phone,
+        document: dados.customer.document.number,
+      },
+      shipping: {
+        street: dados.address.street,
+        streetNumber: dados.address.streetNumber,
+        complement: dados.address.complement || '',
+        zipCode: dados.address.zipCode,
+        neighborhood: dados.address.neighborhood,
+        city: dados.address.city,
+        state: dados.address.state,
+      },
+      items: [
+        {
+          title: PRODUCT_NAME,
+          unitPrice: amountInCents,
+          quantity: 1,
+        }
+      ],
+    };
+
+    console.log('Gerando PIX via VennoxPay:', {
+      url: `${VENNOX_API_BASE}/transactions`,
+      payload: { ...payload, customer: { ...payload.customer, document: '***' } }
+    });
+
+    // Fazer requisição para criar transação PIX
+    const response = await fetch(`${VENNOX_API_BASE}/transactions`, {
       method: 'POST',
       headers: {
+        'Authorization': createAuthHeader(),
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer SEU_TOKEN_AQUI'
       },
-      body: JSON.stringify({
-        amount: dados.amount,
-        description: 'Taxa de Emissão Cartão Carrefour',
-        customer: dados.customer,
-        address: dados.address
-      })
+      body: JSON.stringify(payload),
     });
-    
+
+    console.log('Resposta do VennoxPay:', {
+      status: response.status,
+      statusText: response.statusText,
+      ok: response.ok
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Erro na resposta do VennoxPay:', errorText);
+      
+      let errorMessage = 'Erro ao gerar PIX';
+      try {
+        const errorData = JSON.parse(errorText);
+        errorMessage = errorData.message || errorData.error || errorMessage;
+      } catch (e) {
+        errorMessage = errorText || `Erro ${response.status}: ${response.statusText}`;
+      }
+      
+      throw new Error(errorMessage);
+    }
+
     const data = await response.json();
+    console.log('Dados recebidos do VennoxPay:', data);
+
+    // Extrair dados do PIX da resposta
+    // Estrutura: { id, type, objectId, data: { id, pix: { qrcode, end2EndId, expirationDate } } }
+    const transactionData = data.data || data;
+    const transactionId = data.id || transactionData.id || data.objectId;
+    const pixData = transactionData.pix || {};
+    
+    // O qrcode pode ser uma URL ou o código PIX direto
+    const qrCodeUrl = pixData.qrcode;
+    const end2EndId = pixData.end2EndId;
+    
+    // Se qrcode é uma URL, precisamos extrair o código PIX dela ou usar end2EndId
+    // Por enquanto, vamos usar end2EndId se disponível, senão a URL
+    const pixCode = end2EndId || qrCodeUrl;
+
+    if (!transactionId) {
+      console.error('Resposta incompleta do VennoxPay:', data);
+      throw new Error('Resposta incompleta do gateway de pagamento');
+    }
+
+    // Se não tiver código PIX direto, vamos usar a URL do QR Code
+    // O componente QRCodeSVG pode usar a URL ou precisaremos fazer uma requisição adicional
+    const expirationDate = pixData.expirationDate || transactionData.pix?.expirationDate;
+
     return {
-      transactionId: data.id,
-      qrCode: data.qrCode,
-      pixCode: data.pixCode,
-      expiresAt: data.expiresAt
+      transactionId,
+      qrCode: qrCodeUrl || pixCode,
+      pixCode: pixCode,
+      end2EndId: end2EndId,
+      expiresAt: expirationDate || new Date(Date.now() + 30 * 60 * 1000).toISOString(),
+      status: transactionData.status || 'pending',
+      rawResponse: data, // Manter resposta completa para debug
     };
   } catch (error) {
-    throw new Error('Erro ao gerar PIX: ' + error.message);
+    console.error('Erro ao gerar PIX:', error);
+    
+    // Tratar erros específicos
+    if (error.message.includes('401') || error.message.includes('Unauthorized')) {
+      throw new Error('Erro de autenticação com o gateway. Verifique as credenciais.');
+    } else if (error.message.includes('network') || error.message.includes('fetch')) {
+      throw new Error('Erro de conexão. Verifique sua internet e tente novamente.');
+    }
+    
+    throw error;
   }
-  */
 };
 
-// Verificar status do pagamento
+/**
+ * Verifica o status de um pagamento
+ * @param {string} transactionId - ID da transação
+ * @returns {Promise<Object>} Status do pagamento
+ */
 export const verificarPagamento = async (transactionId) => {
-  // TODO: Integrar com webhook do seu gateway
-  
-  // Por enquanto, simula verificação
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      // Em produção, isso seria uma chamada real à API
-      resolve({
-        status: 'pending', // pending, paid, expired
-        paid: false
-      });
-    }, 500);
-  });
+  try {
+    const response = await fetch(`${VENNOX_API_BASE}/transactions/${transactionId}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': createAuthHeader(),
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Erro ao verificar pagamento: ${response.status}`);
+    }
+
+    const data = await response.json();
+    
+    // Mapear status da API para nosso formato
+    // Estrutura: { data: { status } }
+    const transactionData = data.data || data;
+    const status = transactionData.status || data.status || 'pending';
+    const paid = status === 'paid' || status === 'approved' || status === 'completed';
+    
+    return {
+      status: paid ? 'paid' : status === 'expired' ? 'expired' : 'pending',
+      paid,
+      data: data,
+    };
+  } catch (error) {
+    console.error('Erro ao verificar pagamento:', error);
+    return {
+      status: 'pending',
+      paid: false,
+      error: error.message,
+    };
+  }
 };
 
+/**
+ * Lista transações (útil para debug)
+ * @param {Object} filters - Filtros opcionais
+ * @returns {Promise<Array>} Lista de transações
+ */
+export const listarTransacoes = async (filters = {}) => {
+  try {
+    const queryParams = new URLSearchParams(filters).toString();
+    const url = `${VENNOX_API_BASE}/transactions${queryParams ? `?${queryParams}` : ''}`;
+    
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Authorization': createAuthHeader(),
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Erro ao listar transações: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return Array.isArray(data) ? data : data.transactions || data.data || [];
+  } catch (error) {
+    console.error('Erro ao listar transações:', error);
+    throw error;
+  }
+};
