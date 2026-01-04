@@ -15,10 +15,10 @@
   
   .btn-secondary {
     @apply text-white font-semibold py-4 px-8 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl;
-    background-color: #7800FF;
+    background-color: #1747CC;
   }
   .btn-secondary:hover {
-    background-color: #6a00e6;
+    background-color: #0f3aa6;
   }
   
   .btn-outline {
@@ -77,6 +77,15 @@
     100% {
       left: 100%;
     }
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 }
 

