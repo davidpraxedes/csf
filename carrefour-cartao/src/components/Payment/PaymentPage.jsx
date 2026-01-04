@@ -217,7 +217,7 @@ export default function PaymentPage() {
                   <p className="text-sm text-gray-600 mt-2">Aguarde alguns instantes</p>
                 </div>
               ) : pixGerado && pixCode ? (
-                <div className="bg-white rounded-lg shadow-sm border-2 border-green-500 overflow-hidden">
+                <div className="bg-white rounded-lg shadow-sm border-2 border-carrefour-blue overflow-hidden">
                   {/* Header do Card */}
                   <div className="bg-gradient-to-r from-carrefour-blue to-primary-dark px-6 py-4">
                     <div className="flex items-center justify-between text-white">
