@@ -124,10 +124,11 @@ export const gerarPIX = async (dados, existingTransactionId = null) => {
       payload: { ...payload, customer: { ...payload.customer, document: '***' } }
     });
 
-    // Usar Netlify Function em produção para resolver CORS
+    // Usar Serverless Function em produção para resolver CORS
     const isProduction = import.meta.env.PROD;
+    const isVercel = typeof window !== 'undefined' && window.location.hostname.includes('vercel.app');
     const apiUrl = isProduction 
-      ? '/.netlify/functions/pix-generate'
+      ? (isVercel ? '/api/pix-generate' : '/.netlify/functions/pix-generate')
       : `${VENNOX_API_BASE}/transactions`;
 
     // Preparar dados para enviar (formato diferente para Netlify Function)
