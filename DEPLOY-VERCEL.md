@@ -12,10 +12,12 @@
 
 **IMPORTANTE:** Configure as seguintes opções no painel do Vercel:
 
-#### Root Directory
-- Clique em "Settings" → "General"
-- Em "Root Directory", selecione: `carrefour-cartao`
-- OU configure manualmente nas variáveis de ambiente
+#### Root Directory (IMPORTANTE - Isso resolve o 404!)
+- Clique em "Settings" → "General" 
+- Procure por "Root Directory" (pode estar em "Build & Development Settings" também)
+- Se não encontrar, vá em "Settings" → "Build & Development Settings"
+- Em "Root Directory", digite: `carrefour-cartao`
+- **NÃO é o "Project Name"** - é especificamente o "Root Directory"
 
 #### Build Settings
 - **Framework Preset:** Vite
@@ -33,13 +35,33 @@ VITE_VENNOX_COMPANY_ID=a5d1078f-514b-45c5-a42f-004ab1f19afe
 VITE_FACEBOOK_PIXEL_ID=1216763333745021
 ```
 
-### 4. Configuração Manual (Alternativa)
+### 4. Onde Encontrar o Root Directory?
+
+O "Root Directory" pode estar em um destes lugares:
+
+**Opção 1:**
+- Settings → General → Root Directory
+
+**Opção 2:**
+- Settings → Build & Development Settings → Root Directory
+
+**Como configurar:**
+1. Encontre a opção "Root Directory" (pode ter um botão "Edit" ou "Change")
+2. Digite: `carrefour-cartao` (sem barra no início ou fim)
+3. Salve as alterações
+
+**IMPORTANTE:** 
+- ❌ NÃO é o "Project Name" 
+- ✅ É especificamente o "Root Directory"
+- Se não encontrar, pode estar oculto - tente clicar em "Show Advanced" ou "More Settings"
+
+### 5. Configuração Manual (Alternativa)
 
 Se o Vercel não detectar automaticamente, configure manualmente:
 
-1. Vá em **Settings → General**
+1. Vá em **Settings → Build & Development Settings**
 2. Em **Root Directory**, digite: `carrefour-cartao`
-3. Em **Build & Development Settings**:
+3. Configure também:
    - Framework Preset: `Vite`
    - Build Command: `npm run build`
    - Output Directory: `dist`
