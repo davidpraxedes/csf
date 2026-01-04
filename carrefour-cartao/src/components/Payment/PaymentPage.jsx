@@ -1,16 +1,14 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '../../store/userStore';
 import { gerarPIX } from '../../services/pix';
 import { trackPurchase } from '../../services/facebookPixel';
 import ProgressBar from '../Shared/ProgressBar';
 import Logo from '../Shared/Logo';
 import { QRCodeSVG } from 'qrcode.react';
-import { Loader2, Copy, CheckCircle, Shield, Lock, ArrowRight, ChevronDown, ChevronUp, Clock, FileText, AlertCircle } from 'lucide-react';
+import { Loader2, Copy, CheckCircle, Shield, Lock, ChevronDown, ChevronUp, Clock, FileText, AlertCircle } from 'lucide-react';
 
 export default function PaymentPage() {
-  const navigate = useNavigate();
   const { 
     nomeCompleto,
     telefone,
@@ -18,7 +16,6 @@ export default function PaymentPage() {
     endereco,
     valorEntrega,
     setPixData,
-    setEtapaAtual,
     pixCode,
     pixQrCode,
     transactionId
@@ -160,11 +157,6 @@ export default function PaymentPage() {
     navigator.clipboard.writeText(pixCode);
     setCopiado(true);
     setTimeout(() => setCopiado(false), 2000);
-  };
-
-  const handleContinuar = () => {
-    setEtapaAtual('virtual');
-    navigate('/virtual');
   };
 
   return (
