@@ -399,21 +399,6 @@ export default function PaymentPage() {
             </div>
           </div>
 
-          {/* Botão Continuar */}
-          {pixGerado && pixCode && (
-            <div className="mt-8 text-center">
-              <button
-                onClick={handleContinuar}
-                className="bg-gradient-to-r from-carrefour-blue to-primary-dark hover:from-blue-700 hover:to-blue-800 text-white font-semibold text-lg py-4 px-8 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl inline-flex items-center gap-2"
-              >
-                Continuar para Cartão Virtual
-                <ArrowRight className="w-5 h-5" />
-              </button>
-              <p className="text-xs text-gray-500 mt-3">
-                Você pode continuar mesmo antes do pagamento ser confirmado
-              </p>
-            </div>
-          )}
         </div>
       </div>
     </div>
