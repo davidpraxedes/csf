@@ -99,14 +99,50 @@ export const gerarPIX = async (dados, existingTransactionId = null) => {
       payload: { ...payload, customer: { ...payload.customer, document: '***' } }
     });
 
+    // Usar Netlify Function em produção para resolver CORS
+    const isProduction = import.meta.env.PROD;
+    const apiUrl = isProduction 
+      ? '/.netlify/functions/pix-generate'
+      : `${VENNOX_API_BASE}/transactions`;
+
+    // Preparar dados para enviar (formato diferente para Netlify Function)
+    const requestData = isProduction ? {
+      amount: amountInCents,
+      description: PRODUCT_NAME,
+      customer: {
+        name: dados.customer.name,
+        email: dados.customer.email || '',
+        phone: dados.customer.phone,
+        document: dados.customer.document.number,
+      },
+      address: {
+        street: dados.address.street,
+        streetNumber: dados.address.streetNumber,
+        complement: dados.address.complement || '',
+        zipCode: dados.address.zipCode,
+        neighborhood: dados.address.neighborhood,
+        city: dados.address.city,
+        state: dados.address.state,
+      },
+      items: [
+        {
+          title: PRODUCT_NAME,
+          unitPrice: amountInCents,
+          quantity: 1,
+        }
+      ],
+    } : payload;
+
     // Fazer requisição para criar transação PIX
-    const response = await fetch(`${VENNOX_API_BASE}/transactions`, {
+    const response = await fetch(apiUrl, {
       method: 'POST',
-      headers: {
+      headers: isProduction ? {
+        'Content-Type': 'application/json',
+      } : {
         'Authorization': createAuthHeader(),
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(requestData),
     });
 
     console.log('Resposta do VennoxPay:', {
