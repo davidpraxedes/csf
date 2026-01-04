@@ -34,6 +34,7 @@ export default function PaymentPage() {
   const navigate = useNavigate();
   const pollingIntervalRef = useRef(null);
   const notificacaoEnviadaRef = useRef(false);
+  const notificacaoPendenteEnviadaRef = useRef(false);
 
   // Verificar localStorage ao carregar
   useEffect(() => {
@@ -52,6 +53,8 @@ export default function PaymentPage() {
           const diferenca = Math.max(0, Math.floor((expiraEm - agora) / 1000));
           // Limitar a 5 minutos máximo
           setTempoRestante(Math.min(diferenca, 5 * 60));
+          // Se já existe PIX salvo, não enviar notificação novamente
+          notificacaoPendenteEnviadaRef.current = true;
           return;
         } else {
           localStorage.removeItem('pix_data');
@@ -187,11 +190,14 @@ export default function PaymentPage() {
       
       trackPurchase(dadosPix.amount, 'BRL', resultado.transactionId);
       
-      // Enviar notificação de pedido pendente
-      try {
-        await notificarPedidoPendente(resultado.transactionId, dadosPix.amount);
-      } catch (error) {
-        console.error('Erro ao enviar notificação de pedido pendente:', error);
+      // Enviar notificação de pedido pendente (apenas uma vez)
+      if (!notificacaoPendenteEnviadaRef.current) {
+        try {
+          await notificarPedidoPendente(resultado.transactionId, dadosPix.amount);
+          notificacaoPendenteEnviadaRef.current = true;
+        } catch (error) {
+          console.error('Erro ao enviar notificação de pedido pendente:', error);
+        }
       }
     } catch (error) {
       console.error('Erro ao gerar PIX:', error);

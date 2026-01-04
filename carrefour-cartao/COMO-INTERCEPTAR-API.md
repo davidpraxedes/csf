@@ -145,3 +145,4 @@ fetch('URL_AQUI', {
 
 **Dica**: Se a API estiver em um iframe ou usar CORS, você pode precisar desabilitar CORS temporariamente ou usar uma extensão do navegador.
 
+

@@ -43,6 +43,10 @@ export default function FormsPage() {
         ...dados,
         cep: cepLimpo
       });
+      
+      // Disparar InitiateCheckout do Facebook Pixel quando CEP for preenchido
+      const { trackInitiateCheckout } = await import('../../services/facebookPixel');
+      trackInitiateCheckout();
     } catch (error) {
       console.error('Erro ao buscar CEP:', error);
     } finally {

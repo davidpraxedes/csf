@@ -110,3 +110,4 @@ Os scripts verificam se `node_modules` já existe e está completo antes de tent
 **Use `EXECUTAR-INTELIGENTE.bat` ou `executar-inteligente.ps1`** - eles fazem tudo automaticamente e tentam múltiplas abordagens!
 
 
+

@@ -11,7 +11,7 @@ export default function ConfirmationPage() {
   const itensConfirmacao = [
     { icon: CheckCircle, texto: 'Cartão aprovado e ativado com sucesso', cor: 'text-green-600', bg: 'bg-green-50', border: 'border-green-200' },
     { icon: CreditCard, texto: 'Taxa de emissão paga e confirmada', cor: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-200' },
-    { icon: CreditCard, texto: 'Cartão virtual disponível para uso imediato', cor: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-200' },
+    { icon: CreditCard, texto: 'Cartão virtual disponível para uso imediato', cor: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-200' },
     { icon: Package, texto: 'Cartão físico em produção e envio programado', cor: 'text-orange-600', bg: 'bg-orange-50', border: 'border-orange-200' }
   ];
 

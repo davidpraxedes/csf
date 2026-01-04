@@ -119,3 +119,4 @@ XMLHttpRequest.prototype.send = function(body) {
 console.log('%c✅ Pronto! Agora digite um CPF no site e clique em "Continuar"', 'color: green; font-weight: bold;');
 console.log('A requisição será interceptada e mostrada aqui no console.');
 
+

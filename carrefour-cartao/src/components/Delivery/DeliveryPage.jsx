@@ -16,14 +16,14 @@ export default function DeliveryPage() {
       id: 'carta-registrada',
       titulo: 'Carta Registrada',
       descricao: 'Entrega em até 15 dias úteis',
-      preco: 22.90,
+      preco: 25.50,
       icon: Package,
     },
     {
       id: 'sedex',
       titulo: 'Sedex Expresso',
       descricao: 'Entrega expressa em até 5 dias úteis',
-      preco: 29.90,
+      preco: 32.90,
       icon: Truck,
     },
   ];
@@ -64,10 +64,10 @@ export default function DeliveryPage() {
                 <Truck className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-carrefour-blue" />
               </div>
               <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-2 md:mb-3 px-2">
-                Escolha a Forma de Entrega
+                Entrega do Cartão Físico
               </h2>
               <p className="text-sm sm:text-base md:text-lg text-gray-600 px-4">
-                Selecione como deseja receber seu cartão físico
+                Escolha a forma de entrega do seu cartão Carrefour
               </p>
             </div>
 
@@ -125,7 +125,7 @@ export default function DeliveryPage() {
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-gradient-to-br from-carrefour-blue to-carrefour-purple rounded-xl p-4 sm:p-5 md:p-6 text-white mb-4 md:mb-6"
+                className="bg-gradient-to-br from-carrefour-blue to-primary-dark rounded-xl p-4 sm:p-5 md:p-6 text-white mb-4 md:mb-6"
               >
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
                   <div className="flex-1 min-w-0">
@@ -147,7 +147,7 @@ export default function DeliveryPage() {
               disabled={!selecionado}
               className="w-full bg-carrefour-blue hover:bg-blue-700 text-white font-semibold text-base sm:text-lg py-3.5 sm:py-4 px-4 sm:px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 sm:gap-3"
             >
-              Continuar para Pagamento
+              Continuar
               <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
           </div>

@@ -9,9 +9,9 @@ const beneficios = [
   {
     icon: CreditCard,
     titulo: 'Limite Pré-Aprovado',
-    valor: 'Até R$ 5.000,00',
+    valor: 'Até R$ 5.500,00',
     descricao: 'Crédito disponível conforme seu perfil de aprovação',
-    cor: 'text-blue-600 bg-blue-50 border-blue-200'
+    cor: 'text-green-600 bg-green-50 border-green-200'
   },
   {
     icon: ShoppingBag,
@@ -39,7 +39,7 @@ const beneficios = [
     titulo: 'Programa de Pontos',
     valor: 'Acumule Pontos',
     descricao: 'Ganhe pontos em todas as compras e troque por produtos exclusivos',
-    cor: 'text-purple-600 bg-purple-50 border-purple-200'
+    cor: 'text-green-600 bg-green-50 border-green-200'
   },
   {
     icon: Store,

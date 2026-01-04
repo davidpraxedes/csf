@@ -67,8 +67,8 @@ export default function CPFConsultPage() {
   };
 
   const handleContinuar = () => {
-    setEtapaAtual('processing');
-    navigate('/processing');
+    setEtapaAtual('professional-data');
+    navigate('/professional-data');
   };
 
   return (

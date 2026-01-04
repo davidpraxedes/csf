@@ -110,3 +110,4 @@ Write-Host "  Verificação concluída!" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
 
+

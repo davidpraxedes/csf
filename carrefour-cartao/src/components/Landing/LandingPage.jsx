@@ -349,9 +349,9 @@ export default function LandingPage() {
               
               {/* Barra de Progresso Visual - Mostrando possibilidade */}
               <div className="mb-6">
-                <div className="flex justify-between text-sm text-white/90 mb-2">
-                  <span>Limite Máximo Possível</span>
-                  <span>Conforme seu perfil</span>
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-2">
+                  <span className="text-sm text-white/90">Limite Máximo Possível</span>
+                  <span className="text-sm text-white/90 whitespace-nowrap">Conforme seu perfil</span>
                 </div>
                 <div className="w-full bg-white/20 rounded-full h-4 overflow-hidden">
                   <motion.div

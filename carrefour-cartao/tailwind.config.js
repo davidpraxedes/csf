@@ -9,12 +9,12 @@ export default {
       colors: {
         primary: '#1E5AFF',
         'primary-dark': '#1747CC',
-        secondary: '#7800FF',
+        secondary: '#1747CC',
         'carrefour-blue': '#1E5AFF',
-        'carrefour-purple': '#7800FF',
+        'carrefour-blue-dark': '#1747CC',
         'carrefour-red': '#E4002B',
         'carrefour-gradient-start': '#1E5AFF',
-        'carrefour-gradient-end': '#7800FF',
+        'carrefour-gradient-end': '#1747CC',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],

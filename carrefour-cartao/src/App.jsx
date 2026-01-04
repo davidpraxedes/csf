@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'r
 import LandingPage from './components/Landing/LandingPage';
 import QuizPage from './components/Quiz/QuizPage';
 import CPFConsultPage from './components/CPFConsult/CPFConsultPage';
+import ProfessionalDataPage from './components/ProfessionalData/ProfessionalDataPage';
 import ProcessingPage from './components/Processing/ProcessingPage';
 import ApprovalPage from './components/Approval/ApprovalPage';
 import BenefitsPage from './components/Benefits/BenefitsPage';
@@ -50,6 +51,7 @@ function AppRoutes() {
       <Route path="/" element={<LandingPage />} />
       <Route path="/quiz" element={<QuizPage />} />
       <Route path="/cpf" element={<CPFConsultPage />} />
+      <Route path="/professional-data" element={<ProfessionalDataPage />} />
       <Route path="/processing" element={<ProcessingPage />} />
       <Route path="/approval" element={<ApprovalPage />} />
       <Route path="/benefits" element={<BenefitsPage />} />

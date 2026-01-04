@@ -30,7 +30,7 @@ export default function ProcessingPage() {
 
     const timeout = setTimeout(() => {
       setAprovado(true);
-      setLimite('2.500,00');
+      setLimite('5.500,00');
       setEtapaAtual('approval');
       navigate('/approval');
     }, etapas.length * 2000 + 1000);
@@ -55,7 +55,7 @@ export default function ProcessingPage() {
         <div className="max-w-3xl mx-auto mt-20">
           <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-10 text-center">
             <div className="relative mb-12">
-              <div className="w-32 h-32 mx-auto bg-gradient-to-br from-carrefour-blue to-carrefour-purple rounded-full flex items-center justify-center shadow-xl">
+              <div className="w-32 h-32 mx-auto bg-gradient-to-br from-carrefour-blue to-primary-dark rounded-full flex items-center justify-center shadow-xl">
                 <Loader2 className="w-16 h-16 text-white animate-spin" />
               </div>
               <div className="absolute inset-0 w-32 h-32 mx-auto rounded-full bg-carrefour-blue/20 animate-ping"></div>

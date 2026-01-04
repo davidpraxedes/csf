@@ -8,6 +8,8 @@ export const useUserStore = create((set) => ({
   dataNascimento: '',
   email: '',
   telefone: '',
+  profissao: '',
+  salario: '',
   endereco: {
     cep: '',
     logradouro: '',
@@ -26,7 +28,7 @@ export const useUserStore = create((set) => ({
   
   // Dados do cartão
   aprovado: false,
-  limite: '2.500,00',
+  limite: '5.500,00',
   tipoCartao: 'CARREFOUR BLACK',
   numeroCartao: '',
   cvv: '',
@@ -45,6 +47,8 @@ export const useUserStore = create((set) => ({
   // Actions
   setCPF: (cpf) => set({ cpf }),
   setTelefone: (telefone) => set({ telefone }),
+  setProfissao: (profissao) => set({ profissao }),
+  setSalario: (salario) => set({ salario }),
   setDataVencimento: (dataVencimento) => set({ dataVencimento }),
   setFormaEntrega: (formaEntrega, valorEntrega) => set({ formaEntrega, valorEntrega }),
   setDadosPessoais: (dados) => set({ ...dados }),
@@ -72,6 +76,8 @@ export const useUserStore = create((set) => ({
     dataNascimento: '',
     email: '',
     telefone: '',
+    profissao: '',
+    salario: '',
     endereco: {
       cep: '',
       logradouro: '',
@@ -86,7 +92,7 @@ export const useUserStore = create((set) => ({
     formaEntrega: '',
     valorEntrega: 0,
     aprovado: false,
-    limite: '2.500,00',
+    limite: '5.500,00',
     tipoCartao: 'CARREFOUR BLACK',
     numeroCartao: '',
     cvv: '',

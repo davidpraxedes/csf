@@ -114,3 +114,4 @@ Todas as funcionalidades devem funcionar normalmente em ambos os sistemas operac
 **Sistema Testado:** Windows 10/11
 **Node.js:** 18+ (recomendado)
 
+
