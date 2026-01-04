@@ -559,39 +559,39 @@ export default function PaymentPage() {
             </div>
           </div>
 
-          {/* Preview do Cartão - Só mostra no localhost */}
-          {(import.meta.env.DEV || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && (
+          {/* Preview do Cartão */}
+          {pixGerado && pixCode && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="mt-12 space-y-6"
+              className="mt-8 sm:mt-12 space-y-4 sm:space-y-6 max-w-6xl mx-auto w-full box-border"
             >
               {/* Header */}
-              <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-                <div className="text-center mb-6">
-                  <div className="inline-flex items-center justify-center gap-3 mb-4">
-                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
+              <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-4 sm:p-6 w-full max-w-full box-border">
+                <div className="text-center mb-4 sm:mb-6">
+                  <div className="inline-flex items-center justify-center gap-3 mb-4 flex-col sm:flex-row">
+                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
                       <EyeOff className="w-6 h-6 text-gray-600" />
                     </div>
-                    <div className="text-left">
-                      <h3 className="text-lg font-bold text-gray-900">Seu Cartão Carrefour</h3>
-                      <p className="text-sm text-gray-600">Dados serão liberados após pagamento</p>
+                    <div className="text-center sm:text-left">
+                      <h3 className="text-base sm:text-lg font-bold text-gray-900">Seu Cartão Carrefour</h3>
+                      <p className="text-xs sm:text-sm text-gray-600">Dados serão liberados após pagamento</p>
                     </div>
                   </div>
-                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                    <p className="text-sm text-amber-900 flex items-center justify-center gap-2">
-                      <Lock className="w-4 h-4" />
+                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 sm:p-4">
+                    <p className="text-xs sm:text-sm text-amber-900 flex items-center justify-center gap-2 text-center">
+                      <Lock className="w-4 h-4 flex-shrink-0" />
                       <span>Complete o pagamento da taxa de ativação para visualizar os dados do seu cartão</span>
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="grid md:grid-cols-2 gap-4 sm:gap-6 w-full max-w-full box-border">
                 {/* Card Preview */}
-                <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-                  <div className="max-w-md mx-auto">
+                <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-4 sm:p-6 w-full max-w-full box-border">
+                  <div className="max-w-md mx-auto w-full">
                     <CardDesign
                       nome={nomeCompleto || 'NOME DO TITULAR'}
                       numero="5442 34•• •••• ••••"
@@ -600,39 +600,39 @@ export default function PaymentPage() {
                       mostrarCvv={false}
                     />
                   </div>
-                  <div className="mt-6 text-center">
-                    <div className="inline-flex items-center gap-2 text-sm text-gray-600 bg-gray-50 px-4 py-2 rounded-lg">
-                      <EyeOff className="w-4 h-4 text-gray-500" />
+                  <div className="mt-4 sm:mt-6 text-center">
+                    <div className="inline-flex items-center gap-2 text-xs sm:text-sm text-gray-600 bg-gray-50 px-3 sm:px-4 py-2 rounded-lg">
+                      <EyeOff className="w-4 h-4 text-gray-500 flex-shrink-0" />
                       <span>Dados protegidos até confirmação do pagamento</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Informações do Cartão */}
-                <div className="space-y-6">
+                <div className="space-y-4 sm:space-y-6 w-full max-w-full box-border">
                   {/* Limite */}
-                  <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-6 text-white shadow-xl">
+                  <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-4 sm:p-6 text-white shadow-xl w-full max-w-full box-border">
                     <div className="flex items-center gap-3 mb-4">
-                      <TrendingUp className="w-6 h-6" />
-                      <div>
+                      <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
+                      <div className="min-w-0 flex-1">
                         <p className="text-white/90 text-xs font-semibold uppercase tracking-wide">Limite Disponível</p>
-                        <p className="text-3xl font-bold">{limite ? `R$ ${limite}` : 'R$ ••••'}</p>
+                        <p className="text-2xl sm:text-3xl font-bold truncate">{limite ? `R$ ${limite}` : 'R$ ••••'}</p>
                       </div>
                     </div>
-                    <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3 flex items-center justify-center gap-2">
-                      <EyeOff className="w-4 h-4" />
-                      <span className="font-semibold text-sm">Valor será liberado após pagamento</span>
+                    <div className="bg-white/20 backdrop-blur-sm rounded-lg p-2 sm:p-3 flex items-center justify-center gap-2">
+                      <EyeOff className="w-4 h-4 flex-shrink-0" />
+                      <span className="font-semibold text-xs sm:text-sm text-center">Valor será liberado após pagamento</span>
                     </div>
                   </div>
 
                   {/* Barra de Limite */}
-                  <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-                    <div className="flex items-center justify-between mb-3">
+                  <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-4 sm:p-6 w-full max-w-full box-border">
+                    <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
                       <div className="flex items-center gap-2">
-                        <CreditCard className="w-5 h-5 text-carrefour-blue" />
-                        <h4 className="font-semibold text-gray-900">Limite do Cartão</h4>
+                        <CreditCard className="w-4 h-4 sm:w-5 sm:h-5 text-carrefour-blue flex-shrink-0" />
+                        <h4 className="font-semibold text-sm sm:text-base text-gray-900">Limite do Cartão</h4>
                       </div>
-                      <span className="text-sm text-gray-600 font-mono">•••• / ••••</span>
+                      <span className="text-xs sm:text-sm text-gray-600 font-mono">•••• / ••••</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-3 mb-2">
                       <div className="bg-gradient-to-r from-green-500 to-green-600 h-3 rounded-full" style={{ width: '100%' }}>
@@ -646,28 +646,28 @@ export default function PaymentPage() {
                   </div>
 
                   {/* Informações Adicionais */}
-                  <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-                    <h4 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                      <CreditCard className="w-5 h-5 text-carrefour-blue" />
+                  <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-4 sm:p-6 w-full max-w-full box-border">
+                    <h4 className="font-semibold text-sm sm:text-base text-gray-900 mb-3 sm:mb-4 flex items-center gap-2">
+                      <CreditCard className="w-4 h-4 sm:w-5 sm:h-5 text-carrefour-blue flex-shrink-0" />
                       Informações do Cartão
                     </h4>
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <span className="text-sm text-gray-600">Número do Cartão</span>
-                        <span className="font-mono text-sm text-gray-900">5442 34•• •••• ••••</span>
+                    <div className="space-y-2 sm:space-y-3">
+                      <div className="flex items-center justify-between p-2 sm:p-3 bg-gray-50 rounded-lg gap-2">
+                        <span className="text-xs sm:text-sm text-gray-600">Número do Cartão</span>
+                        <span className="font-mono text-xs sm:text-sm text-gray-900 truncate">5442 34•• •••• ••••</span>
                       </div>
-                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <span className="text-sm text-gray-600">CVV</span>
-                        <span className="font-mono text-sm text-gray-900">•••</span>
+                      <div className="flex items-center justify-between p-2 sm:p-3 bg-gray-50 rounded-lg gap-2">
+                        <span className="text-xs sm:text-sm text-gray-600">CVV</span>
+                        <span className="font-mono text-xs sm:text-sm text-gray-900">•••</span>
                       </div>
-                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <span className="text-sm text-gray-600">Validade</span>
-                        <span className="font-mono text-sm text-gray-900">••/••</span>
+                      <div className="flex items-center justify-between p-2 sm:p-3 bg-gray-50 rounded-lg gap-2">
+                        <span className="text-xs sm:text-sm text-gray-600">Validade</span>
+                        <span className="font-mono text-xs sm:text-sm text-gray-900">••/••</span>
                       </div>
-                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <span className="text-sm text-gray-600">Status</span>
-                        <span className="text-sm font-semibold text-amber-600 flex items-center gap-1">
-                          <Lock className="w-3 h-3" />
+                      <div className="flex items-center justify-between p-2 sm:p-3 bg-gray-50 rounded-lg gap-2">
+                        <span className="text-xs sm:text-sm text-gray-600">Status</span>
+                        <span className="text-xs sm:text-sm font-semibold text-amber-600 flex items-center gap-1">
+                          <Lock className="w-3 h-3 flex-shrink-0" />
                           Aguardando Pagamento
                         </span>
                       </div>
