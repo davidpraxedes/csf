@@ -272,20 +272,20 @@ export default function PaymentPage() {
                     }}></div>
                   </div>
 
-                  <div className="relative z-10">
-                    <div className="flex items-center justify-between gap-2 sm:gap-4 md:gap-6">
+                  <div className="relative z-10 w-full">
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-2 md:gap-4 w-full">
                       {/* Lado Esquerdo - Ícone e Label */}
-                      <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                      <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0 w-full sm:w-auto">
                         <div className="relative flex-shrink-0">
                           <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white/30">
                             <Clock className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
                           </div>
                         </div>
                         <div className="min-w-0 flex-1">
-                          <p className="text-[10px] sm:text-xs text-white/80 uppercase tracking-wider font-semibold mb-0.5 sm:mb-1 truncate">
+                          <p className="text-[10px] sm:text-xs text-white/80 uppercase tracking-wider font-semibold mb-0.5 sm:mb-1">
                             Tempo Restante
                           </p>
-                          <p className="text-[10px] sm:text-xs md:text-sm text-white/90 line-clamp-2">
+                          <p className="text-[10px] sm:text-xs md:text-sm text-white/90">
                             Complete o pagamento antes do vencimento
                           </p>
                         </div>
@@ -295,7 +295,7 @@ export default function PaymentPage() {
                       <div className="flex items-center justify-center flex-shrink-0">
                         <div className="relative flex items-center justify-center">
                           {/* Círculo de progresso */}
-                          <svg className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 transform -rotate-90" viewBox="0 0 100 100">
+                          <svg className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 transform -rotate-90 flex-shrink-0" viewBox="0 0 100 100">
                             <circle
                               cx="50"
                               cy="50"
