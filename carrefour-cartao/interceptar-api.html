@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interceptar API - Aprovado Direto</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        .info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .request-info {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 12px;
+            overflow-x: auto;
+        }
+        button {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #1976D2;
+        }
+        .log {
+            background: #000;
+            color: #0f0;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Interceptador de API - Aprovado Direto</h1>
+        
+        <div class="info">
+            <strong>Instruções:</strong>
+            <ol>
+                <li>Abra o DevTools (F12) e vá na aba "Network" (Rede)</li>
+                <li>Filtre por "XHR" ou "Fetch"</li>
+                <li>No site <a href="https://aprovedireto.com/oportunidade/4/" target="_blank">https://aprovedireto.com/oportunidade/4/</a>, digite um CPF</li>
+                <li>Clique em "Continuar"</li>
+                <li>Observe a requisição que aparece no Network</li>
+                <li>Clique com botão direito na requisição → "Copy" → "Copy as cURL" ou "Copy as fetch"</li>
+                <li>Cole abaixo e clique em "Analisar"</li>
+            </ol>
+        </div>
+
+        <div>
+            <h2>Cole a requisição aqui (cURL ou fetch):</h2>
+            <textarea id="requestInput" style="width: 100%; height: 200px; font-family: monospace; padding: 10px;" placeholder="Cole aqui a requisição copiada do DevTools..."></textarea>
+            <br><br>
+            <button onclick="analisar()">Analisar Requisição</button>
+        </div>
+
+        <div id="resultado" style="display: none;">
+            <h2>Resultado da Análise:</h2>
+            <div id="resultadoContent"></div>
+        </div>
+
+        <div>
+            <h2>Log de Requisições (se usar o script abaixo):</h2>
+            <div id="log" class="log"></div>
+        </div>
+    </div>
+
+    <script>
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const time = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `[${time}] ${message}<br>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function analisar() {
+            const input = document.getElementById('requestInput').value;
+            const resultado = document.getElementById('resultado');
+            const resultadoContent = document.getElementById('resultadoContent');
+            
+            if (!input.trim()) {
+                alert('Por favor, cole a requisição primeiro!');
+                return;
+            }
+
+            resultado.style.display = 'block';
+            
+            let url = '';
+            let method = '';
+            let headers = {};
+            let body = '';
+
+            // Tentar detectar se é cURL ou fetch
+            if (input.includes('curl')) {
+                // Parse cURL
+                const urlMatch = input.match(/curl\s+['"]?([^'"]+)['"]?/);
+                if (urlMatch) url = urlMatch[1];
+                
+                const methodMatch = input.match(/-X\s+(\w+)/);
+                if (methodMatch) method = methodMatch[1];
+                
+                // Headers
+                const headerMatches = input.matchAll(/-H\s+['"]([^'"]+)['"]/g);
+                for (const match of headerMatches) {
+                    const [key, value] = match[1].split(':').map(s => s.trim());
+                    headers[key] = value;
+                }
+                
+                // Body
+                const bodyMatch = input.match(/-d\s+['"]([^'"]+)['"]/);
+                if (bodyMatch) body = bodyMatch[1];
+            } else if (input.includes('fetch')) {
+                // Parse fetch
+                const urlMatch = input.match(/fetch\(['"]([^'"]+)['"]/);
+                if (urlMatch) url = urlMatch[1];
+                
+                const methodMatch = input.match(/method:\s*['"]([^'"]+)['"]/);
+                if (methodMatch) method = methodMatch[1];
+                
+                // Headers
+                const headersMatch = input.match(/headers:\s*\{([^}]+)\}/s);
+                if (headersMatch) {
+                    const headersStr = headersMatch[1];
+                    const headerMatches = headersStr.matchAll(/(\w+):\s*['"]([^'"]+)['"]/g);
+                    for (const match of headerMatches) {
+                        headers[match[1]] = match[2];
+                    }
+                }
+                
+                // Body
+                const bodyMatch = input.match(/body:\s*['"]([^'"]+)['"]/);
+                if (bodyMatch) body = bodyMatch[1];
+            }
+
+            let html = `
+                <div class="request-info">
+                    <strong>URL:</strong> ${url || 'Não encontrado'}<br>
+                    <strong>Método:</strong> ${method || 'POST'}<br>
+                    <strong>Headers:</strong><br>
+                    <pre>${JSON.stringify(headers, null, 2)}</pre>
+                    <strong>Body:</strong><br>
+                    <pre>${body || 'Nenhum'}</pre>
+                </div>
+            `;
+
+            // Gerar código JavaScript atualizado
+            if (url && headers) {
+                html += `
+                    <h3>Código JavaScript para usar:</h3>
+                    <div class="request-info">
+                        <pre>const response = await fetch('${url}', {
+  method: '${method || 'POST'}',
+  headers: ${JSON.stringify(headers, null, 2)},
+  body: ${body ? `JSON.stringify(${body})` : 'undefined'}
+});</pre>
+                    </div>
+                `;
+            }
+
+            resultadoContent.innerHTML = html;
+        }
+
+        // Interceptar fetch se possível
+        if (typeof window !== 'undefined') {
+            const originalFetch = window.fetch;
+            window.fetch = function(...args) {
+                log(`Requisição interceptada: ${args[0]}`);
+                if (args[1]) {
+                    log(`Método: ${args[1].method || 'GET'}`);
+                    log(`Headers: ${JSON.stringify(args[1].headers || {})}`);
+                    log(`Body: ${args[1].body || 'Nenhum'}`);
+                }
+                return originalFetch.apply(this, args);
+            };
+            log('Interceptador de fetch ativado!');
+        }
+    </script>
+</body>
+</html>
+
