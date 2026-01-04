@@ -11,39 +11,32 @@ const PUSHCUT_BASE_URL = 'https://api.pushcut.io/XPTr5Kloj05Rr37Saz0D1/notificat
  */
 export const enviarNotificacao = async (notificationName, text = '') => {
   try {
-    // Pushcut aceita parâmetros via query string para customizar a mensagem
-    const url = `${PUSHCUT_BASE_URL}/${encodeURIComponent(notificationName)}${text ? `?text=${encodeURIComponent(text)}` : ''}`;
+    // Pushcut aceita parâmetros via query string
+    // Tentar com parâmetro 'text' que é comum em APIs de notificação
+    const params = new URLSearchParams();
+    if (text) {
+      params.append('text', text);
+      params.append('message', text); // Tentar ambos os nomes comuns
+      params.append('body', text);
+    }
+    
+    const url = `${PUSHCUT_BASE_URL}/${encodeURIComponent(notificationName)}${params.toString() ? `?${params.toString()}` : ''}`;
+    
+    console.log('📤 Enviando notificação Pushcut:', url);
     
     const response = await fetch(url, {
-      method: 'POST',
+      method: 'GET',
       headers: {
         'Accept': 'application/json',
-        'Content-Type': 'application/json',
       },
-      body: text ? JSON.stringify({ text }) : undefined,
     });
 
     if (!response.ok) {
-      // Se POST falhar, tentar GET
-      const getUrl = `${PUSHCUT_BASE_URL}/${encodeURIComponent(notificationName)}${text ? `?text=${encodeURIComponent(text)}` : ''}`;
-      const getResponse = await fetch(getUrl, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-        },
-      });
-      
-      if (!getResponse.ok) {
-        throw new Error(`Erro ao enviar notificação: ${getResponse.status}`);
-      }
-      
-      const getData = await getResponse.json();
-      console.log('✅ Notificação Pushcut enviada (GET):', notificationName, getData);
-      return getData;
+      throw new Error(`Erro ao enviar notificação: ${response.status}`);
     }
 
     const data = await response.json();
-    console.log('✅ Notificação Pushcut enviada (POST):', notificationName, data);
+    console.log('✅ Notificação Pushcut enviada:', notificationName, data);
     return data;
   } catch (error) {
     console.error('❌ Erro ao enviar notificação Pushcut:', error);
