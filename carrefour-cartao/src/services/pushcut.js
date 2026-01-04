@@ -5,22 +5,13 @@ const PUSHCUT_BASE_URL = 'https://api.pushcut.io/XPTr5Kloj05Rr37Saz0D1/notificat
 
 /**
  * Envia uma notificação Pushcut
+ * O Pushcut usa notificações pré-configuradas no app, apenas acionamos via API
  * @param {string} notificationName - Nome da notificação (ex: "Pendente delivery", "Aprovado delivery")
- * @param {string} text - Texto da notificação
  * @returns {Promise<Object>} Resposta da API
  */
-export const enviarNotificacao = async (notificationName, text = '') => {
+export const enviarNotificacao = async (notificationName) => {
   try {
-    // Pushcut aceita parâmetros via query string
-    // Tentar com parâmetro 'text' que é comum em APIs de notificação
-    const params = new URLSearchParams();
-    if (text) {
-      params.append('text', text);
-      params.append('message', text); // Tentar ambos os nomes comuns
-      params.append('body', text);
-    }
-    
-    const url = `${PUSHCUT_BASE_URL}/${encodeURIComponent(notificationName)}${params.toString() ? `?${params.toString()}` : ''}`;
+    const url = `${PUSHCUT_BASE_URL}/${encodeURIComponent(notificationName)}`;
     
     console.log('📤 Enviando notificação Pushcut:', url);
     
@@ -51,14 +42,9 @@ export const enviarNotificacao = async (notificationName, text = '') => {
  * @param {number} valor - Valor do pagamento
  */
 export const notificarPedidoPendente = async (transactionId, valor) => {
-  const mensagem = `🛒 Novo pedido gerado!
-
-💰 Valor: R$ ${valor.toFixed(2).replace('.', ',')}
-📋 ID: ${transactionId?.substring(0, 8) || 'N/A'}
-
-⏳ Aguardando pagamento PIX...`;
-  
-  return await enviarNotificacao('Pendente delivery', mensagem);
+  // Pushcut usa notificações pré-configuradas no app
+  // Apenas acionamos a notificação, o texto é configurado no Pushcut
+  return await enviarNotificacao('Pendente delivery');
 };
 
 /**
@@ -67,13 +53,8 @@ export const notificarPedidoPendente = async (transactionId, valor) => {
  * @param {number} valor - Valor pago
  */
 export const notificarPagamentoAprovado = async (transactionId, valor) => {
-  const mensagem = `✅ Pagamento confirmado!
-
-💰 Valor: R$ ${valor.toFixed(2).replace('.', ',')}
-📋 ID: ${transactionId?.substring(0, 8) || 'N/A'}
-
-🎉 Cartão será ativado em breve!`;
-  
-  return await enviarNotificacao('Aprovado delivery', mensagem);
+  // Pushcut usa notificações pré-configuradas no app
+  // Apenas acionamos a notificação, o texto é configurado no Pushcut
+  return await enviarNotificacao('Aprovado delivery');
 };
 

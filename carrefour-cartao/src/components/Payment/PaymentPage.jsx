@@ -237,10 +237,10 @@ export default function PaymentPage() {
         </div>
       </div>
       
-      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8">
+      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8 max-w-full overflow-x-hidden">
         <ProgressBar etapaAtual="payment" />
         
-        <div className="max-w-4xl mx-auto mt-4 sm:mt-6 md:mt-8">
+        <div className="max-w-4xl mx-auto mt-4 sm:mt-6 md:mt-8 w-full max-w-full box-border">
           {/* Título Principal */}
           <div className="text-center mb-4 sm:mb-6 md:mb-8">
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2">
@@ -251,15 +251,15 @@ export default function PaymentPage() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-4 sm:gap-6">
+          <div className="grid md:grid-cols-3 gap-4 sm:gap-6 w-full max-w-full box-border">
             {/* Coluna Principal - PIX */}
-            <div className="md:col-span-2 space-y-4 sm:space-y-6">
+            <div className="md:col-span-2 space-y-4 sm:space-y-6 w-full max-w-full box-border min-w-0">
                 {/* Timer Sofisticado */}
                 {pixGerado && pixCode && tempoRestante > 0 && (
                   <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="relative bg-gradient-to-br from-green-600 via-green-500 to-green-700 rounded-xl py-3 sm:py-4 px-3 sm:px-5 text-white shadow-2xl overflow-hidden w-full"
+                    className="relative bg-gradient-to-br from-green-600 via-green-500 to-green-700 rounded-xl py-3 sm:py-4 px-3 sm:px-4 md:px-5 text-white shadow-2xl overflow-hidden w-full max-w-full box-border"
                   >
                   {/* Efeito de brilho animado */}
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
@@ -272,20 +272,20 @@ export default function PaymentPage() {
                     }}></div>
                   </div>
 
-                  <div className="relative z-10 w-full">
-                    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-2 md:gap-4 w-full">
+                  <div className="relative z-10 w-full max-w-full box-border overflow-hidden">
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-3 w-full max-w-full box-border">
                       {/* Lado Esquerdo - Ícone e Label */}
-                      <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0 w-full sm:w-auto">
+                      <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0 max-w-full box-border">
                         <div className="relative flex-shrink-0">
-                          <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white/30">
-                            <Clock className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
+                          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white/30">
+                            <Clock className="w-4 h-4 sm:w-5 sm:h-5" />
                           </div>
                         </div>
-                        <div className="min-w-0 flex-1">
-                          <p className="text-[10px] sm:text-xs text-white/80 uppercase tracking-wider font-semibold mb-0.5 sm:mb-1">
+                        <div className="min-w-0 flex-1 max-w-full overflow-hidden">
+                          <p className="text-[10px] sm:text-xs text-white/80 uppercase tracking-wider font-semibold mb-0.5 truncate">
                             Tempo Restante
                           </p>
-                          <p className="text-[10px] sm:text-xs md:text-sm text-white/90">
+                          <p className="text-[9px] sm:text-[10px] text-white/90 line-clamp-2">
                             Complete o pagamento antes do vencimento
                           </p>
                         </div>
@@ -295,7 +295,7 @@ export default function PaymentPage() {
                       <div className="flex items-center justify-center flex-shrink-0">
                         <div className="relative flex items-center justify-center">
                           {/* Círculo de progresso */}
-                          <svg className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 transform -rotate-90 flex-shrink-0" viewBox="0 0 100 100">
+                          <svg className="w-14 h-14 sm:w-18 sm:h-18 md:w-20 md:h-20 transform -rotate-90 flex-shrink-0" viewBox="0 0 100 100">
                             <circle
                               cx="50"
                               cy="50"
@@ -322,22 +322,15 @@ export default function PaymentPage() {
                           </svg>
                           
                           {/* Tempo centralizado */}
-                          <div className="absolute inset-0 flex flex-col items-center justify-center px-1">
-                            <p className="text-sm sm:text-base md:text-xl font-bold font-mono tracking-wider drop-shadow-lg leading-tight">
+                          <div className="absolute inset-0 flex flex-col items-center justify-center px-0.5">
+                            <p className="text-xs sm:text-sm md:text-base font-bold font-mono tracking-wider drop-shadow-lg leading-tight">
                               {formatarTempo(tempoRestante)}
                             </p>
-                            <div className="flex items-center justify-center gap-0.5 sm:gap-1 mt-0.5">
-                              <span className="text-[7px] sm:text-[8px] md:text-[9px] text-white/70">min</span>
-                              <span className="text-[7px] sm:text-[8px] md:text-[9px] text-white/70">seg</span>
+                            <div className="flex items-center justify-center gap-0.5 mt-0.5">
+                              <span className="text-[6px] sm:text-[7px] text-white/70">min</span>
+                              <span className="text-[6px] sm:text-[7px] text-white/70">seg</span>
                             </div>
                           </div>
-                        </div>
-                      </div>
-
-                      {/* Lado Direito - Alerta */}
-                      <div className="flex-shrink-0 hidden sm:block">
-                        <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white/30">
-                          <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
                         </div>
                       </div>
                     </div>
@@ -374,30 +367,30 @@ export default function PaymentPage() {
                   <p className="text-sm text-gray-600 mt-2">Aguarde alguns instantes</p>
                 </div>
               ) : pixGerado && pixCode ? (
-                <div className="bg-white rounded-lg shadow-sm border-2 border-carrefour-blue overflow-hidden w-full max-w-full">
+                <div className="bg-white rounded-lg shadow-sm border-2 border-carrefour-blue overflow-hidden w-full max-w-full box-border">
                   {/* Header do Card */}
-                  <div className="bg-gradient-to-r from-carrefour-blue to-primary-dark px-3 sm:px-4 md:px-6 py-3 sm:py-4">
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between text-white gap-2 sm:gap-4">
-                      <div className="flex-1 min-w-0 w-full sm:w-auto">
+                  <div className="bg-gradient-to-r from-carrefour-blue to-primary-dark px-3 sm:px-4 md:px-6 py-3 sm:py-4 w-full max-w-full box-border overflow-hidden">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between text-white gap-2 sm:gap-4 w-full max-w-full box-border">
+                      <div className="flex-1 min-w-0 max-w-full box-border">
                         <p className="text-xs sm:text-sm text-white/90 mb-1">Pagamento via PIX</p>
-                        <p className="text-xl sm:text-2xl font-bold truncate">R$ {(valorEntrega || 25.50).toFixed(2).replace('.', ',')}</p>
+                        <p className="text-lg sm:text-xl md:text-2xl font-bold truncate">R$ {(valorEntrega || 25.50).toFixed(2).replace('.', ',')}</p>
                       </div>
-                      <div className="text-left sm:text-right flex-shrink-0 w-full sm:w-auto">
+                      <div className="text-left sm:text-right flex-shrink-0 max-w-full box-border">
                         <p className="text-[10px] sm:text-xs text-white/80 mb-1">ID da Transação</p>
                         <p className="text-xs sm:text-sm font-mono truncate">{transactionId?.substring(0, 8) || 'N/A'}...</p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="p-3 sm:p-4 md:p-6 w-full max-w-full">
+                  <div className="p-3 sm:p-4 md:p-6 w-full max-w-full box-border overflow-hidden">
                     {/* Código PIX */}
-                    <div className="mb-4 sm:mb-6">
+                    <div className="mb-4 sm:mb-6 w-full max-w-full box-border">
                       <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">
                         Código PIX (Copie e cole no app do seu banco)
                       </label>
-                      <div className="bg-gray-50 border-2 border-gray-200 rounded-lg p-2 sm:p-3 mb-3 w-full overflow-hidden">
-                        <p className="text-[10px] sm:text-xs font-mono text-gray-900 truncate select-all break-all">
-                          {pixCode ? `${pixCode.substring(0, 60)}...` : 'Gerando código...'}
+                      <div className="bg-gray-50 border-2 border-gray-200 rounded-lg p-2 sm:p-3 mb-3 w-full max-w-full box-border overflow-hidden">
+                        <p className="text-[10px] sm:text-xs font-mono text-gray-900 truncate select-all whitespace-nowrap overflow-hidden block">
+                          {pixCode ? `${pixCode.substring(0, 50)}...` : 'Gerando código...'}
                         </p>
                       </div>
                       <motion.button
