@@ -1,7 +1,4 @@
 {
-  "buildCommand": "cd carrefour-cartao && npm install && npm run build",
-  "outputDirectory": "carrefour-cartao/dist",
-  "installCommand": "cd carrefour-cartao && npm install",
   "framework": "vite",
   "rewrites": [
     {
