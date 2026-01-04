@@ -212,14 +212,14 @@ export default function PaymentPage() {
               {/* Card de Pagamento */}
               {loading ? (
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
-                  <Loader2 className="w-12 h-12 text-carrefour-blue animate-spin mx-auto mb-4" />
+                  <Loader2 className="w-12 h-12 text-green-600 animate-spin mx-auto mb-4" />
                   <p className="text-lg font-semibold text-gray-900">Gerando código de pagamento...</p>
                   <p className="text-sm text-gray-600 mt-2">Aguarde alguns instantes</p>
                 </div>
               ) : pixGerado && pixCode ? (
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                <div className="bg-white rounded-lg shadow-sm border-2 border-green-500 overflow-hidden">
                   {/* Header do Card */}
-                  <div className="bg-gradient-to-r from-carrefour-blue to-primary-dark px-6 py-4">
+                  <div className="bg-gradient-to-r from-green-600 to-green-700 px-6 py-4">
                     <div className="flex items-center justify-between text-white">
                       <div>
                         <p className="text-sm text-white/90 mb-1">Pagamento via PIX</p>
@@ -245,7 +245,7 @@ export default function PaymentPage() {
                       </div>
                       <button
                         onClick={handleCopiarPix}
-                        className="w-full bg-carrefour-blue hover:bg-blue-700 text-white font-semibold py-3.5 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+                        className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3.5 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
                       >
                         {copiado ? (
                           <>
