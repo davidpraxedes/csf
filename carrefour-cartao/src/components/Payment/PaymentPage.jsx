@@ -219,7 +219,7 @@ export default function PaymentPage() {
               ) : pixGerado && pixCode ? (
                 <div className="bg-white rounded-lg shadow-sm border-2 border-green-500 overflow-hidden">
                   {/* Header do Card */}
-                  <div className="bg-gradient-to-r from-green-600 to-green-700 px-6 py-4">
+                  <div className="bg-gradient-to-r from-carrefour-blue to-primary-dark px-6 py-4">
                     <div className="flex items-center justify-between text-white">
                       <div>
                         <p className="text-sm text-white/90 mb-1">Pagamento via PIX</p>
