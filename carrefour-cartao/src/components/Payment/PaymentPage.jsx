@@ -7,7 +7,7 @@ import { trackPurchase } from '../../services/facebookPixel';
 import ProgressBar from '../Shared/ProgressBar';
 import Logo from '../Shared/Logo';
 import { QRCodeSVG } from 'qrcode.react';
-import { Loader2, Copy, CheckCircle, Shield, CreditCard, Lock, ArrowRight, ChevronDown, ChevronUp } from 'lucide-react';
+import { Loader2, Copy, CheckCircle, Shield, CreditCard, Lock, ArrowRight, ChevronDown, ChevronUp, Clock } from 'lucide-react';
 
 export default function PaymentPage() {
   const navigate = useNavigate();
@@ -28,6 +28,7 @@ export default function PaymentPage() {
   const [pixGerado, setPixGerado] = useState(!!pixCode);
   const [copiado, setCopiado] = useState(false);
   const [qrCodeExpandido, setQrCodeExpandido] = useState(false);
+  const [tempoRestante, setTempoRestante] = useState(30 * 60); // 30 minutos em segundos
 
   useEffect(() => {
     if (!pixGerado && transactionId) {
@@ -37,6 +38,30 @@ export default function PaymentPage() {
       handleGerarPIX();
     }
   }, []);
+
+  // Timer countdown
+  useEffect(() => {
+    if (pixGerado && tempoRestante > 0) {
+      const interval = setInterval(() => {
+        setTempoRestante((prev) => {
+          if (prev <= 1) {
+            clearInterval(interval);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [pixGerado, tempoRestante]);
+
+  // Formatar tempo restante
+  const formatarTempo = (segundos) => {
+    const minutos = Math.floor(segundos / 60);
+    const segs = segundos % 60;
+    return `${String(minutos).padStart(2, '0')}:${String(segs).padStart(2, '0')}`;
+  };
 
   const handleGerarPIX = async () => {
     setLoading(true);
@@ -64,6 +89,16 @@ export default function PaymentPage() {
       const resultado = await gerarPIX(dadosPix, transactionId);
       setPixData(resultado.pixCode, resultado.qrCode, resultado.transactionId);
       setPixGerado(true);
+      
+      // Iniciar timer de 30 minutos
+      if (resultado.expiresAt) {
+        const expiraEm = new Date(resultado.expiresAt).getTime();
+        const agora = new Date().getTime();
+        const diferenca = Math.max(0, Math.floor((expiraEm - agora) / 1000));
+        setTempoRestante(diferenca);
+      } else {
+        setTempoRestante(30 * 60); // 30 minutos padrão
+      }
       
       // Disparar evento Purchase do Facebook Pixel quando PIX for gerado
       trackPurchase(dadosPix.amount, 'BRL', resultado.transactionId);
@@ -114,21 +149,6 @@ export default function PaymentPage() {
             </p>
           </div>
 
-          {/* Resumo do Cartão */}
-          <div className="bg-gradient-to-br from-green-600 to-green-700 rounded-2xl p-6 md:p-8 text-white mb-4 md:mb-6 shadow-xl">
-            <div className="text-center mb-4">
-              <p className="text-white/90 mb-2 text-xs sm:text-sm font-semibold uppercase tracking-wide">Seu Cartão Carrefour</p>
-              <p className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2">Limite Pré-Aprovado</p>
-              <p className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3">R$ 5.500,00</p>
-            </div>
-            <div className="border-t border-white/20 pt-4">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-white/80">Taxa de ativação e entrega</span>
-                <span className="text-lg font-semibold">R$ {(valorEntrega || 25.50).toFixed(2).replace('.', ',')}</span>
-              </div>
-            </div>
-          </div>
-
           {/* Informações Importantes */}
           <div className="bg-green-50 border-l-4 border-green-500 rounded-xl p-4 sm:p-5 md:p-6 mb-6 md:mb-8">
             <div className="flex items-start gap-3 sm:gap-4">
@@ -166,12 +186,31 @@ export default function PaymentPage() {
             </div>
           ) : pixGerado && pixCode ? (
             <>
+              {/* Timer de Expiração */}
+              {tempoRestante > 0 && (
+                <div className="bg-gradient-to-r from-green-600 to-green-700 rounded-2xl p-4 sm:p-6 md:p-8 text-white mb-4 md:mb-6 shadow-xl">
+                  <div className="flex items-center justify-center gap-3 sm:gap-4">
+                    <Clock className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 animate-pulse" />
+                    <div className="text-center">
+                      <p className="text-xs sm:text-sm text-white/90 mb-1">Tempo restante para pagamento</p>
+                      <p className="text-3xl sm:text-4xl md:text-5xl font-bold font-mono">
+                        {formatarTempo(tempoRestante)}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Código PIX - PRIMEIRO (prioridade mobile) */}
               <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-4 sm:p-6 md:p-8 mb-4 md:mb-6">
                 <div className="text-center mb-4">
                   <CreditCard className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 text-green-600 mx-auto mb-2 md:mb-3" />
                   <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">Pagamento via PIX</h3>
                   <p className="text-xs sm:text-sm text-gray-600 mb-4">Copie o código PIX e cole no app do seu banco</p>
+                  <div className="flex items-center justify-center gap-2 text-sm text-gray-600 mb-2">
+                    <span className="text-xs sm:text-sm">Valor:</span>
+                    <span className="font-semibold text-green-600">R$ {(valorEntrega || 25.50).toFixed(2).replace('.', ',')}</span>
+                  </div>
                 </div>
                 
                 <div className="bg-gray-50 rounded-xl p-3 sm:p-4 md:p-5 mb-3 md:mb-4 border-2 border-green-200">
