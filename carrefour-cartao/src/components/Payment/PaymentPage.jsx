@@ -172,30 +172,30 @@ export default function PaymentPage() {
         </div>
       </div>
       
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8">
         <ProgressBar etapaAtual="payment" />
         
-        <div className="max-w-4xl mx-auto mt-8">
+        <div className="max-w-4xl mx-auto mt-4 sm:mt-6 md:mt-8">
           {/* Título Principal */}
-          <div className="text-center mb-8">
-            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
+          <div className="text-center mb-4 sm:mb-6 md:mb-8">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2">
               Pagamento Seguro
             </h1>
-            <p className="text-base text-gray-600">
+            <p className="text-sm sm:text-base text-gray-600 px-2">
               Complete o pagamento para finalizar a ativação do seu cartão
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-3 gap-4 sm:gap-6">
             {/* Coluna Principal - PIX */}
-            <div className="md:col-span-2 space-y-6">
-              {/* Timer Sofisticado */}
-              {pixGerado && pixCode && tempoRestante > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="relative bg-gradient-to-br from-green-600 via-green-500 to-green-700 rounded-xl py-4 px-5 text-white shadow-2xl overflow-hidden"
-                >
+            <div className="md:col-span-2 space-y-4 sm:space-y-6">
+                {/* Timer Sofisticado */}
+                {pixGerado && pixCode && tempoRestante > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="relative bg-gradient-to-br from-green-600 via-green-500 to-green-700 rounded-xl py-3 sm:py-4 px-3 sm:px-5 text-white shadow-2xl overflow-hidden w-full"
+                  >
                   {/* Efeito de brilho animado */}
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
                   
@@ -208,29 +208,29 @@ export default function PaymentPage() {
                   </div>
 
                   <div className="relative z-10">
-                    <div className="flex items-center justify-between gap-6">
+                    <div className="flex items-center justify-between gap-2 sm:gap-4 md:gap-6">
                       {/* Lado Esquerdo - Ícone e Label */}
-                      <div className="flex items-center gap-3">
-                        <div className="relative">
-                          <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white/30">
-                            <Clock className="w-6 h-6" />
+                      <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                        <div className="relative flex-shrink-0">
+                          <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white/30">
+                            <Clock className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
                           </div>
                         </div>
-                        <div>
-                          <p className="text-xs text-white/80 uppercase tracking-wider font-semibold mb-1">
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[10px] sm:text-xs text-white/80 uppercase tracking-wider font-semibold mb-0.5 sm:mb-1 truncate">
                             Tempo Restante
                           </p>
-                          <p className="text-sm text-white/90">
+                          <p className="text-[10px] sm:text-xs md:text-sm text-white/90 line-clamp-2">
                             Complete o pagamento antes do vencimento
                           </p>
                         </div>
                       </div>
 
                       {/* Centro - Timer Principal */}
-                      <div className="flex-1 flex items-center justify-center">
+                      <div className="flex items-center justify-center flex-shrink-0">
                         <div className="relative flex items-center justify-center">
                           {/* Círculo de progresso */}
-                          <svg className="w-24 h-24 transform -rotate-90" viewBox="0 0 100 100">
+                          <svg className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 transform -rotate-90" viewBox="0 0 100 100">
                             <circle
                               cx="50"
                               cy="50"
@@ -257,22 +257,22 @@ export default function PaymentPage() {
                           </svg>
                           
                           {/* Tempo centralizado */}
-                          <div className="absolute inset-0 flex flex-col items-center justify-center">
-                            <p className="text-xl font-bold font-mono tracking-wider drop-shadow-lg leading-tight">
+                          <div className="absolute inset-0 flex flex-col items-center justify-center px-1">
+                            <p className="text-sm sm:text-base md:text-xl font-bold font-mono tracking-wider drop-shadow-lg leading-tight">
                               {formatarTempo(tempoRestante)}
                             </p>
-                            <div className="flex items-center justify-center gap-1 mt-0.5">
-                              <span className="text-[9px] text-white/70">min</span>
-                              <span className="text-[9px] text-white/70">seg</span>
+                            <div className="flex items-center justify-center gap-0.5 sm:gap-1 mt-0.5">
+                              <span className="text-[7px] sm:text-[8px] md:text-[9px] text-white/70">min</span>
+                              <span className="text-[7px] sm:text-[8px] md:text-[9px] text-white/70">seg</span>
                             </div>
                           </div>
                         </div>
                       </div>
 
                       {/* Lado Direito - Alerta */}
-                      <div className="flex-shrink-0">
-                        <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white/30">
-                          <AlertCircle className="w-6 h-6" />
+                      <div className="flex-shrink-0 hidden sm:block">
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white/30">
+                          <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
                         </div>
                       </div>
                     </div>
@@ -311,27 +311,27 @@ export default function PaymentPage() {
               ) : pixGerado && pixCode ? (
                 <div className="bg-white rounded-lg shadow-sm border-2 border-carrefour-blue overflow-hidden w-full max-w-full">
                   {/* Header do Card */}
-                  <div className="bg-gradient-to-r from-carrefour-blue to-primary-dark px-6 py-4">
-                    <div className="flex items-center justify-between text-white gap-4">
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm text-white/90 mb-1">Pagamento via PIX</p>
-                        <p className="text-2xl font-bold truncate">R$ {(valorEntrega || 25.50).toFixed(2).replace('.', ',')}</p>
+                  <div className="bg-gradient-to-r from-carrefour-blue to-primary-dark px-3 sm:px-4 md:px-6 py-3 sm:py-4">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between text-white gap-2 sm:gap-4">
+                      <div className="flex-1 min-w-0 w-full sm:w-auto">
+                        <p className="text-xs sm:text-sm text-white/90 mb-1">Pagamento via PIX</p>
+                        <p className="text-xl sm:text-2xl font-bold truncate">R$ {(valorEntrega || 25.50).toFixed(2).replace('.', ',')}</p>
                       </div>
-                      <div className="text-right flex-shrink-0">
-                        <p className="text-xs text-white/80 mb-1">ID da Transação</p>
-                        <p className="text-sm font-mono truncate">{transactionId?.substring(0, 8) || 'N/A'}...</p>
+                      <div className="text-left sm:text-right flex-shrink-0 w-full sm:w-auto">
+                        <p className="text-[10px] sm:text-xs text-white/80 mb-1">ID da Transação</p>
+                        <p className="text-xs sm:text-sm font-mono truncate">{transactionId?.substring(0, 8) || 'N/A'}...</p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="p-6 w-full max-w-full">
+                  <div className="p-3 sm:p-4 md:p-6 w-full max-w-full">
                     {/* Código PIX */}
-                    <div className="mb-6">
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <div className="mb-4 sm:mb-6">
+                      <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">
                         Código PIX (Copie e cole no app do seu banco)
                       </label>
-                      <div className="bg-gray-50 border-2 border-gray-200 rounded-lg p-3 mb-3 w-full">
-                        <p className="text-xs font-mono text-gray-900 truncate select-all">
+                      <div className="bg-gray-50 border-2 border-gray-200 rounded-lg p-2 sm:p-3 mb-3 w-full overflow-hidden">
+                        <p className="text-[10px] sm:text-xs font-mono text-gray-900 truncate select-all break-all">
                           {pixCode ? `${pixCode.substring(0, 60)}...` : 'Gerando código...'}
                         </p>
                       </div>
@@ -345,33 +345,33 @@ export default function PaymentPage() {
                           repeat: Infinity,
                           ease: "easeInOut"
                         }}
-                        className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3.5 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+                        className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 sm:py-3.5 px-3 sm:px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
                       >
                         {copiado ? (
                           <>
-                            <CheckCircle className="w-5 h-5" />
-                            Código Copiado
+                            <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5" />
+                            <span className="text-sm sm:text-base">Código Copiado</span>
                           </>
                         ) : (
                           <>
-                            <Copy className="w-5 h-5" />
-                            Copiar Código PIX
+                            <Copy className="w-4 h-4 sm:w-5 sm:h-5" />
+                            <span className="text-sm sm:text-base">Copiar Código PIX</span>
                           </>
                         )}
                       </motion.button>
                     </div>
 
                     {/* QR Code Expansível */}
-                    <div className="border-t border-gray-200 pt-6">
+                    <div className="border-t border-gray-200 pt-4 sm:pt-6">
                       <button
                         onClick={() => setQrCodeExpandido(!qrCodeExpandido)}
-                        className="w-full flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors"
+                        className="w-full flex items-center justify-between p-2 sm:p-3 hover:bg-gray-50 rounded-lg transition-colors"
                       >
-                        <span className="text-sm font-semibold text-gray-700">QR Code para escanear</span>
+                        <span className="text-xs sm:text-sm font-semibold text-gray-700">QR Code para escanear</span>
                         {qrCodeExpandido ? (
-                          <ChevronUp className="w-5 h-5 text-gray-500" />
+                          <ChevronUp className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" />
                         ) : (
-                          <ChevronDown className="w-5 h-5 text-gray-500" />
+                          <ChevronDown className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" />
                         )}
                       </button>
                       
@@ -379,10 +379,12 @@ export default function PaymentPage() {
                         <motion.div
                           initial={{ height: 0, opacity: 0 }}
                           animate={{ height: 'auto', opacity: 1 }}
-                          className="mt-4 pb-4"
+                          className="mt-3 sm:mt-4 pb-3 sm:pb-4"
                         >
-                          <div className="bg-white p-6 rounded-lg border-2 border-gray-200 flex justify-center">
-                            <QRCodeSVG value={pixCode} size={240} level="H" />
+                          <div className="bg-white p-3 sm:p-4 md:p-6 rounded-lg border-2 border-gray-200 flex justify-center">
+                            <div className="w-[200px] h-[200px] sm:w-[240px] sm:h-[240px] flex items-center justify-center">
+                              <QRCodeSVG value={pixCode} size={240} level="H" className="max-w-full max-h-full" />
+                            </div>
                           </div>
                         </motion.div>
                       )}
@@ -393,12 +395,12 @@ export default function PaymentPage() {
 
               {/* Instruções de Pagamento */}
               {pixGerado && pixCode && (
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-5">
-                  <h3 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                    <FileText className="w-4 h-4 text-carrefour-blue" />
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4 md:p-5">
+                  <h3 className="text-xs sm:text-sm font-semibold text-gray-900 mb-2 sm:mb-3 flex items-center gap-2">
+                    <FileText className="w-3 h-3 sm:w-4 sm:h-4 text-carrefour-blue flex-shrink-0" />
                     Como pagar com PIX
                   </h3>
-                  <ol className="space-y-2 text-sm text-gray-700">
+                  <ol className="space-y-2 text-xs sm:text-sm text-gray-700">
                     <li className="flex gap-2">
                       <span className="font-semibold text-carrefour-blue">1.</span>
                       <span>Abra o app do seu banco e selecione a opção PIX</span>
@@ -421,11 +423,11 @@ export default function PaymentPage() {
             </div>
 
             {/* Sidebar - Resumo e Informações */}
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               {/* Resumo do Pedido */}
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
-                <h3 className="text-base font-semibold text-gray-900 mb-4">Resumo do Pedido</h3>
-                <div className="space-y-3 text-sm">
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-4 md:p-5">
+                <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-3 sm:mb-4">Resumo do Pedido</h3>
+                <div className="space-y-2 sm:space-y-3 text-xs sm:text-sm">
                   <div className="flex justify-between">
                     <span className="text-gray-600">Taxa de ativação</span>
                     <span className="font-semibold text-gray-900">R$ {(valorEntrega || 25.50).toFixed(2).replace('.', ',')}</span>
