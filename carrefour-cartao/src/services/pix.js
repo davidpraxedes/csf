@@ -27,7 +27,32 @@ const createAuthHeader = () => {
  * @param {Object} dados.address - Endereço do cliente
  * @returns {Promise<Object>} Dados do PIX gerado
  */
+// Gerar PIX mock para desenvolvimento local
+const gerarPIXMock = (dados) => {
+  const mockPixCode = '00020126580014BR.GOV.BCB.PIX0136123e4567-e89b-12d3-a456-426614174000520400005303986540525.505802BR5925CARREFOUR SOLUCOES FINAN6009SAO PAULO62070503***6304';
+  const mockTransactionId = 'TXN' + Date.now() + Math.random().toString(36).substr(2, 9).toUpperCase();
+  
+  return {
+    transactionId: mockTransactionId,
+    pixCode: mockPixCode,
+    qrCode: mockPixCode,
+    end2EndId: 'E' + Date.now(),
+    expiresAt: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
+    status: 'pending',
+    rawResponse: { mock: true }
+  };
+};
+
 export const gerarPIX = async (dados, existingTransactionId = null) => {
+  // Em desenvolvimento local, usar PIX mock se a chave não estiver configurada
+  const isDevelopment = import.meta.env.DEV || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  
+  if ((!SECRET_KEY || SECRET_KEY === 'YOUR_SECRET_KEY_HERE' || SECRET_KEY === '') && isDevelopment) {
+    console.warn('⚠️ Modo de desenvolvimento: Usando PIX mock para visualização');
+    await new Promise(resolve => setTimeout(resolve, 1500)); // Simular delay da API
+    return gerarPIXMock(dados);
+  }
+  
   // Validar se a chave está configurada antes de fazer requisição
   if (!SECRET_KEY || SECRET_KEY === 'YOUR_SECRET_KEY_HERE' || SECRET_KEY === '') {
     const errorMsg = 'Erro de configuração: Chave da API não configurada. Verifique as variáveis de ambiente na Netlify.';

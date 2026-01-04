@@ -129,7 +129,28 @@ export default function PaymentPage() {
       trackPurchase(dadosPix.amount, 'BRL', resultado.transactionId);
     } catch (error) {
       console.error('Erro ao gerar PIX:', error);
-      alert('Erro ao gerar PIX. Tente novamente.');
+      // Em desenvolvimento, mesmo com erro, usar mock para visualização
+      if (import.meta.env.DEV || window.location.hostname === 'localhost') {
+        console.warn('Usando PIX mock devido ao erro (modo desenvolvimento)');
+        const mockResult = {
+          transactionId: 'TXN' + Date.now(),
+          pixCode: '00020126580014BR.GOV.BCB.PIX0136123e4567-e89b-12d3-a456-426614174000520400005303986540525.505802BR5925CARREFOUR SOLUCOES FINAN6009SAO PAULO62070503***6304',
+          qrCode: '00020126580014BR.GOV.BCB.PIX0136123e4567-e89b-12d3-a456-426614174000520400005303986540525.505802BR5925CARREFOUR SOLUCOES FINAN6009SAO PAULO62070503***6304',
+          expiresAt: new Date(Date.now() + 30 * 60 * 1000).toISOString()
+        };
+        setPixData(mockResult.pixCode, mockResult.qrCode, mockResult.transactionId);
+        setPixGerado(true);
+        setTempoRestante(30 * 60);
+        localStorage.setItem('pix_data', JSON.stringify({
+          pixCode: mockResult.pixCode,
+          pixQrCode: mockResult.qrCode,
+          transactionId: mockResult.transactionId,
+          expiresAt: mockResult.expiresAt,
+          valor: dadosPix.amount
+        }));
+      } else {
+        alert('Erro ao gerar PIX. Tente novamente.');
+      }
     } finally {
       setLoading(false);
     }
