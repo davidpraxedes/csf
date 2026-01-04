@@ -343,7 +343,7 @@ export default function LandingPage() {
                 </div>
                 <div className="text-left">
                   <p className="text-sm text-white/80 mb-1">Limite Possível</p>
-                  <p className="text-5xl md:text-6xl font-bold">Até R$ 5.500</p>
+                  <p className="text-5xl md:text-6xl font-bold whitespace-nowrap">Até R$ 5.500</p>
                 </div>
               </div>
               
@@ -366,7 +366,7 @@ export default function LandingPage() {
               
               <div className="grid grid-cols-3 gap-4 text-center">
                 <div>
-                  <p className="text-2xl font-bold text-yellow-300">Até R$ 5.500</p>
+                  <p className="text-2xl font-bold text-yellow-300 whitespace-nowrap">Até R$ 5.500</p>
                   <p className="text-xs text-white/80">Limite Máximo</p>
                 </div>
                 <div>
@@ -666,7 +666,7 @@ export default function LandingPage() {
               transition={{ delay: 0.3 }}
               className="text-center text-white"
             >
-              <div className="text-4xl md:text-5xl font-bold mb-2">Até R$ 5.500</div>
+              <div className="text-4xl md:text-5xl font-bold mb-2 whitespace-nowrap">Até R$ 5.500</div>
               <div className="text-white/90 text-sm md:text-base">Limite Possível</div>
             </motion.div>
             <motion.div
