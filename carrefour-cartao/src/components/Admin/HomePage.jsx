@@ -23,6 +23,7 @@ import {
   FileText,
   Palette,
 } from 'lucide-react';
+import { getAnalytics } from '../../services/analytics';
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -38,48 +39,27 @@ export default function HomePage() {
     }
   }, [checkAuth, navigate]);
 
-  // Simular visitantes e usuários online (em produção, viria de analytics real)
+  // Carregar dados reais do analytics
   useEffect(() => {
-    // Carregar visitantes do localStorage
-    const storedVisitors = localStorage.getItem('admin_visitors');
-    const storedPageViews = localStorage.getItem('admin_page_views');
-    
-    if (storedVisitors) {
-      setVisitors(parseInt(storedVisitors, 10));
-    } else {
-      // Valor inicial baseado em pedidos
-      const initialVisitors = orders.length * 3;
-      setVisitors(initialVisitors);
-      localStorage.setItem('admin_visitors', initialVisitors.toString());
-    }
-
-    if (storedPageViews) {
-      setPageViews(parseInt(storedPageViews, 10));
-    } else {
-      const initialPageViews = orders.length * 5;
-      setPageViews(initialPageViews);
-      localStorage.setItem('admin_page_views', initialPageViews.toString());
-    }
-
-    // Simular usuários online (1-5 usuários aleatórios)
-    const interval = setInterval(() => {
-      setOnlineUsers(Math.floor(Math.random() * 5) + 1);
-    }, 5000);
-
-    // Incrementar visitantes periodicamente
-    const visitorInterval = setInterval(() => {
-      setVisitors((prev) => {
-        const newValue = prev + Math.floor(Math.random() * 3);
-        localStorage.setItem('admin_visitors', newValue.toString());
-        return newValue;
-      });
-    }, 30000); // A cada 30 segundos
-
-    return () => {
-      clearInterval(interval);
-      clearInterval(visitorInterval);
+    const loadAnalytics = () => {
+      try {
+        const analytics = getAnalytics();
+        setVisitors(analytics.totalVisitors);
+        setOnlineUsers(analytics.onlineUsers);
+        setPageViews(analytics.pageViews);
+      } catch (error) {
+        console.error('Erro ao carregar analytics:', error);
+      }
     };
-  }, [orders.length]);
+
+    // Carregar imediatamente
+    loadAnalytics();
+
+    // Atualizar a cada 5 segundos
+    const interval = setInterval(loadAnalytics, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   // Estatísticas
   const stats = {
