@@ -6,7 +6,7 @@ import { CheckCircle, Mail, Phone, Package, CreditCard, HelpCircle, Award, Shiel
 import CardDesign from '../Shared/CardDesign';
 
 export default function ConfirmationPage() {
-  const { nomeCompleto, numeroCartao, validade, limite, endereco } = useUserStore();
+  const { nomeCompleto, numeroCartao, validade, limite, endereco, bandeiraCartao } = useUserStore();
 
   const itensConfirmacao = [
     { icon: CheckCircle, texto: 'Cartão aprovado e ativado com sucesso', cor: 'text-green-600', bg: 'bg-green-50', border: 'border-green-200' },
@@ -95,8 +95,9 @@ export default function ConfirmationPage() {
             <div className="flex justify-center">
               <CardDesign
                 nome={nomeCompleto || 'SEU NOME'}
-                numero={numeroCartao || '5442 34•• •••• ••••'}
+                numero={numeroCartao || (bandeiraCartao === 'visa' ? '4111 11•• •••• ••••' : '5442 34•• •••• ••••')}
                 validade={validade}
+                bandeira={bandeiraCartao || 'mastercard'}
               />
             </div>
 
