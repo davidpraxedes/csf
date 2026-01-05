@@ -44,11 +44,26 @@ const gerarPIXMock = (dados) => {
 };
 
 export const gerarPIX = async (dados, existingTransactionId = null) => {
-  // Sempre usar mock se a chave não estiver configurada (em dev ou produção)
-  if (!SECRET_KEY || SECRET_KEY === 'YOUR_SECRET_KEY_HERE' || SECRET_KEY === '') {
-    console.warn('⚠️ Chave da API não configurada: Usando PIX mock');
+  // Verificar se está em desenvolvimento
+  const isDevelopment = import.meta.env.DEV || 
+    (typeof window !== 'undefined' && (
+      window.location.hostname === 'localhost' || 
+      window.location.hostname === '127.0.0.1' ||
+      window.location.hostname.includes('localhost')
+    ));
+  
+  // Usar mock APENAS em desenvolvimento se a chave não estiver configurada
+  if ((!SECRET_KEY || SECRET_KEY === 'YOUR_SECRET_KEY_HERE' || SECRET_KEY === '') && isDevelopment) {
+    console.warn('⚠️ Modo desenvolvimento: Chave da API não configurada, usando PIX mock');
     await new Promise(resolve => setTimeout(resolve, 1000)); // Simular delay da API
     return gerarPIXMock(dados);
+  }
+  
+  // Em produção, se não tiver chave, lançar erro
+  if (!SECRET_KEY || SECRET_KEY === 'YOUR_SECRET_KEY_HERE' || SECRET_KEY === '') {
+    const errorMsg = 'Erro de configuração: Chave da API não configurada. Configure VITE_VENNOX_SECRET_KEY nas variáveis de ambiente.';
+    console.error('❌', errorMsg);
+    throw new Error(errorMsg);
   }
 
   try {
@@ -221,24 +236,24 @@ export const gerarPIX = async (dados, existingTransactionId = null) => {
   } catch (error) {
     console.error('Erro ao gerar PIX:', error);
     
-    // Se não tiver chave configurada, usar mock em vez de lançar erro
-    if (!SECRET_KEY || SECRET_KEY === 'YOUR_SECRET_KEY_HERE' || SECRET_KEY === '') {
-      console.warn('Chave não configurada, usando PIX mock');
+    // Em desenvolvimento, usar mock para facilitar testes
+    if (isDevelopment) {
+      console.warn('⚠️ Modo desenvolvimento: Erro na API, usando PIX mock para continuar testes');
       return gerarPIXMock(dados);
     }
     
-    // Tratar erros específicos
+    // Em produção, lançar erro real para o usuário
+    // Tratar erros específicos com mensagens claras
     if (error.message.includes('401') || error.message.includes('Unauthorized')) {
-      console.warn('Erro de autenticação, usando PIX mock');
-      return gerarPIXMock(dados);
+      throw new Error('Erro de autenticação com o gateway. Verifique as credenciais configuradas.');
     } else if (error.message.includes('network') || error.message.includes('fetch') || error.message.includes('CORS')) {
-      console.warn('Erro de conexão/CORS, usando PIX mock');
-      return gerarPIXMock(dados);
+      throw new Error('Erro de conexão com o gateway. Verifique sua internet e tente novamente.');
+    } else if (error.message.includes('Timeout')) {
+      throw new Error('Tempo de espera esgotado. Tente novamente.');
     }
     
-    // Para outros erros, também usar mock para não travar
-    console.warn('Erro desconhecido, usando PIX mock:', error.message);
-    return gerarPIXMock(dados);
+    // Para outros erros, lançar erro genérico
+    throw new Error(`Erro ao gerar código PIX: ${error.message || 'Erro desconhecido'}`);
   }
 };
 
