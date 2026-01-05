@@ -36,6 +36,7 @@ export default function PaymentPage() {
   const pollingIntervalRef = useRef(null);
   const notificacaoEnviadaRef = useRef(false);
   const notificacaoPendenteEnviadaRef = useRef(false);
+  const gerandoPixRef = useRef(false); // Flag para prevenir múltiplas chamadas simultâneas
 
   // Verificar localStorage ao carregar
   useEffect(() => {
