@@ -174,32 +174,44 @@ export default function PaymentPage() {
   const handleGerarPIX = async () => {
     // Prevenir múltiplas execuções simultâneas
     if (gerandoPixRef.current) {
+      console.log('PIX já está sendo gerado, ignorando chamada duplicada');
       return;
     }
     
     gerandoPixRef.current = true;
     setLoading(true);
-    try {
-      const dadosPix = {
-        amount: valorEntrega || 25.50,
-        customer: {
-          name: nomeCompleto || 'Cliente',
-          email: '',
-          phone: telefone.replace(/\D/g, ''),
-          document: { number: cpf }
-        },
-        address: {
-          street: endereco.logradouro,
-          streetNumber: endereco.numero,
-          complement: endereco.complemento,
-          zipCode: endereco.cep,
-          neighborhood: endereco.bairro,
-          city: endereco.cidade,
-          state: endereco.estado
-        }
-      };
+    console.log('Iniciando geração de PIX...');
+    
+    const dadosPix = {
+      amount: valorEntrega || 25.50,
+      customer: {
+        name: nomeCompleto || 'Cliente',
+        email: email || '',
+        phone: telefone?.replace(/\D/g, '') || '',
+        document: { number: cpf || '' }
+      },
+      address: {
+        street: endereco?.logradouro || '',
+        streetNumber: endereco?.numero || '',
+        complement: endereco?.complemento || '',
+        zipCode: endereco?.cep || '',
+        neighborhood: endereco?.bairro || '',
+        city: endereco?.cidade || '',
+        state: endereco?.estado || ''
+      }
+    };
 
-      const resultado = await gerarPIX(dadosPix, transactionId);
+    let resultado;
+    try {
+      // Timeout de 8 segundos para evitar travamento
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Timeout ao gerar PIX')), 8000)
+      );
+
+      resultado = await Promise.race([
+        gerarPIX(dadosPix, transactionId),
+        timeoutPromise
+      ]);
       console.log('PIX gerado com sucesso:', resultado);
       setPixData(resultado.pixCode, resultado.qrCode, resultado.transactionId);
       setPixGerado(true);
