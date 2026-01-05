@@ -336,7 +336,7 @@ export default function PaymentPage() {
             {/* Coluna Principal - PIX */}
             <div className="md:col-span-2 space-y-4 sm:space-y-6 w-full max-w-full box-border min-w-0">
                 {/* Timer Sofisticado */}
-                {pixGerado && pixCode && tempoRestante > 0 && (
+                {((pixGerado || pixCode) && (pixCode || tempoRestante > 0)) && (
                   <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
