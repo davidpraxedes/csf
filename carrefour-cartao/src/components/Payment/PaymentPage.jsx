@@ -150,7 +150,7 @@ export default function PaymentPage() {
 
   const handleGerarPIX = async () => {
     // Prevenir múltiplas execuções simultâneas
-    if (gerandoPixRef.current && pixGerado) {
+    if (gerandoPixRef.current) {
       return;
     }
     
