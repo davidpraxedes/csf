@@ -215,6 +215,7 @@ export default function PaymentPage() {
       console.log('PIX gerado com sucesso:', resultado);
       setPixData(resultado.pixCode, resultado.qrCode, resultado.transactionId);
       setPixGerado(true);
+      setLoading(false);
       console.log('Estado atualizado: pixGerado=true, pixCode=', resultado.pixCode?.substring(0, 20));
       
       const expiresAt = resultado.expiresAt || new Date(Date.now() + 5 * 60 * 1000).toISOString();
@@ -258,13 +259,16 @@ export default function PaymentPage() {
       
       // Enviar notificação de pedido pendente (apenas uma vez)
       if (!notificacaoPendenteEnviadaRef.current) {
+        console.log('Enviando notificação de pedido pendente...');
         try {
           await notificarPedidoPendente(resultado.transactionId, dadosPix.amount);
           notificacaoPendenteEnviadaRef.current = true;
+          console.log('Notificação enviada com sucesso');
         } catch (error) {
           console.error('Erro ao enviar notificação de pedido pendente:', error);
         }
       }
+      console.log('PIX processado com sucesso');
     } catch (error) {
       console.error('Erro ao gerar PIX:', error);
       // Sempre usar mock em caso de erro para garantir que os elementos apareçam
