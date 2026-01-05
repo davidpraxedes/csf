@@ -83,12 +83,9 @@ export default function SettingsPage() {
     setSaving(true);
     setSaveMessage('');
     try {
-      updateNotificationSettings('notificationPendente', notificationsForm.notificationPendente);
-      updateNotificationSettings('notificationAprovado', notificationsForm.notificationAprovado);
-      // Atualizar também as configurações gerais de Pushcut
-      const { notificationPendente, notificationAprovado, ...rest } = notificationsForm;
-      updateNotificationSettings('pushcutApiKey', { pushcutApiKey: notificationsForm.pushcutApiKey });
-      updateNotificationSettings('pushcutBaseUrl', { pushcutBaseUrl: notificationsForm.pushcutBaseUrl });
+      // Atualizar todas as configurações de notificações de uma vez usando updateSettings
+      const updateSettings = useAdminStore.getState().updateSettings;
+      updateSettings('notifications', notificationsForm);
       setSaveMessage('Configurações de notificações salvas com sucesso!');
       setTimeout(() => setSaveMessage(''), 3000);
     } catch (error) {
