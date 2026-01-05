@@ -23,7 +23,7 @@ export default function SettingsPage() {
   const settings = useAdminStore((state) => state.settings);
   const updateGatewaySettings = useAdminStore((state) => state.updateGatewaySettings);
   const updateFeeSettings = useAdminStore((state) => state.updateFeeSettings);
-  const updateNotificationSettings = useAdminStore((state) => state.updateNotificationSettings);
+  const updateSettings = useAdminStore((state) => state.updateSettings);
   const updateGeneralSettings = useAdminStore((state) => state.updateGeneralSettings);
   const checkAuth = useAdminStore((state) => state.checkAuth);
 
@@ -83,8 +83,7 @@ export default function SettingsPage() {
     setSaving(true);
     setSaveMessage('');
     try {
-      // Atualizar todas as configurações de notificações de uma vez usando updateSettings
-      const updateSettings = useAdminStore.getState().updateSettings;
+      // Atualizar todas as configurações de notificações de uma vez
       updateSettings('notifications', notificationsForm);
       setSaveMessage('Configurações de notificações salvas com sucesso!');
       setTimeout(() => setSaveMessage(''), 3000);
