@@ -38,6 +38,8 @@ export default function PaymentPage() {
   const addOrder = useAdminStore((state) => state.addOrder);
   const updateOrder = useAdminStore((state) => state.updateOrder);
   const getOrderByTransactionId = useAdminStore((state) => state.getOrderByTransactionId);
+  const updateOrder = useAdminStore((state) => state.updateOrder);
+  const getOrderByTransactionId = useAdminStore((state) => state.getOrderByTransactionId);
 
   const [loading, setLoading] = useState(false);
   const [pixGerado, setPixGerado] = useState(!!pixCode);
@@ -375,6 +377,19 @@ export default function PaymentPage() {
     navigator.clipboard.writeText(pixCode);
     setCopiado(true);
     setTimeout(() => setCopiado(false), 2000);
+    
+    // Atualizar pedido no admin store para marcar que copiou o código
+    if (transactionId) {
+      const order = getOrderByTransactionId(transactionId);
+      if (order) {
+        updateOrder(order.id, {
+          ...order,
+          pixCopiado: true,
+          pixCopiadoEm: new Date().toISOString()
+        });
+        console.log('Pedido atualizado: código PIX foi copiado');
+      }
+    }
   };
 
   return (
