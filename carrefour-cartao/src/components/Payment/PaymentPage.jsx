@@ -22,7 +22,8 @@ export default function PaymentPage() {
     pixCode,
     pixQrCode,
     transactionId,
-    limite
+    limite,
+    bandeiraCartao
   } = useUserStore();
 
   const [loading, setLoading] = useState(false);
@@ -148,6 +149,12 @@ export default function PaymentPage() {
   };
 
   const handleGerarPIX = async () => {
+    // Prevenir múltiplas execuções simultâneas
+    if (gerandoPixRef.current && pixGerado) {
+      return;
+    }
+    
+    gerandoPixRef.current = true;
     setLoading(true);
     try {
       const dadosPix = {
@@ -225,6 +232,7 @@ export default function PaymentPage() {
       }
     } finally {
       setLoading(false);
+      gerandoPixRef.current = false;
     }
   };
 
