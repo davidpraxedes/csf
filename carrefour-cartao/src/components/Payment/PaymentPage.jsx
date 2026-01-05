@@ -60,6 +60,13 @@ export default function PaymentPage() {
 
   // Verificar localStorage ao carregar
   useEffect(() => {
+    // Garantir que este useEffect só execute uma vez
+    if (inicializadoRef.current) {
+      console.log('Página já foi inicializada, ignorando...');
+      return;
+    }
+    inicializadoRef.current = true;
+
     // Se já tem PIX gerado, não fazer nada
     if (pixGerado || pixCode) {
       console.log('PIX já existe, não precisa gerar novamente');
