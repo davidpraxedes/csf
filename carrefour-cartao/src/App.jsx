@@ -17,6 +17,7 @@ import PageLoader from './components/Shared/PageLoader';
 import LoginPage from './components/Admin/LoginPage';
 import DashboardPage from './components/Admin/DashboardPage';
 import OrderDetailPage from './components/Admin/OrderDetailPage';
+import SettingsPage from './components/Admin/SettingsPage';
 
 // Componente wrapper para adicionar loading entre páginas
 function AppRoutes() {
@@ -68,6 +69,7 @@ function AppRoutes() {
       <Route path="/admin/login" element={<LoginPage />} />
       <Route path="/admin/dashboard" element={<DashboardPage />} />
       <Route path="/admin/orders/:orderId" element={<OrderDetailPage />} />
+      <Route path="/admin/settings" element={<SettingsPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
