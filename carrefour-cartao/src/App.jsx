@@ -18,6 +18,7 @@ import LoginPage from './components/Admin/LoginPage';
 import HomePage from './components/Admin/HomePage';
 import OrdersPage from './components/Admin/OrdersPage';
 import OrderDetailPage from './components/Admin/OrderDetailPage';
+import StatisticsPage from './components/Admin/StatisticsPage';
 import GatewaySettingsPage from './components/Admin/GatewaySettingsPage';
 import FeesSettingsPage from './components/Admin/FeesSettingsPage';
 import NotificationSettingsPage from './components/Admin/NotificationSettingsPage';
@@ -74,6 +75,7 @@ function AppRoutes() {
       <Route path="/admin/dashboard" element={<HomePage />} />
       <Route path="/admin/orders" element={<OrdersPage />} />
       <Route path="/admin/orders/:orderId" element={<OrderDetailPage />} />
+      <Route path="/admin/statistics" element={<StatisticsPage />} />
       <Route path="/admin/settings/gateway" element={<GatewaySettingsPage />} />
       <Route path="/admin/settings/fees" element={<FeesSettingsPage />} />
       <Route path="/admin/settings/notifications" element={<NotificationSettingsPage />} />
