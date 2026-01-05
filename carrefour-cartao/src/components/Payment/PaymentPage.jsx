@@ -533,7 +533,7 @@ export default function PaymentPage() {
               ) : null}
 
               {/* Instruções de Pagamento */}
-              {pixGerado && pixCode && (
+              {(pixGerado || pixCode) && (
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4 md:p-5">
                   <h3 className="text-xs sm:text-sm font-semibold text-gray-900 mb-2 sm:mb-3 flex items-center gap-2">
                     <FileText className="w-3 h-3 sm:w-4 sm:h-4 text-carrefour-blue flex-shrink-0" />
@@ -641,7 +641,7 @@ export default function PaymentPage() {
           </div>
 
           {/* Preview do Cartão */}
-          {pixGerado && pixCode && (
+          {(pixGerado || pixCode) && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
