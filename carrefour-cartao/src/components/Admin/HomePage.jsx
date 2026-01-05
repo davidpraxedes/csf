@@ -16,6 +16,12 @@ import {
   AlertCircle,
   ArrowUpRight,
   ArrowDownRight,
+  Globe,
+  BarChart3,
+  Key,
+  Bell,
+  FileText,
+  Palette,
 } from 'lucide-react';
 
 export default function HomePage() {
@@ -410,11 +416,11 @@ export default function HomePage() {
                   <span className="text-sm font-medium text-gray-900">Notificações</span>
                 </Link>
                 <Link
-                  to="/admin/reports"
+                  to="/admin/settings/appearance"
                   className="flex flex-col items-center justify-center p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors"
                 >
-                  <FileText className="w-8 h-8 text-purple-600 mb-2" />
-                  <span className="text-sm font-medium text-gray-900">Relatórios</span>
+                  <Palette className="w-8 h-8 text-purple-600 mb-2" />
+                  <span className="text-sm font-medium text-gray-900">Aparência</span>
                 </Link>
               </div>
             </div>
