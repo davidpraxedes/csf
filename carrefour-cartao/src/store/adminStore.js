@@ -172,13 +172,21 @@ export const useAdminStore = create((set, get) => ({
   },
 
   updateNotificationSettings: (notificationType, updates) => {
-        const settings = { ...get().settings };
-        settings.notifications[notificationType] = {
-          ...settings.notifications[notificationType],
-          ...updates,
-        };
-        set({ settings });
-        localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(settings));
+    const settings = { ...get().settings };
+    if (notificationType === 'notificationPendente' || notificationType === 'notificationAprovado') {
+      settings.notifications[notificationType] = {
+        ...settings.notifications[notificationType],
+        ...updates,
+      };
+    } else if (notificationType === 'pushcutApiKey') {
+      settings.notifications.pushcutApiKey = updates.pushcutApiKey || updates;
+    } else if (notificationType === 'pushcutBaseUrl') {
+      settings.notifications.pushcutBaseUrl = updates.pushcutBaseUrl || updates;
+    } else {
+      settings.notifications[notificationType] = updates;
+    }
+    set({ settings });
+    localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(settings));
   },
 
   updateGeneralSettings: (updates) => {
