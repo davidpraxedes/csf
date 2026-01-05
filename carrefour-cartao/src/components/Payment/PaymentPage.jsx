@@ -66,11 +66,12 @@ export default function PaymentPage() {
       }
     }
 
-    if (!pixGerado && transactionId) {
-      handleGerarPIX();
-    } else if (!pixGerado) {
+    // Prevenir múltiplas chamadas simultâneas
+    if (!pixGerado && !gerandoPixRef.current) {
+      gerandoPixRef.current = true;
       handleGerarPIX();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Timer countdown
