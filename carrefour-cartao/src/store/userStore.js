@@ -21,6 +21,7 @@ export const useUserStore = create((set) => ({
   },
   dataVencimento: '',
   designCartao: 'classic', // classic, black, gold, exclusive
+  bandeiraCartao: 'mastercard', // visa ou mastercard
   
   // Entrega
   formaEntrega: '', // 'carta-registrada' ou 'sedex'
@@ -54,6 +55,7 @@ export const useUserStore = create((set) => ({
   setDadosPessoais: (dados) => set({ ...dados }),
   setEndereco: (endereco) => set({ endereco }),
   setDesignCartao: (design) => set({ designCartao: design }),
+  setBandeiraCartao: (bandeira) => set({ bandeiraCartao: bandeira }),
   setAprovado: (aprovado) => set({ aprovado }),
   setLimite: (limite) => set({ limite }),
   setNumeroCartao: (numero) => set({ numeroCartao: numero }),
@@ -89,6 +91,7 @@ export const useUserStore = create((set) => ({
     },
     dataVencimento: '',
     designCartao: 'classic',
+    bandeiraCartao: 'mastercard',
     formaEntrega: '',
     valorEntrega: 0,
     aprovado: false,

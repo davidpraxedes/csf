@@ -94,8 +94,9 @@ export default function ApprovalPage() {
             >
               <CardDesign
                 nome={nomeCompleto || 'SEU NOME'}
-                numero={numeroCartao || '5442 34•• •••• ••••'}
+                numero={numeroCartao || (bandeiraCartao === 'visa' ? '4111 11•• •••• ••••' : '5442 34•• •••• ••••')}
                 validade={validade || '12/28'}
+                bandeira={bandeiraCartao || 'mastercard'}
               />
             </motion.div>
 

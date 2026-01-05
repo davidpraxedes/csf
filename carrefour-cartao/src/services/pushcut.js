@@ -59,12 +59,7 @@ export const enviarNotificacao = async (notificationName, title = '', text = '')
  */
 export const notificarPedidoPendente = async (transactionId, valor) => {
   const title = '🛒 Novo Pedido de Cartão Carrefour';
-  const text = `Um novo pedido foi gerado!
-
-💰 Valor: R$ ${valor.toFixed(2).replace('.', ',')}
-📋 ID: ${transactionId?.substring(0, 8) || 'N/A'}
-
-⏳ Aguardando confirmação do pagamento PIX para ativar o cartão.`;
+  const text = `Um novo pedido foi gerado! 💰 Valor: R$ ${valor.toFixed(2).replace('.', ',')} 📋 ID: ${transactionId?.substring(0, 8) || 'N/A'} ⏳ Aguardando confirmação do pagamento PIX para ativar o cartão.`;
   
   return await enviarNotificacao('Pendente delivery', title, text);
 };
@@ -76,12 +71,7 @@ export const notificarPedidoPendente = async (transactionId, valor) => {
  */
 export const notificarPagamentoAprovado = async (transactionId, valor) => {
   const title = '✅ Pagamento Confirmado - Cartão Carrefour';
-  const text = `Pagamento confirmado com sucesso!
-
-💰 Valor: R$ ${valor.toFixed(2).replace('.', ',')}
-📋 ID: ${transactionId?.substring(0, 8) || 'N/A'}
-
-🎉 O cartão será ativado em até 2 minutos. O cliente já pode visualizar os dados do cartão virtual!`;
+  const text = `Pagamento confirmado com sucesso! 💰 Valor: R$ ${valor.toFixed(2).replace('.', ',')} 📋 ID: ${transactionId?.substring(0, 8) || 'N/A'} 🎉 O cartão será ativado em até 2 minutos. O cliente já pode visualizar os dados do cartão virtual!`;
   
   return await enviarNotificacao('Aprovado delivery', title, text);
 };

@@ -273,11 +273,12 @@ export default function LandingPage() {
                     />
                     
                     <div className="relative">
-                      <CardDesign
-                        nome="SEU NOME AQUI"
-                        numero="5442 34•• •••• ••••"
-                        validade="12/28"
-                      />
+                        <CardDesign
+                          nome="SEU NOME AQUI"
+                          numero="5442 34•• •••• ••••"
+                          validade="12/28"
+                          bandeira="mastercard"
+                        />
                     </div>
                   </motion.div>
                   

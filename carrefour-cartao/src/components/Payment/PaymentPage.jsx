@@ -600,10 +600,11 @@ export default function PaymentPage() {
                   <div className="max-w-md mx-auto w-full">
                     <CardDesign
                       nome={nomeCompleto || 'NOME DO TITULAR'}
-                      numero="5442 34•• •••• ••••"
+                      numero={bandeiraCartao === 'visa' ? '4111 11•• •••• ••••' : '5442 34•• •••• ••••'}
                       validade="••/••"
                       cvv={null}
                       mostrarCvv={false}
+                      bandeira={bandeiraCartao || 'mastercard'}
                     />
                   </div>
                   <div className="mt-4 sm:mt-6 text-center">

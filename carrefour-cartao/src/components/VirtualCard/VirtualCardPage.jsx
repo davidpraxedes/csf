@@ -70,10 +70,11 @@ export default function VirtualCardPage() {
             >
               <CardDesign
                 nome={nomeCompleto || 'SEU NOME'}
-                numero={mostrarNumero ? numeroCartao : '5442 34•• •••• ••••'}
+                numero={mostrarNumero ? numeroCartao : (bandeiraCartao === 'visa' ? '4111 11•• •••• ••••' : '5442 34•• •••• ••••')}
                 validade={validade}
                 cvv={mostrarCvv ? cvv : null}
                 mostrarCvv={mostrarCvv}
+                bandeira={bandeiraCartao || 'mastercard'}
               />
             </motion.div>
 
