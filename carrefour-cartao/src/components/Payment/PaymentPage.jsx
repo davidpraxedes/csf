@@ -59,6 +59,12 @@ export default function PaymentPage() {
 
   // Verificar localStorage ao carregar
   useEffect(() => {
+    // Se já tem PIX gerado, não fazer nada
+    if (pixGerado || pixCode) {
+      console.log('PIX já existe, não precisa gerar novamente');
+      return;
+    }
+
     const pixSalvo = localStorage.getItem('pix_data');
     if (pixSalvo) {
       try {
@@ -87,10 +93,8 @@ export default function PaymentPage() {
     }
 
     // Prevenir múltiplas chamadas simultâneas
-    if (!pixGerado && !gerandoPixRef.current && !pixCode) {
+    if (!pixGerado && !gerandoPixRef.current && !pixCode && !loading) {
       console.log('Iniciando geração de PIX...');
-      gerandoPixRef.current = true;
-      setLoading(true);
       handleGerarPIX();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
