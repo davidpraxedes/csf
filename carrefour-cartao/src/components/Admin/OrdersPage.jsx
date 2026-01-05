@@ -10,6 +10,8 @@ import {
   Eye,
   Calendar,
   User,
+  Copy,
+  CheckCircle,
 } from 'lucide-react';
 
 export default function OrdersPage() {

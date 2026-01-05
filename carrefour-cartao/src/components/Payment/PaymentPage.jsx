@@ -36,6 +36,8 @@ export default function PaymentPage() {
   } = useUserStore();
   
   const addOrder = useAdminStore((state) => state.addOrder);
+  const updateOrder = useAdminStore((state) => state.updateOrder);
+  const getOrderByTransactionId = useAdminStore((state) => state.getOrderByTransactionId);
 
   const [loading, setLoading] = useState(false);
   const [pixGerado, setPixGerado] = useState(!!pixCode);

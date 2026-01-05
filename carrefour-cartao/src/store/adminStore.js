@@ -150,6 +150,10 @@ export const useAdminStore = create((set, get) => ({
         return get().orders.find((order) => order.id === orderId);
   },
 
+  getOrderByTransactionId: (transactionId) => {
+        return get().orders.find((order) => order.transactionId === transactionId);
+  },
+
   // Actions - Configurações
   updateSettings: (category, updates) => {
         const settings = {

@@ -327,14 +327,35 @@ export default function OrderDetailPage() {
                   <label className="text-sm font-medium text-gray-500">Data de Criação</label>
                   <p className="text-gray-900 mt-1">{formatDate(order.createdAt)}</p>
                 </div>
-                {order.updatedAt && (
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">Última Atualização</label>
-                    <p className="text-gray-900 mt-1">{formatDate(order.updatedAt)}</p>
-                  </div>
-                )}
-              </div>
-            </motion.div>
+                      {order.updatedAt && (
+                        <div>
+                          <label className="text-sm font-medium text-gray-500">Última Atualização</label>
+                          <p className="text-gray-900 mt-1">{formatDate(order.updatedAt)}</p>
+                        </div>
+                      )}
+                      <div>
+                        <label className="text-sm font-medium text-gray-500">Código PIX Copiado</label>
+                        <div className="flex items-center gap-2 mt-1">
+                          {order.pixCopiado ? (
+                            <>
+                              <CheckCircle className="w-4 h-4 text-green-600" />
+                              <span className="text-green-600 font-medium">Sim</span>
+                              {order.pixCopiadoEm && (
+                                <span className="text-xs text-gray-500">
+                                  ({formatDate(order.pixCopiadoEm)})
+                                </span>
+                              )}
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="w-4 h-4 text-gray-400" />
+                              <span className="text-gray-500">Não</span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
 
             {/* Ações */}
             <motion.div
