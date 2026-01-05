@@ -190,8 +190,10 @@ export default function PaymentPage() {
       };
 
       const resultado = await gerarPIX(dadosPix, transactionId);
+      console.log('PIX gerado com sucesso:', resultado);
       setPixData(resultado.pixCode, resultado.qrCode, resultado.transactionId);
       setPixGerado(true);
+      console.log('Estado atualizado: pixGerado=true, pixCode=', resultado.pixCode?.substring(0, 20));
       
       const expiresAt = resultado.expiresAt || new Date(Date.now() + 5 * 60 * 1000).toISOString();
       const expiraEm = new Date(expiresAt).getTime();
@@ -251,9 +253,11 @@ export default function PaymentPage() {
         qrCode: '00020126580014BR.GOV.BCB.PIX0136123e4567-e89b-12d3-a456-426614174000520400005303986540525.505802BR5925CARREFOUR SOLUCOES FINAN6009SAO PAULO62070503***6304',
         expiresAt: new Date(Date.now() + 5 * 60 * 1000).toISOString()
       };
+      console.log('Usando PIX mock devido ao erro');
       setPixData(mockResult.pixCode, mockResult.qrCode, mockResult.transactionId);
       setPixGerado(true);
       setTempoRestante(5 * 60);
+      console.log('Estado atualizado (mock): pixGerado=true, pixCode=', mockResult.pixCode?.substring(0, 20));
       localStorage.setItem('pix_data', JSON.stringify({
         pixCode: mockResult.pixCode,
         pixQrCode: mockResult.qrCode,
