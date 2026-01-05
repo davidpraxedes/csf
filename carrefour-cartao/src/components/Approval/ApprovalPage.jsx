@@ -10,7 +10,7 @@ import { useEffect } from 'react';
 
 export default function ApprovalPage() {
   const navigate = useNavigate();
-  const { nomeCompleto, setEtapaAtual, setNumeroCartao, setCvv, setValidade, setLimite, numeroCartao, cvv, validade } = useUserStore();
+  const { nomeCompleto, setEtapaAtual, setNumeroCartao, setCvv, setValidade, setLimite, numeroCartao, cvv, validade, bandeiraCartao } = useUserStore();
   const limiteStore = useUserStore(state => state.limite);
   
   // Garantir que o limite seja sempre 5.500,00
