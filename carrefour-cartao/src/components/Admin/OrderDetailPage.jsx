@@ -106,11 +106,11 @@ export default function OrderDetailPage() {
         {/* Header */}
         <header className="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm">
           <div className="px-4 sm:px-6 lg:px-8 py-4">
-            <h1 className="text-2xl font-bold text-gray-900">Detalhes do Pedido</h1>
-            <p className="text-sm text-gray-600 mt-1">ID: {orderId}</p>
-          </div>
-        </header>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">Detalhes do Pedido</h1>
+                <p className="text-sm text-gray-600 mt-1">ID: {orderId}</p>
+              </div>
               <span
                 className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${getStatusBadge(
                   order.paymentStatus
@@ -123,8 +123,7 @@ export default function OrderDetailPage() {
               </span>
             </div>
           </div>
-        </div>
-      </header>
+        </header>
 
       <div className="px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
