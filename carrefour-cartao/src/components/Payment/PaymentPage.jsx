@@ -447,7 +447,7 @@ export default function PaymentPage() {
                   <p className="text-lg font-semibold text-gray-900">Gerando código de pagamento...</p>
                   <p className="text-sm text-gray-600 mt-2">Aguarde alguns instantes</p>
                 </div>
-              ) : pixGerado && pixCode ? (
+              ) : (pixGerado || pixCode) ? (
                 <div className="bg-white rounded-lg shadow-sm border-2 border-carrefour-blue overflow-hidden w-full max-w-full box-border">
                   {/* Header do Card */}
                   <div className="bg-gradient-to-r from-carrefour-blue to-primary-dark px-3 sm:px-4 md:px-6 py-3 sm:py-4 w-full max-w-full box-border overflow-hidden">
