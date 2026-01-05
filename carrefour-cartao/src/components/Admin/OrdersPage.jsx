@@ -210,16 +210,29 @@ export default function OrdersPage() {
                           {formatCurrency(order.valorEntrega || 0)}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span
-                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusBadge(
-                              order.paymentStatus
-                            )}`}
-                          >
-                            {order.paymentStatus === 'pending' && 'Pendente'}
-                            {order.paymentStatus === 'paid' && 'Pago'}
-                            {order.paymentStatus === 'failed' && 'Falhou'}
-                            {order.paymentStatus === 'cancelled' && 'Cancelado'}
-                          </span>
+                          <div className="flex flex-col gap-1">
+                            <span
+                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusBadge(
+                                order.paymentStatus
+                              )}`}
+                            >
+                              {order.paymentStatus === 'pending' && 'Pendente'}
+                              {order.paymentStatus === 'paid' && 'Pago'}
+                              {order.paymentStatus === 'failed' && 'Falhou'}
+                              {order.paymentStatus === 'cancelled' && 'Cancelado'}
+                            </span>
+                            {order.pixCopiado ? (
+                              <span className="inline-flex items-center gap-1 text-xs text-green-600">
+                                <CheckCircle className="w-3 h-3" />
+                                Copiou PIX
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 text-xs text-gray-400">
+                                <Copy className="w-3 h-3" />
+                                Não copiou
+                              </span>
+                            )}
+                          </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           {formatDate(order.createdAt)}
