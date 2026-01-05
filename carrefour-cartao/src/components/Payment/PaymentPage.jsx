@@ -350,13 +350,14 @@ export default function PaymentPage() {
       } else {
         // Em produção, mostrar erro real ao usuário
         console.error('Erro em produção:', error.message);
-        setLoading(false);
         alert(`Erro ao gerar código PIX: ${error.message}\n\nPor favor, tente novamente ou entre em contato com o suporte.`);
       }
     } finally {
+      // SEMPRE limpar o loading e a flag, mesmo em caso de erro
       console.log('Finalizando geração de PIX, limpando loading...');
       setLoading(false);
       gerandoPixRef.current = false;
+      console.log('Flags limpas: loading=false, gerandoPixRef=false');
     }
   };
 
