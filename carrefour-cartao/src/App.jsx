@@ -14,6 +14,9 @@ import PaymentPage from './components/Payment/PaymentPage';
 import VirtualCardPage from './components/VirtualCard/VirtualCardPage';
 import ConfirmationPage from './components/Confirmation/ConfirmationPage';
 import PageLoader from './components/Shared/PageLoader';
+import LoginPage from './components/Admin/LoginPage';
+import DashboardPage from './components/Admin/DashboardPage';
+import OrderDetailPage from './components/Admin/OrderDetailPage';
 
 // Componente wrapper para adicionar loading entre páginas
 function AppRoutes() {
@@ -61,6 +64,10 @@ function AppRoutes() {
       <Route path="/payment" element={<PaymentPage />} />
       <Route path="/virtual" element={<VirtualCardPage />} />
       <Route path="/confirmation" element={<ConfirmationPage />} />
+      {/* Admin Routes */}
+      <Route path="/admin/login" element={<LoginPage />} />
+      <Route path="/admin/dashboard" element={<DashboardPage />} />
+      <Route path="/admin/orders/:orderId" element={<OrderDetailPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
