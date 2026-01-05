@@ -49,6 +49,7 @@ export default function PaymentPage() {
   const notificacaoPendenteEnviadaRef = useRef(false);
   const gerandoPixRef = useRef(false); // Flag para prevenir múltiplas chamadas simultâneas
   const inicializadoRef = useRef(false); // Flag para garantir que useEffect só execute uma vez
+  const inicializadoRef = useRef(false); // Flag para garantir que useEffect só execute uma vez
 
   // Sincronizar pixGerado com pixCode do store
   useEffect(() => {
