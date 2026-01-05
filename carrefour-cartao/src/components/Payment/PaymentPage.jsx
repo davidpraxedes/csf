@@ -49,6 +49,14 @@ export default function PaymentPage() {
   const notificacaoPendenteEnviadaRef = useRef(false);
   const gerandoPixRef = useRef(false); // Flag para prevenir múltiplas chamadas simultâneas
 
+  // Sincronizar pixGerado com pixCode do store
+  useEffect(() => {
+    if (pixCode && !pixGerado) {
+      console.log('Sincronizando: pixCode encontrado no store, atualizando pixGerado');
+      setPixGerado(true);
+    }
+  }, [pixCode, pixGerado]);
+
   // Verificar localStorage ao carregar
   useEffect(() => {
     const pixSalvo = localStorage.getItem('pix_data');
@@ -79,8 +87,10 @@ export default function PaymentPage() {
     }
 
     // Prevenir múltiplas chamadas simultâneas
-    if (!pixGerado && !gerandoPixRef.current) {
+    if (!pixGerado && !gerandoPixRef.current && !pixCode) {
+      console.log('Iniciando geração de PIX...');
       gerandoPixRef.current = true;
+      setLoading(true);
       handleGerarPIX();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
