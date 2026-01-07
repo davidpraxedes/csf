@@ -34,12 +34,28 @@ export default async function handler(req, res) {
 
         console.log(`📝 [API update-order] Atualizando pedido ${transactionId}:`, updates);
 
+        // Mapear status de pagamento para status do pedido (sem migration)
+        let statusToUpdate = updates.status;
+        if (updates.paymentStatus === 'paid' || updates.status === 'paid') {
+            statusToUpdate = 'aprovado';
+        } else if (updates.paymentStatus === 'failed') {
+            statusToUpdate = 'cancelado';
+        }
+
+        const dataToUpdate = {
+            ...updates,
+            updatedAt: new Date()
+        };
+
+        if (statusToUpdate) {
+            dataToUpdate.status = statusToUpdate;
+        }
+
+        console.log(`📝 [API update-order] Atualizando pedido ${transactionId} -> Status: ${statusToUpdate || 'unchanged'}`);
+
         const order = await prisma.order.update({
             where: { transactionId },
-            data: {
-                ...updates,
-                updatedAt: new Date()
-            }
+            data: dataToUpdate
         });
 
         return res.status(200).json(order);

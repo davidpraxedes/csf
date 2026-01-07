@@ -67,7 +67,8 @@ export default async function handler(req, res) {
             documentPhotoBack: order.documentPhotoBack,
             hasPhotoFront: !!order.documentPhotoFront,
             hasPhotoBack: !!order.documentPhotoBack,
-            paymentStatus: order.status || 'pending',
+            paymentStatus: (order.status === 'aprovado') ? 'paid' :
+                (order.status === 'cancelado') ? 'failed' : 'pending',
             status: order.status || 'pendente',
             createdAt: order.createdAt,
             updatedAt: order.updatedAt
