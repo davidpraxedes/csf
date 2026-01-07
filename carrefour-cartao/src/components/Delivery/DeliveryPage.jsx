@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '../../store/userStore';
+import { useAdminStore } from '../../store/adminStore';
 import ProgressBar from '../Shared/ProgressBar';
 import Logo from '../Shared/Logo';
 import { Truck, Package, ArrowRight, CheckCircle, AlertCircle } from 'lucide-react';
@@ -11,22 +12,21 @@ export default function DeliveryPage() {
   const { formaEntrega, valorEntrega, setFormaEntrega, setEtapaAtual } = useUserStore();
   const [selecionado, setSelecionado] = useState(formaEntrega);
 
-  const opcoesEntrega = [
-    {
-      id: 'carta-registrada',
-      titulo: 'Carta Registrada',
-      descricao: 'Entrega em até 15 dias úteis',
-      preco: 25.50,
-      icon: Package,
-    },
-    {
-      id: 'sedex',
-      titulo: 'Sedex Expresso',
-      descricao: 'Entrega expressa em até 5 dias úteis',
-      preco: 32.90,
-      icon: Truck,
-    },
-  ];
+  const { settings } = useAdminStore();
+  const shippingOptions = settings?.fees?.shippingOptions || [];
+
+  const getIcon = (id) => {
+    if (id?.includes('sedex')) return Truck;
+    return Package;
+  };
+
+  const opcoesEntrega = shippingOptions.map(opt => ({
+    id: opt.id,
+    titulo: opt.title,
+    descricao: opt.description,
+    preco: opt.price,
+    icon: getIcon(opt.id)
+  }));
 
   const handleSelecionar = (opcao) => {
     setSelecionado(opcao.id);

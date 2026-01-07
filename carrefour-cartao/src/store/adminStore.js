@@ -46,8 +46,22 @@ const getDefaultSettings = () => ({
   // Taxas
   fees: {
     activationFee: 25.50,
-    deliveryFeeRegistered: 10.00,
-    deliveryFeeSedex: 25.00,
+    shippingOptions: [
+      {
+        id: 'carta-registrada',
+        title: 'Carta Registrada',
+        description: 'Entrega em até 15 dias úteis',
+        price: 25.50,
+        active: true,
+      },
+      {
+        id: 'sedex',
+        title: 'Sedex Expresso',
+        description: 'Entrega expressa em até 5 dias úteis',
+        price: 32.90,
+        active: true,
+      },
+    ],
   },
   // Notificações Pushcut
   notifications: {

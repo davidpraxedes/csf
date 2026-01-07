@@ -56,11 +56,10 @@ export default function FeesSettingsPage() {
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className={`mb-6 p-4 rounded-lg flex items-center gap-2 ${
-                    saveMessage.includes('sucesso')
+                  className={`mb-6 p-4 rounded-lg flex items-center gap-2 ${saveMessage.includes('sucesso')
                       ? 'bg-green-50 text-green-700 border border-green-200'
                       : 'bg-red-50 text-red-700 border border-red-200'
-                  }`}
+                    }`}
                 >
                   {saveMessage.includes('sucesso') ? (
                     <CheckCircle className="w-5 h-5" />
@@ -88,40 +87,58 @@ export default function FeesSettingsPage() {
                   <p className="mt-1 text-xs text-gray-500">Valor da taxa de ativação do cartão.</p>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Taxa de Entrega - Carta Registrada (R$)
-                  </label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    value={feesForm.deliveryFeeRegistered}
-                    onChange={(e) =>
-                      setFeesForm({ ...feesForm, deliveryFeeRegistered: parseFloat(e.target.value) || 0 })
-                    }
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-carrefour-blue focus:border-carrefour-blue"
-                    placeholder="10.00"
-                  />
-                  <p className="mt-1 text-xs text-gray-500">Valor da entrega via carta registrada.</p>
-                </div>
+                <div className="space-y-4">
+                  <h3 className="text-sm font-medium text-gray-900">Opções de Entrega</h3>
+                  {feesForm.shippingOptions?.map((option, index) => (
+                    <div key={option.id} className="p-4 border border-gray-200 rounded-lg bg-gray-50 space-y-3">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-semibold text-gray-700 capitalize">Opção {index + 1} ({option.id})</span>
+                      </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Taxa de Entrega - SEDEX (R$)
-                  </label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    value={feesForm.deliveryFeeSedex}
-                    onChange={(e) =>
-                      setFeesForm({ ...feesForm, deliveryFeeSedex: parseFloat(e.target.value) || 0 })
-                    }
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-carrefour-blue focus:border-carrefour-blue"
-                    placeholder="25.00"
-                  />
-                  <p className="mt-1 text-xs text-gray-500">Valor da entrega via SEDEX.</p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-xs font-medium text-gray-500 mb-1">Título</label>
+                          <input
+                            type="text"
+                            value={option.title}
+                            onChange={(e) => {
+                              const newOptions = [...feesForm.shippingOptions];
+                              newOptions[index].title = e.target.value;
+                              setFeesForm({ ...feesForm, shippingOptions: newOptions });
+                            }}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-gray-500 mb-1">Preço (R$)</label>
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={option.price}
+                            onChange={(e) => {
+                              const newOptions = [...feesForm.shippingOptions];
+                              newOptions[index].price = parseFloat(e.target.value) || 0;
+                              setFeesForm({ ...feesForm, shippingOptions: newOptions });
+                            }}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                          />
+                        </div>
+                        <div className="md:col-span-2">
+                          <label className="block text-xs font-medium text-gray-500 mb-1">Descrição</label>
+                          <input
+                            type="text"
+                            value={option.description}
+                            onChange={(e) => {
+                              const newOptions = [...feesForm.shippingOptions];
+                              newOptions[index].description = e.target.value;
+                              setFeesForm({ ...feesForm, shippingOptions: newOptions });
+                            }}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
 
                 <button
