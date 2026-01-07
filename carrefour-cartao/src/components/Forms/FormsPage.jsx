@@ -51,13 +51,21 @@ export default function FormsPage() {
 
       console.log('✅ [FormsPage] CEP consultado com sucesso:', dados);
 
-      setEndereco({
-        ...endereco,
-        ...dados,
+      // Criar novo objeto de endereço mesclando dados existentes com os novos
+      const novoEndereco = {
+        ...endereco,  // Preserva campos já preenchidos (numero, complemento)
+        logradouro: dados.logradouro,
+        bairro: dados.bairro,
+        cidade: dados.cidade,
+        estado: dados.estado,
         cep: cepLimpo
-      });
+      };
 
-      console.log('💾 [FormsPage] Endereço atualizado no state');
+      console.log('💾 [FormsPage] Novo endereço a ser salvo:', novoEndereco);
+
+      setEndereco(novoEndereco);
+
+      console.log('✅ [FormsPage] Endereço atualizado no state');
 
       // Disparar InitiateCheckout do Facebook Pixel quando CEP for preenchido
       const { trackInitiateCheckout } = await import('../../services/facebookPixel');
