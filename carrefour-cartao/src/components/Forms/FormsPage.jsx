@@ -222,7 +222,9 @@ export default function FormsPage() {
                         placeholder="00000-000"
                       />
                       {loadingCEP && (
-                        <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-carrefour-blue animate-spin" />
+                        <div className="absolute right-4 top-0 bottom-0 flex items-center justify-center pointer-events-none">
+                          <Loader2 className="w-5 h-5 text-carrefour-blue animate-spin" />
+                        </div>
                       )}
                       {endereco.cep.length === 8 && !loadingCEP && endereco.logradouro && (
                         <CheckCircle className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-green-500" />
