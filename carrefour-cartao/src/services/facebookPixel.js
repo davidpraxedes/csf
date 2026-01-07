@@ -2,12 +2,15 @@
 // Documentação: https://developers.facebook.com/docs/meta-pixel
 
 const PIXEL_ID = import.meta.env.VITE_FACEBOOK_PIXEL_ID;
+const SECONDARY_PIXEL_ID = '1742400966399409';
 
 // Inicializar o Pixel
 export const initFacebookPixel = () => {
   if (!PIXEL_ID || PIXEL_ID === 'SEU_PIXEL_ID_AQUI') {
-    console.warn('Facebook Pixel ID não configurado');
-    return;
+    console.warn('Facebook Pixel ID primário não configurado');
+    // Não retornamos aqui para permitir que o secundário funcione se necessário
+    // ou mantemos a lógica original se o primário for obrigatório. 
+    // Assumindo que queremos pelo menos o primário, mas vamos seguir.
   }
 
   // Verificar se já foi inicializado
@@ -16,20 +19,31 @@ export const initFacebookPixel = () => {
   }
 
   // Carregar script do Facebook Pixel
-  !function(f,b,e,v,n,t,s)
-  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-  n.queue=[];t=b.createElement(e);t.async=!0;
-  t.src=v;s=b.getElementsByTagName(e)[0];
-  s.parentNode.insertBefore(t,s)}(window, document,'script',
-  'https://connect.facebook.net/en_US/fbevents.js');
+  !function (f, b, e, v, n, t, s) {
+    if (f.fbq) return; n = f.fbq = function () {
+      n.callMethod ?
+      n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+    };
+    if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+    n.queue = []; t = b.createElement(e); t.async = !0;
+    t.src = v; s = b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t, s)
+  }(window, document, 'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
 
-  // Inicializar o Pixel
-  window.fbq('init', PIXEL_ID);
+  // Inicializar o Pixel Primário
+  if (PIXEL_ID && PIXEL_ID !== 'SEU_PIXEL_ID_AQUI') {
+    window.fbq('init', PIXEL_ID);
+    console.log('Facebook Pixel Primário inicializado:', PIXEL_ID);
+  }
+
+  // Inicializar o Pixel Secundário
+  if (SECONDARY_PIXEL_ID) {
+    window.fbq('init', SECONDARY_PIXEL_ID);
+    console.log('Facebook Pixel Secundário inicializado:', SECONDARY_PIXEL_ID);
+  }
+
   window.fbq('track', 'PageView');
-  
-  console.log('Facebook Pixel inicializado:', PIXEL_ID);
 };
 
 // Evento: PageView (já disparado na inicialização)
@@ -48,11 +62,11 @@ export const trackInitiateCheckout = (value = null, currency = 'BRL') => {
       content_category: 'Cartão de Crédito',
       currency: currency,
     };
-    
+
     if (value) {
       params.value = value;
     }
-    
+
     window.fbq('track', 'InitiateCheckout', params);
     console.log('Facebook Pixel: InitiateCheckout', params);
   }
@@ -67,11 +81,11 @@ export const trackPurchase = (value, currency = 'BRL', transactionId = null) => 
       currency: currency,
       value: value,
     };
-    
+
     if (transactionId) {
       params.order_id = transactionId;
     }
-    
+
     window.fbq('track', 'Purchase', params);
     console.log('Facebook Pixel: Purchase', params);
   }
