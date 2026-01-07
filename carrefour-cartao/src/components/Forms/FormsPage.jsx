@@ -49,7 +49,7 @@ export default function FormsPage() {
       console.log('📞 [FormsPage] Chamando consultarCEP...');
       const dados = await consultarCEP(cepLimpo);
 
-      console.log('✅ [FormsPage] CEP consultado com sucesso:', dados);
+      console.log('✅ [FormsPage] CEP consultado com sucesso:', JSON.stringify(dados, null, 2));
 
       // Criar novo objeto de endereço mesclando dados existentes com os novos
       const novoEndereco = {
@@ -61,11 +61,18 @@ export default function FormsPage() {
         cep: cepLimpo
       };
 
-      console.log('💾 [FormsPage] Novo endereço a ser salvo:', novoEndereco);
+      console.log('💾 [FormsPage] Novo endereço a ser salvo:', JSON.stringify(novoEndereco, null, 2));
+      console.log('🔍 [FormsPage] Estado atual ANTES do setEndereco:', JSON.stringify(endereco, null, 2));
 
       setEndereco(novoEndereco);
 
-      console.log('✅ [FormsPage] Endereço atualizado no state');
+      console.log('✅ [FormsPage] setEndereco() chamado');
+
+      // Verificar se realmente atualizou
+      setTimeout(() => {
+        const enderecoAtualizado = useUserStore.getState().endereco;
+        console.log('🔎 [FormsPage] Estado DEPOIS do setEndereco:', JSON.stringify(enderecoAtualizado, null, 2));
+      }, 100);
 
       // Disparar InitiateCheckout do Facebook Pixel quando CEP for preenchido
       const { trackInitiateCheckout } = await import('../../services/facebookPixel');
