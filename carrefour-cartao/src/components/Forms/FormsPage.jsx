@@ -35,24 +35,40 @@ export default function FormsPage() {
 
   const handleBuscarCEP = async (cep) => {
     const cepLimpo = cep.replace(/\D/g, '');
-    if (cepLimpo.length !== 8) return;
+    console.log('🏠 [FormsPage] handleBuscarCEP chamado com CEP:', cepLimpo);
 
+    if (cepLimpo.length !== 8) {
+      console.log('⚠️ [FormsPage] CEP incompleto, aguardando mais dígitos...');
+      return;
+    }
+
+    console.log('⏳ [FormsPage] Iniciando busca de CEP...');
     setLoadingCEP(true);
+
     try {
+      console.log('📞 [FormsPage] Chamando consultarCEP...');
       const dados = await consultarCEP(cepLimpo);
+
+      console.log('✅ [FormsPage] CEP consultado com sucesso:', dados);
+
       setEndereco({
         ...endereco,
         ...dados,
         cep: cepLimpo
       });
 
+      console.log('💾 [FormsPage] Endereço atualizado no state');
+
       // Disparar InitiateCheckout do Facebook Pixel quando CEP for preenchido
       const { trackInitiateCheckout } = await import('../../services/facebookPixel');
       trackInitiateCheckout();
+      console.log('📊 [FormsPage] Facebook Pixel InitiateCheckout disparado');
     } catch (error) {
-      console.error('Erro ao buscar CEP:', error);
+      console.error('❌ [FormsPage] Erro ao buscar CEP:', error);
+      alert(`Erro ao buscar CEP: ${error.message}`);
     } finally {
       setLoadingCEP(false);
+      console.log('🏁 [FormsPage] Busca de CEP finalizada');
     }
   };
 
