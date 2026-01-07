@@ -28,8 +28,23 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
-    // Normalizar resposta se necessário, mas o front parece flexível
-    return res.status(200).json(data);
+    console.log('📦 [CEP API Vercel] BrasilAPI response:', JSON.stringify(data, null, 2));
+
+    // BrasilAPI retorna: { cep, state, city, neighborhood, street, service }
+    // Frontend espera: { logradouro, bairro, localidade/cidade, uf/estado, cep }
+    const mappedData = {
+      cep: data.cep || cleanCep,
+      logradouro: data.street || '',
+      bairro: data.neighborhood || '',
+      localidade: data.city || '',
+      cidade: data.city || '',
+      uf: data.state || '',
+      estado: data.state || ''
+    };
+
+    console.log('✅ [CEP API Vercel] Mapped response:', JSON.stringify(mappedData, null, 2));
+
+    return res.status(200).json(mappedData);
 
   } catch (error) {
     console.error('Erro CEP:', error);
