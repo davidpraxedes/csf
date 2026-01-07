@@ -29,7 +29,30 @@ const getStoredOrders = () => {
 const getStoredSettings = () => {
   try {
     const stored = localStorage.getItem(STORAGE_KEY_SETTINGS);
-    return stored ? JSON.parse(stored) : getDefaultSettings();
+    if (!stored) return getDefaultSettings();
+
+    // Merge stored settings with defaults to ensure new fields (like shippingOptions) exist
+    const parsed = JSON.parse(stored);
+    const defaults = getDefaultSettings();
+
+    return {
+      ...defaults,
+      ...parsed,
+      fees: {
+        ...defaults.fees,
+        ...parsed.fees,
+        // Ensure shippingOptions exists if it was missing in stored fees
+        shippingOptions: parsed.fees?.shippingOptions || defaults.fees.shippingOptions
+      },
+      general: {
+        ...defaults.general,
+        ...parsed.general
+      },
+      notifications: {
+        ...defaults.notifications,
+        ...parsed.notifications
+      }
+    };
   } catch (e) {
     console.error('Erro ao ler configurações do localStorage:', e);
     return getDefaultSettings();

@@ -57,8 +57,8 @@ export default function FeesSettingsPage() {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   className={`mb-6 p-4 rounded-lg flex items-center gap-2 ${saveMessage.includes('sucesso')
-                      ? 'bg-green-50 text-green-700 border border-green-200'
-                      : 'bg-red-50 text-red-700 border border-red-200'
+                    ? 'bg-green-50 text-green-700 border border-green-200'
+                    : 'bg-red-50 text-red-700 border border-red-200'
                     }`}
                 >
                   {saveMessage.includes('sucesso') ? (
@@ -88,11 +88,59 @@ export default function FeesSettingsPage() {
                 </div>
 
                 <div className="space-y-4">
-                  <h3 className="text-sm font-medium text-gray-900">Opções de Entrega</h3>
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-medium text-gray-900">Opções de Entrega</h3>
+                    <button
+                      onClick={() => {
+                        const newId = `custom-${Date.now()}`;
+                        setFeesForm({
+                          ...feesForm,
+                          shippingOptions: [
+                            ...feesForm.shippingOptions,
+                            {
+                              id: newId,
+                              title: 'Nova Opção',
+                              description: 'Descrição da entrega',
+                              price: 0,
+                              active: true
+                            }
+                          ]
+                        });
+                      }}
+                      className="text-sm text-carrefour-blue hover:text-blue-700 font-medium flex items-center gap-1"
+                    >
+                      + Adicionar Opção
+                    </button>
+                  </div>
+
                   {feesForm.shippingOptions?.map((option, index) => (
-                    <div key={option.id} className="p-4 border border-gray-200 rounded-lg bg-gray-50 space-y-3">
+                    <div key={option.id} className="p-4 border border-gray-200 rounded-lg bg-gray-50 space-y-3 relative group">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-semibold text-gray-700 capitalize">Opção {index + 1} ({option.id})</span>
+                        <span className="text-sm font-semibold text-gray-700 capitalize">Opção {index + 1}</span>
+                        <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2 mr-2">
+                            <label className="text-xs text-gray-500">Ativo</label>
+                            <input
+                              type="checkbox"
+                              checked={option.active !== false}
+                              onChange={(e) => {
+                                const newOptions = [...feesForm.shippingOptions];
+                                newOptions[index].active = e.target.checked;
+                                setFeesForm({ ...feesForm, shippingOptions: newOptions });
+                              }}
+                              className="rounded border-gray-300 text-carrefour-blue focus:ring-carrefour-blue"
+                            />
+                          </div>
+                          <button
+                            onClick={() => {
+                              const newOptions = feesForm.shippingOptions.filter((_, i) => i !== index);
+                              setFeesForm({ ...feesForm, shippingOptions: newOptions });
+                            }}
+                            className="text-red-500 hover:text-red-700 text-xs font-medium"
+                          >
+                            Remover
+                          </button>
+                        </div>
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -107,6 +155,7 @@ export default function FeesSettingsPage() {
                               setFeesForm({ ...feesForm, shippingOptions: newOptions });
                             }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                            placeholder="Ex: Sedex"
                           />
                         </div>
                         <div>
@@ -134,6 +183,7 @@ export default function FeesSettingsPage() {
                               setFeesForm({ ...feesForm, shippingOptions: newOptions });
                             }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                            placeholder="Ex: Entrega em até 3 dias úteis"
                           />
                         </div>
                       </div>
