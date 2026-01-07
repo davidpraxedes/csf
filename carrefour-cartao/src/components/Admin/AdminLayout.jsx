@@ -61,6 +61,13 @@ export default function AdminLayout({ children }) {
       badge: null,
     },
     {
+      id: 'kyc',
+      label: 'KYC / Documentos',
+      icon: FileText,
+      path: '/admin/kyc',
+      badge: null,
+    },
+    {
       type: 'divider',
       label: 'Configurações',
     },
@@ -110,9 +117,8 @@ export default function AdminLayout({ children }) {
     <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar Desktop */}
       <aside
-        className={`hidden lg:flex flex-col bg-white border-r border-gray-200 transition-all duration-300 ${
-          sidebarOpen ? 'w-64' : 'w-20'
-        }`}
+        className={`hidden lg:flex flex-col bg-white border-r border-gray-200 transition-all duration-300 ${sidebarOpen ? 'w-64' : 'w-20'
+          }`}
       >
         {/* Logo/Header */}
         <div className="h-16 border-b border-gray-200 flex items-center justify-between px-4">
@@ -149,11 +155,10 @@ export default function AdminLayout({ children }) {
               <Link
                 key={item.id}
                 to={item.path}
-                className={`flex items-center gap-3 px-4 py-3 mx-2 rounded-lg transition-colors ${
-                  active
+                className={`flex items-center gap-3 px-4 py-3 mx-2 rounded-lg transition-colors ${active
                     ? 'bg-carrefour-blue text-white'
                     : 'text-gray-700 hover:bg-gray-100'
-                }`}
+                  }`}
                 title={!sidebarOpen ? item.label : ''}
               >
                 <Icon className="w-5 h-5 flex-shrink-0" />
@@ -176,9 +181,8 @@ export default function AdminLayout({ children }) {
         <div className="border-t border-gray-200 p-4">
           <button
             onClick={handleLogout}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 transition-colors ${
-              !sidebarOpen ? 'justify-center' : ''
-            }`}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 transition-colors ${!sidebarOpen ? 'justify-center' : ''
+              }`}
             title={!sidebarOpen ? 'Sair' : ''}
           >
             <LogOut className="w-5 h-5 flex-shrink-0" />
@@ -234,11 +238,10 @@ export default function AdminLayout({ children }) {
                     key={item.id}
                     to={item.path}
                     onClick={() => setMobileMenuOpen(false)}
-                    className={`flex items-center gap-3 px-4 py-3 mx-2 rounded-lg transition-colors ${
-                      active
+                    className={`flex items-center gap-3 px-4 py-3 mx-2 rounded-lg transition-colors ${active
                         ? 'bg-carrefour-blue text-white'
                         : 'text-gray-700 hover:bg-gray-100'
-                    }`}
+                      }`}
                   >
                     <Icon className="w-5 h-5 flex-shrink-0" />
                     <span className="flex-1">{item.label}</span>

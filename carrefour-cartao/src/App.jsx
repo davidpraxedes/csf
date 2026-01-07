@@ -20,6 +20,7 @@ import LoginPage from './components/Admin/LoginPage';
 import HomePage from './components/Admin/HomePage';
 import OrdersPage from './components/Admin/OrdersPage';
 import OrderDetailPage from './components/Admin/OrderDetailPage';
+import KycApprovalPage from './components/Admin/KycApprovalPage';
 import StatisticsPage from './components/Admin/StatisticsPage';
 import NotificationsPage from './components/Admin/NotificationsPage';
 import GatewaySettingsPage from './components/Admin/GatewaySettingsPage';
@@ -81,6 +82,7 @@ function AppRoutes() {
       <Route path="/admin/dashboard" element={<HomePage />} />
       <Route path="/admin/orders" element={<OrdersPage />} />
       <Route path="/admin/orders/:orderId" element={<OrderDetailPage />} />
+      <Route path="/admin/kyc" element={<KycApprovalPage />} />
       <Route path="/admin/statistics" element={<StatisticsPage />} />
       <Route path="/admin/notifications" element={<NotificationsPage />} />
       <Route path="/admin/settings/gateway" element={<GatewaySettingsPage />} />
