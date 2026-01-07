@@ -19,14 +19,20 @@ export const useUserStore = create((set) => ({
     cidade: '',
     estado: '',
   },
+
+  // KYC - Verificação de Identidade
+  rg: '',
+  documentPhotoFront: '', // base64 string
+  documentPhotoBack: '',  // base64 string
+
   dataVencimento: '',
   designCartao: 'classic', // classic, black, gold, exclusive
   bandeiraCartao: 'mastercard', // visa ou mastercard
-  
+
   // Entrega
   formaEntrega: '', // 'carta-registrada' ou 'sedex'
   valorEntrega: 0,
-  
+
   // Dados do cartão
   aprovado: false,
   limite: '5.500,00',
@@ -34,26 +40,28 @@ export const useUserStore = create((set) => ({
   numeroCartao: '',
   cvv: '',
   validade: '',
-  
+
   // Progresso
   etapaAtual: 'landing',
   quizRespostas: {},
-  
+
   // Pagamento
   pixCode: '',
   pixQrCode: '',
   pagamentoAprovado: false,
   transactionId: '',
-  
+
   // Actions
   setCPF: (cpf) => set({ cpf }),
   setTelefone: (telefone) => set({ telefone }),
+  setEmail: (email) => set({ email }),
   setProfissao: (profissao) => set({ profissao }),
   setSalario: (salario) => set({ salario }),
   setDataVencimento: (dataVencimento) => set({ dataVencimento }),
   setFormaEntrega: (formaEntrega, valorEntrega) => set({ formaEntrega, valorEntrega }),
   setDadosPessoais: (dados) => set({ ...dados }),
   setEndereco: (endereco) => set({ endereco }),
+  setKycData: (rg, photoFront, photoBack) => set({ rg, documentPhotoFront: photoFront, documentPhotoBack: photoBack }),
   setDesignCartao: (design) => set({ designCartao: design }),
   setBandeiraCartao: (bandeira) => set({ bandeiraCartao: bandeira }),
   setAprovado: (aprovado) => set({ aprovado }),

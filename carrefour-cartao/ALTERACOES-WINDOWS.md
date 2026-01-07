@@ -115,3 +115,4 @@ Todas as funcionalidades devem funcionar normalmente em ambos os sistemas operac
 **Node.js:** 18+ (recomendado)
 
 
+

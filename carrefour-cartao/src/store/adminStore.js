@@ -131,15 +131,25 @@ export const useAdminStore = create((set, get) => ({
     console.log('📝 [AdminStore] Adicionando novo pedido:', {
       transactionId: orderData.transactionId,
       nomeCompleto: orderData.nomeCompleto,
-      valorEntrega: orderData.valorEntrega
+      valorEntrega: orderData.valorEntrega,
+      rg: orderData.rg || 'N/A',
+      hasPhotoFront: !!orderData.documentPhotoFront,
+      hasPhotoBack: !!orderData.documentPhotoBack
     });
 
+    // Verificar se já existe pedido com este transactionId
+    const existingOrder = get().orders.find(o => o.transactionId === orderData.transactionId);
+    if (existingOrder) {
+      console.warn('⚠️ [AdminStore] Pedido duplicado detectado, ignorando criação:', orderData.transactionId);
+      return existingOrder;
+    }
+
     const newOrder = {
-      id: `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: crypto.randomUUID(),
       ...orderData,
+      status: 'pendente',
       createdAt: new Date().toISOString(),
-      status: 'pending',
-      paymentStatus: 'pending',
+      pixCopiado: false,
     };
 
     const orders = [...get().orders, newOrder];

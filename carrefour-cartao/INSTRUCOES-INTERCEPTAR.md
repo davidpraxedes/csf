@@ -56,3 +56,4 @@ Envie:
 **Dica**: O script `interceptar-api.js` faz tudo automaticamente! Basta colar no console.
 
 
+

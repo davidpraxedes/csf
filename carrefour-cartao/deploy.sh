@@ -24,3 +24,4 @@ pm2 restart carrefour-cartao
 echo "✅ Deploy concluído!"
 pm2 logs carrefour-cartao --lines 20
 
+

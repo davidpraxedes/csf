@@ -10,7 +10,7 @@ import InputMask from 'react-input-mask';
 export default function ProfessionalDataPage() {
   const navigate = useNavigate();
   const { setProfissao, setSalario, setEtapaAtual, profissao, salario } = useUserStore();
-  
+
   const [profissaoLocal, setProfissaoLocal] = useState(profissao || '');
   const [salarioLocal, setSalarioLocal] = useState(salario || '');
   const [erro, setErro] = useState('');
@@ -32,12 +32,12 @@ export default function ProfessionalDataPage() {
   const formatarSalario = (valor) => {
     // Remove tudo que não é número
     const numeros = valor.replace(/\D/g, '');
-    
+
     if (!numeros) return '';
-    
+
     // Converte para número e divide por 100 para ter decimais
     const valorFloat = parseFloat(numeros) / 100;
-    
+
     // Formata com vírgula para decimais
     return valorFloat.toLocaleString('pt-BR', {
       minimumFractionDigits: 2,
@@ -66,9 +66,10 @@ export default function ProfessionalDataPage() {
 
     // Salvar dados
     setProfissao(profissaoLocal);
+    setProfissao(profissaoLocal);
     setSalario(salarioLocal);
-    setEtapaAtual('processing');
-    navigate('/processing');
+    setEtapaAtual('kyc');
+    navigate('/kyc');
   };
 
   return (
@@ -78,10 +79,10 @@ export default function ProfessionalDataPage() {
           <Logo size="md" />
         </div>
       </div>
-      
+
       <div className="container mx-auto px-4 py-8">
         <ProgressBar etapaAtual="professional-data" />
-        
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -185,4 +186,5 @@ export default function ProfessionalDataPage() {
     </div>
   );
 }
+
 

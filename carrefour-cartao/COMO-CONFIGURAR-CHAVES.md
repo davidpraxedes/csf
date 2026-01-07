@@ -111,3 +111,4 @@ Se tudo funcionar, está pronto! 🎉
 - Verifique se o arquivo `public/_redirects` existe
 - Verifique se o `netlify.toml` está correto
 
+

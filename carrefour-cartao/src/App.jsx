@@ -4,11 +4,13 @@ import LandingPage from './components/Landing/LandingPage';
 import QuizPage from './components/Quiz/QuizPage';
 import CPFConsultPage from './components/CPFConsult/CPFConsultPage';
 import ProfessionalDataPage from './components/ProfessionalData/ProfessionalDataPage';
+import KycPage from './components/Services/KycPage';
 import ProcessingPage from './components/Processing/ProcessingPage';
 import ApprovalPage from './components/Approval/ApprovalPage';
 import BenefitsPage from './components/Benefits/BenefitsPage';
 import CustomizationPage from './components/Customization/CustomizationPage';
 import FormsPage from './components/Forms/FormsPage';
+import ContractPage from './components/Legal/ContractPage';
 import DeliveryPage from './components/Delivery/DeliveryPage';
 import PaymentPage from './components/Payment/PaymentPage';
 import VirtualCardPage from './components/VirtualCard/VirtualCardPage';
@@ -35,7 +37,7 @@ function AppRoutes() {
     // Sempre mostrar loading quando mudar de rota (exceto primeira carga)
     if (prevPath !== location.pathname) {
       setLoading(true);
-      
+
       // Loading mínimo de 1 segundo
       const timer = setTimeout(() => {
         setLoading(false);
@@ -62,11 +64,14 @@ function AppRoutes() {
       <Route path="/quiz" element={<QuizPage />} />
       <Route path="/cpf" element={<CPFConsultPage />} />
       <Route path="/professional-data" element={<ProfessionalDataPage />} />
+      <Route path="/kyc" element={<KycPage />} />
       <Route path="/processing" element={<ProcessingPage />} />
       <Route path="/approval" element={<ApprovalPage />} />
       <Route path="/benefits" element={<BenefitsPage />} />
       <Route path="/customization" element={<CustomizationPage />} />
       <Route path="/forms" element={<FormsPage />} />
+      <Route path="/forms" element={<FormsPage />} />
+      <Route path="/contract" element={<ContractPage />} />
       <Route path="/delivery" element={<DeliveryPage />} />
       <Route path="/payment" element={<PaymentPage />} />
       <Route path="/virtual" element={<VirtualCardPage />} />

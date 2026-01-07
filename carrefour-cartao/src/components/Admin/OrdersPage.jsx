@@ -41,7 +41,27 @@ export default function OrdersPage() {
     }
   }, [orders]);
 
+  // Sincronizar com API (DB)
+  useEffect(() => {
+    const loadData = async () => {
+      if (useAdminStore.getState().fetchOrders) {
+        await useAdminStore.getState().fetchOrders();
+      }
+    };
+    loadData();
+  }, []);
+
   // Filtrar pedidos
+  useEffect(() => {
+    // Carregar pedidos do banco de dados ao entrar na página
+    const loadData = async () => {
+      if (useAdminStore.getState().fetchOrders) {
+        await useAdminStore.getState().fetchOrders();
+      }
+    };
+    loadData();
+  }, []);
+
   const filteredOrders = orders
     .filter((order) => {
       if (searchTerm) {

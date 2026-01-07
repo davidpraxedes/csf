@@ -49,10 +49,10 @@ export default function DeliveryPage() {
           <Logo size="md" />
         </div>
       </div>
-      
+
       <div className="container mx-auto px-4 py-6 md:py-8">
         <ProgressBar etapaAtual="delivery" />
-        
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -75,24 +75,22 @@ export default function DeliveryPage() {
               {opcoesEntrega.map((opcao) => {
                 const Icon = opcao.icon;
                 const isSelecionado = selecionado === opcao.id;
-                
+
                 return (
                   <motion.button
                     key={opcao.id}
                     onClick={() => handleSelecionar(opcao)}
-                    className={`w-full p-4 sm:p-5 md:p-6 rounded-xl border-2 transition-all duration-300 text-left ${
-                      isSelecionado
+                    className={`w-full p-4 sm:p-5 md:p-6 rounded-xl border-2 transition-all duration-300 text-left ${isSelecionado
                         ? 'border-carrefour-blue bg-carrefour-blue/5 shadow-lg'
                         : 'border-gray-200 bg-white hover:border-carrefour-blue hover:bg-blue-50'
-                    }`}
+                      }`}
                     whileHover={{ scale: 1.01 }}
                     whileTap={{ scale: 0.99 }}
                   >
                     <div className="flex items-start justify-between gap-3 sm:gap-4">
                       <div className="flex items-start gap-3 sm:gap-4 flex-1 min-w-0">
-                        <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                          isSelecionado ? 'bg-carrefour-blue text-white' : 'bg-gray-100 text-gray-600'
-                        }`}>
+                        <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${isSelecionado ? 'bg-carrefour-blue text-white' : 'bg-gray-100 text-gray-600'
+                          }`}>
                           <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
                         </div>
                         <div className="flex-1 min-w-0">
@@ -120,17 +118,44 @@ export default function DeliveryPage() {
               })}
             </div>
 
+            {/* Why Shipping Cost Explanation */}
+            <div className="mb-6 bg-blue-50 border border-blue-100 rounded-xl p-4 flex gap-4">
+              <div className="mt-1 flex-shrink-0">
+                <Truck className="w-5 h-5 text-carrefour-blue" />
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-gray-900">Por que há custo de envio?</h4>
+                <p className="text-xs text-gray-600 mt-1 leading-relaxed">
+                  Para garantir a segurança do seu cartão, utilizamos transportadoras privadas com rastreamento em tempo real e seguro contra extravio. Isso garante que seu cartão chegue apenas em suas mãos.
+                </p>
+              </div>
+            </div>
+
+            {/* Virtual Card Access Promo */}
+            <div className="mb-8 bg-green-50 border border-green-100 rounded-xl p-4 flex gap-4 items-center">
+              <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 text-green-600">
+                <CheckCircle className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-gray-900">Acesso Imediato ao Cartão Virtual</h4>
+                <p className="text-xs text-gray-600 mt-0.5">
+                  Assim que o pagamento do envio for confirmado, seu <strong>Cartão Virtual</strong> é liberado instantaneamente no app para compras online!
+                </p>
+              </div>
+            </div>
+
             {/* Resumo se selecionado */}
             {opcaoSelecionada && (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-gradient-to-br from-carrefour-blue to-primary-dark rounded-xl p-4 sm:p-5 md:p-6 text-white mb-4 md:mb-6"
+                className="bg-gradient-to-br from-green-600 to-green-800 rounded-xl p-4 sm:p-5 md:p-6 text-white mb-4 md:mb-6 shadow-lg transform transition-all"
               >
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
                   <div className="flex-1 min-w-0">
-                    <p className="text-white/90 text-xs sm:text-sm font-semibold uppercase tracking-wide mb-1">
-                      Forma de Entrega Selecionada
+                    <p className="text-white/90 text-xs sm:text-sm font-semibold uppercase tracking-wide mb-1 flex items-center gap-2">
+                      <CheckCircle className="w-4 h-4" />
+                      Entrega Definida
                     </p>
                     <p className="text-xl sm:text-2xl font-bold">{opcaoSelecionada.titulo}</p>
                     <p className="text-white/80 text-xs sm:text-sm mt-1">{opcaoSelecionada.descricao}</p>
