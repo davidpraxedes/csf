@@ -195,6 +195,47 @@ export const useAdminStore = create((set, get) => ({
     return get().orders.find((order) => order.transactionId === transactionId);
   },
 
+  // Buscar pedidos do banco de dados
+  fetchOrders: async () => {
+    try {
+      console.log('📥 [AdminStore] Buscando pedidos do banco de dados...');
+
+      const response = await fetch('/api/get-orders');
+
+      if (!response.ok) {
+        console.warn(`⚠️ [AdminStore] API retornou ${response.status}, usando localStorage`);
+        return get().orders;
+      }
+
+      const orders = await response.json();
+      console.log(`✅ [AdminStore] ${orders.length} pedidos carregados do banco`);
+
+      // Mesclar com localStorage (manter ambos)
+      const localOrders = get().orders;
+      const allOrders = [...orders];
+
+      // Adicionar pedidos do localStorage que não estão no banco
+      localOrders.forEach(localOrder => {
+        if (!allOrders.find(o => o.transactionId === localOrder.transactionId)) {
+          console.log('📌 [AdminStore] Adicionando pedido do localStorage:', localOrder.transactionId);
+          allOrders.push(localOrder);
+        }
+      });
+
+      set({ orders: allOrders });
+
+      // Salvar no localStorage também
+      localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(allOrders));
+      console.log(`💾 [AdminStore] Total de ${allOrders.length} pedidos (DB + Local)`);
+
+      return allOrders;
+    } catch (error) {
+      console.error('❌ [AdminStore] Erro ao buscar pedidos:', error);
+      // Manter pedidos do localStorage em caso de erro
+      return get().orders;
+    }
+  },
+
   // Actions - Configurações
   updateSettings: (category, updates) => {
     const settings = {
