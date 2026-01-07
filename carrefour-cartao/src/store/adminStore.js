@@ -72,6 +72,7 @@ const getDefaultSettings = () => ({
     logoUrl: '/images/logocsf.png',
     primaryColor: '#0066CC',
     secondaryColor: '#00AA44',
+    kycEnabled: true,
   },
 });
 

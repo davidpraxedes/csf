@@ -144,11 +144,10 @@ export default function SettingsPage() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex-1 flex items-center justify-center gap-2 px-6 py-4 font-medium transition-colors ${
-                    activeTab === tab.id
+                  className={`flex-1 flex items-center justify-center gap-2 px-6 py-4 font-medium transition-colors ${activeTab === tab.id
                       ? 'text-carrefour-blue border-b-2 border-carrefour-blue bg-blue-50'
                       : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                  }`}
+                    }`}
                 >
                   <Icon className="w-5 h-5" />
                   <span>{tab.label}</span>
@@ -163,11 +162,10 @@ export default function SettingsPage() {
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className={`mb-4 p-4 rounded-lg flex items-center gap-2 ${
-                  saveMessage.includes('sucesso')
+                className={`mb-4 p-4 rounded-lg flex items-center gap-2 ${saveMessage.includes('sucesso')
                     ? 'bg-green-50 text-green-700 border border-green-200'
                     : 'bg-red-50 text-red-700 border border-red-200'
-                }`}
+                  }`}
               >
                 {saveMessage.includes('sucesso') ? (
                   <CheckCircle className="w-5 h-5" />
@@ -679,6 +677,31 @@ export default function SettingsPage() {
                       </div>
                     </div>
                   </div>
+                  </div>
+
+                  <div className="mt-8 pt-6 border-t border-gray-200">
+                    <h3 className="text-lg font-medium text-gray-900 mb-4">Validação de Identidade</h3>
+                    <div className="flex items-center justify-between bg-white p-4 border border-gray-200 rounded-lg">
+                      <div>
+                        <p className="font-medium text-gray-900">Exigir Documentos (KYC)</p>
+                        <p className="text-sm text-gray-500">
+                          Se desativado, o cliente purlará a etapa de envio de fotos do RG/CNH.
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className={`text-sm font-medium ${generalForm.kycEnabled !== false ? 'text-green-600' : 'text-gray-500'}`}>
+                          {generalForm.kycEnabled !== false ? 'Ativado' : 'Desativado'}
+                        </span>
+                        <input
+                          type="checkbox"
+                          id="kycEnabled"
+                          checked={generalForm.kycEnabled !== false}
+                          onChange={(e) => setGeneralForm({ ...generalForm, kycEnabled: e.target.checked })}
+                          className="w-5 h-5 text-carrefour-blue border-gray-300 rounded focus:ring-carrefour-blue"
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <button
@@ -700,10 +723,10 @@ export default function SettingsPage() {
                 </button>
               </motion.div>
             )}
-          </div>
         </div>
       </div>
     </div>
+    </div >
   );
 }
 

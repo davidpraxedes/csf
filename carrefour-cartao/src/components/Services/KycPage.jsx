@@ -5,6 +5,7 @@ import Webcam from 'react-webcam';
 import InputMask from 'react-input-mask';
 import { Camera, RefreshCw, Check, AlertCircle, ArrowRight, User, Image as ImageIcon, Sun, Smartphone, FileText, ShieldCheck, Scale, CreditCard, ChevronRight } from 'lucide-react';
 import { useUserStore } from '../../store/userStore';
+import { useAdminStore } from '../../store/adminStore';
 import Logo from '../Shared/Logo';
 import ProgressBar from '../Shared/ProgressBar';
 
@@ -13,11 +14,25 @@ export default function KycPage() {
     const { setKycData, setEtapaAtual } = useUserStore();
     const webcamRef = useRef(null);
 
+    // Ler configurações do AdminStore
+    const { settings } = useAdminStore.getState(); // Acesso direto para evitar rerender loop ou usar hook se preferir
+    const kycEnabled = settings?.general?.kycEnabled !== false; // Default true
+
     const [selectedDoc, setSelectedDoc] = useState('rg'); // 'rg' or 'cnh'
     const [docNumber, setDocNumber] = useState('');
     const [step, setStep] = useState('selection'); // 'selection', 'input-doc', 'intro-front', 'capture-front', 'review-front', 'intro-back', 'capture-back', 'review-back', 'sending'
     const [photos, setPhotos] = useState({ front: null, back: null });
     const [error, setError] = useState('');
+
+    // Auto-skip se KYC estiver desativado
+    useEffect(() => {
+        if (!kycEnabled) {
+            console.log('Skipping KYC (Disabled in settings)');
+            setKycData('Não Exigido', null, null);
+            setEtapaAtual('processing');
+            navigate('/processing');
+        }
+    }, [kycEnabled, navigate, setKycData, setEtapaAtual]);
 
     // Configurações da Câmera
     const videoConstraints = {
@@ -26,7 +41,7 @@ export default function KycPage() {
         height: { ideal: 720 }
     };
 
-    const handleDocSelection = (type) => {
+    const handleDocSelection = (type) => { // Mantido igual
         setSelectedDoc(type);
         setStep('intro-front'); // Pula direto para instrução da foto
     };
