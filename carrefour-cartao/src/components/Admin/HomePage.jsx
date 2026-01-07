@@ -107,6 +107,30 @@ export default function HomePage() {
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     .slice(0, 5);
 
+
+
+  // Função de debug do localStorage
+  const debugLocalStorage = () => {
+    console.log('🔍 [DEBUG] Verificando localStorage...');
+    const stored = localStorage.getItem('admin_orders');
+    console.log('🔍 [DEBUG] Dados brutos:', stored);
+
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        console.log('🔍 [DEBUG] Pedidos parseados:', parsed);
+        console.log('🔍 [DEBUG] Total:', parsed.length);
+        alert(`✅ Total de pedidos no localStorage: ${parsed.length}\n\nVerifique o console para detalhes.`);
+      } catch (e) {
+        console.error('🔍 [DEBUG] Erro ao parsear:', e);
+        alert('❌ Erro ao parsear dados do localStorage!');
+      }
+    } else {
+      console.log('🔍 [DEBUG] Nenhum dado encontrado');
+      alert('⚠️ Nenhum pedido encontrado no localStorage!');
+    }
+  };
+
   return (
     <AdminLayout>
       <div className="min-h-screen bg-gray-50">
