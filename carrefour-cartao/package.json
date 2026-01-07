@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "db-push": "prisma db push"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",

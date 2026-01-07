@@ -102,8 +102,20 @@ export default function PaymentPage() {
       }
     }
 
-    // Prevenir múltiplas chamadas simultâneas
+    // Prevenir múltiplas chamadas simultâneas (Lock de LocalStorage para persistir entre remounts)
+    const lockKey = 'pix_generation_lock';
+    const lockTime = parseInt(localStorage.getItem(lockKey) || '0');
+    const now = Date.now();
+
+    // Se existe lock válido (menos de 15 segundos), ignora
+    if (now - lockTime < 15000) {
+      console.log('🔒 Lock de geração de PIX ativo, bloqueando duplicidade...');
+      return;
+    }
+
     if (!pixGerado && !gerandoPixRef.current && !pixCode && !loading) {
+      // Definir Lock
+      localStorage.setItem(lockKey, now.toString());
       console.log('Iniciando geração de PIX...');
       handleGerarPIX();
     }
