@@ -12,6 +12,7 @@ import {
   User,
   Copy,
   CheckCircle,
+  Trash2,
 } from 'lucide-react';
 
 export default function OrdersPage() {
@@ -271,13 +272,35 @@ export default function OrdersPage() {
                           {formatDate(order.createdAt)}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm">
-                          <Link
-                            to={`/admin/orders/${order.id}`}
-                            className="inline-flex items-center gap-1 text-carrefour-blue hover:text-blue-700 font-medium"
-                          >
-                            <Eye className="w-4 h-4" />
-                            Ver Detalhes
-                          </Link>
+                          <div className="flex items-center gap-3">
+                            <Link
+                              to={`/admin/orders/${order.id}`}
+                              className="inline-flex items-center gap-1 text-carrefour-blue hover:text-blue-700 font-medium"
+                            >
+                              <Eye className="w-4 h-4" />
+                              Ver Detalhes
+                            </Link>
+                            <button
+                              onClick={async () => {
+                                if (window.confirm('Tem certeza que deseja apagar este pedido?')) {
+                                  try {
+                                    const res = await fetch(`/api/delete-order?id=${order.id}`, { method: 'DELETE' });
+                                    if (res.ok) {
+                                      useAdminStore.getState().fetchOrders(); // Recarregar
+                                    } else {
+                                      alert('Erro ao apagar');
+                                    }
+                                  } catch (e) {
+                                    alert('Erro ao apagar');
+                                  }
+                                }
+                              }}
+                              className="inline-flex items-center gap-1 text-red-500 hover:text-red-700 font-medium"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                              Apagar
+                            </button>
+                          </div>
                         </td>
                       </motion.tr>
                     ))}

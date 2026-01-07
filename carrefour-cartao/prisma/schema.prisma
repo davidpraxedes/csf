@@ -12,6 +12,7 @@ model Order {
   id              String   @id @default(uuid())
   transactionId   String   @unique
   status          String   @default("pendente") // pendente, aprovado, entregue
+  paymentStatus   String   @default("pending") // pending, paid, failed
   
   // Dados Pessoais
   nomeCompleto    String

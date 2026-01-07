@@ -10,6 +10,8 @@ import trackVisitHandler from './api/track-visit.js';
 import getAnalyticsHandler from './api/get-analytics.js';
 import createOrderHandler from './api/create-order.js';
 import updateOrderHandler from './api/update-order.js';
+import deleteOrderHandler from './api/delete-order.js';
+import cleanupDbHandler from './api/cleanup-db.js';
 
 const app = express();
 const port = 3001;
@@ -39,6 +41,8 @@ app.post('/api/track-visit', adapt(trackVisitHandler));
 app.get('/api/get-analytics', adapt(getAnalyticsHandler));
 app.post('/api/create-order', adapt(createOrderHandler));
 app.post('/api/update-order', adapt(updateOrderHandler));
+app.delete('/api/delete-order', adapt(deleteOrderHandler));
+app.get('/api/cleanup-db', adapt(cleanupDbHandler));
 
 app.listen(port, () => {
     console.log(`🚀 Backend local rodando em http://localhost:${port}`);
