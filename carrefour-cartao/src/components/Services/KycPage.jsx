@@ -235,13 +235,28 @@ export default function KycPage() {
                 </span>
             </div>
 
-            <div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black/90 to-transparent flex justify-center pb-12">
+            <div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black/90 to-transparent flex flex-col items-center justify-center pb-12">
                 <button
                     onClick={() => capture(side)}
                     className="w-20 h-20 rounded-full bg-white border-4 border-gray-300 shadow-lg hover:scale-105 transition-transform flex items-center justify-center relative group"
                 >
                     <div className="w-16 h-16 rounded-full border-2 border-gray-200 group-hover:bg-gray-100 transition-colors" />
                 </button>
+
+                {/* DEV MODE SIMULATION */}
+                {(import.meta.env.DEV || window.location.hostname.includes('localhost')) && (
+                    <button
+                        onClick={() => {
+                            // Imagem de placeholder (RG Genérico para teste)
+                            const mockImage = "https://t4.ftcdn.net/jpg/04/70/29/97/360_F_470299797_UD0eoVMMSUbHCcNJCdv2t8B2g1w6aeGY.jpg";
+                            setPhotos(prev => ({ ...prev, [side]: mockImage }));
+                            setStep(side === 'front' ? 'review-front' : 'review-back');
+                        }}
+                        className="mt-4 text-xs text-white/50 hover:text-white border border-white/20 px-3 py-1 rounded-full uppercase tracking-wider"
+                    >
+                        [DEV] Simular Foto
+                    </button>
+                )}
             </div>
         </motion.div>
     );

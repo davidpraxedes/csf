@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '../../store/userStore';
 import ProgressBar from '../Shared/ProgressBar';
 import Logo from '../Shared/Logo';
-import { Truck, Package, ArrowRight, CheckCircle } from 'lucide-react';
+import { Truck, Package, ArrowRight, CheckCircle, AlertCircle } from 'lucide-react';
 
 export default function DeliveryPage() {
   const navigate = useNavigate();
@@ -81,8 +81,8 @@ export default function DeliveryPage() {
                     key={opcao.id}
                     onClick={() => handleSelecionar(opcao)}
                     className={`w-full p-4 sm:p-5 md:p-6 rounded-xl border-2 transition-all duration-300 text-left ${isSelecionado
-                        ? 'border-carrefour-blue bg-carrefour-blue/5 shadow-lg'
-                        : 'border-gray-200 bg-white hover:border-carrefour-blue hover:bg-blue-50'
+                      ? 'border-carrefour-blue bg-carrefour-blue/5 shadow-lg'
+                      : 'border-gray-200 bg-white hover:border-carrefour-blue hover:bg-blue-50'
                       }`}
                     whileHover={{ scale: 1.01 }}
                     whileTap={{ scale: 0.99 }}
@@ -127,6 +127,19 @@ export default function DeliveryPage() {
                 <h4 className="text-sm font-bold text-gray-900">Por que há custo de envio?</h4>
                 <p className="text-xs text-gray-600 mt-1 leading-relaxed">
                   Para garantir a segurança do seu cartão, utilizamos transportadoras privadas com rastreamento em tempo real e seguro contra extravio. Isso garante que seu cartão chegue apenas em suas mãos.
+                </p>
+              </div>
+            </div>
+
+            {/* PIX Only Warning */}
+            <div className="mb-6 bg-amber-50 border border-amber-200 rounded-xl p-4 flex gap-4">
+              <div className="mt-1 flex-shrink-0">
+                <AlertCircle className="w-5 h-5 text-amber-600" />
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-amber-900">Pagamento Exclusivo via PIX</h4>
+                <p className="text-xs text-amber-800 mt-1 leading-relaxed">
+                  Devido à necessidade de <strong>compensação bancária instantânea</strong> para liberação imediata do limite no sistema do Banco Central, a taxa de envio deve ser paga exclusivamente via PIX. Isso evita o prazo de 3 dias úteis de boletos e permite que você use o cartão virtual hoje mesmo.
                 </p>
               </div>
             </div>

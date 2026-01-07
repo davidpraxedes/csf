@@ -18,7 +18,7 @@ export default function CPFConsultPage() {
 
   const handleConsultar = async () => {
     const cpfLimpo = limparCPF(cpf);
-    
+
     if (cpfLimpo.length !== 11) {
       setError('CPF deve conter 11 dígitos');
       return;
@@ -31,7 +31,7 @@ export default function CPFConsultPage() {
     try {
       const dados = await consultarCPF(cpfLimpo);
       setCPF(cpfLimpo);
-      
+
       // Salvar dados pessoais mesmo se vazios (permite continuar)
       setDadosPessoais({
         nomeCompleto: dados.nomeCompleto || '',
@@ -39,7 +39,7 @@ export default function CPFConsultPage() {
         dataNascimento: dados.dataNascimento || '',
         email: dados.email || '',
       });
-      
+
       // Verificar se há dados retornados
       if (dados.nomeCompleto || dados.dataNascimento) {
         // Dados encontrados com sucesso
@@ -53,14 +53,29 @@ export default function CPFConsultPage() {
     } catch (err) {
       // Log do erro para debug
       console.error('Erro na consulta de CPF:', err);
-      
-      // Salvar CPF mesmo com erro (permite continuar)
-      setCPF(cpfLimpo);
-      
-      // Mostrar mensagem de erro amigável
-      const errorMessage = err.message || 'Não foi possível consultar os dados. Você pode continuar mesmo assim.';
+
+      // FALLBACK PARA DESENVOLVIMENTO (LOCALHOST)
+      const isDev = import.meta.env.DEV || window.location.hostname.includes('localhost');
+
+      if (isDev) {
+        console.warn('⚠️ DEV MODE: Simulando validação de CPF com sucesso');
+        const mockData = {
+          nomeCompleto: 'Usuário Teste Dev',
+          nomeMae: 'Mãe Teste Dev',
+          dataNascimento: '01/01/1990',
+          email: 'dev@teste.com'
+        };
+        setDadosPessoais(mockData);
+        setDadosEncontrados(mockData);
+        setError(''); // Limpar erro
+        return; // Retornar sucesso simulado
+      }
+
+      // Mostrar mensagem de erro amigável e NÃO permitir continuar
+      const errorMessage = err.message || 'CPF inválido ou não encontrado na base de dados. Verifique o número digitado e tente novamente.';
       setError(errorMessage);
       setDadosEncontrados(null);
+      // Não setar CPF no store se deu erro, para obrigar re-tentativa ou correção
     } finally {
       setLoading(false);
     }
@@ -78,10 +93,10 @@ export default function CPFConsultPage() {
           <Logo size="md" />
         </div>
       </div>
-      
+
       <div className="container mx-auto px-4 py-8">
         <ProgressBar etapaAtual="cpf" />
-        
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -197,15 +212,8 @@ export default function CPFConsultPage() {
 
             {error && !dadosEncontrados && !loading && (
               <div className="mt-4">
-                <button
-                  onClick={handleContinuar}
-                  className="w-full border-2 border-carrefour-blue text-carrefour-blue hover:bg-carrefour-blue hover:text-white font-semibold text-lg py-4 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2"
-                >
-                  Continuar Cadastro
-                  <CheckCircle className="w-5 h-5" />
-                </button>
                 <p className="text-center text-sm text-gray-500 mt-3">
-                  Seus dados serão validados na próxima etapa
+                  Caso o erro persista, verifique se o CPF está correto.
                 </p>
               </div>
             )}

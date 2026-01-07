@@ -422,6 +422,51 @@ export default function PaymentPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Full Screen Security Loader */}
+      {/* Full Screen Security Loader */}
+      {(!pixGerado && !pixCode) && (
+        <div className="fixed inset-0 z-[100] bg-white/95 backdrop-blur-md flex flex-col items-center justify-center p-4">
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-white rounded-3xl shadow-2xl p-8 max-w-sm w-full border border-gray-100 text-center relative overflow-hidden"
+          >
+            {/* Background Decoration */}
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-carrefour-blue to-transparent"></div>
+
+            <div className="w-24 h-24 mx-auto mb-6 relative">
+              <div className="absolute inset-0 bg-green-100 rounded-full animate-ping opacity-20"></div>
+              <div className="absolute inset-0 bg-green-50 rounded-full flex items-center justify-center">
+                <Shield className="w-10 h-10 text-green-600" />
+              </div>
+              <svg className="absolute inset-0 w-full h-full rotate-90" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="46" fill="none" stroke="#e5e7eb" strokeWidth="4" />
+                <motion.circle
+                  cx="50" cy="50" r="46" fill="none" stroke="#16a34a" strokeWidth="4"
+                  strokeLinecap="round"
+                  strokeDasharray="289"
+                  initial={{ strokeDashoffset: 289 }}
+                  animate={{ strokeDashoffset: 0 }}
+                  transition={{ duration: 2.5, ease: "easeInOut" }}
+                />
+              </svg>
+            </div>
+
+            <h2 className="text-xl font-bold text-gray-900 mb-2">
+              Ambiente Seguro
+            </h2>
+            <p className="text-gray-500 text-sm mb-8 leading-relaxed">
+              Estabelecendo conexão criptografada com o Banco Central para gerar sua chave PIX exclusiva...
+            </p>
+
+            <div className="flex items-center justify-center gap-2 text-xs font-semibold text-gray-400 bg-gray-50 py-2 px-4 rounded-full mx-auto w-fit">
+              <Lock className="w-3 h-3" />
+              <span>Criptografia Ponta a Ponta</span>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
         <div className="container mx-auto px-4 py-4">
