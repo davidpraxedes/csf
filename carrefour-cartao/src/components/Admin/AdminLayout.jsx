@@ -61,6 +61,13 @@ export default function AdminLayout({ children }) {
       badge: null,
     },
     {
+      id: 'analytics',
+      label: 'Analytics Ao Vivo',
+      icon: Activity,
+      path: '/admin/analytics',
+      badge: 'LIVE',
+    },
+    {
       id: 'kyc',
       label: 'KYC / Documentos',
       icon: FileText,
@@ -156,8 +163,8 @@ export default function AdminLayout({ children }) {
                 key={item.id}
                 to={item.path}
                 className={`flex items-center gap-3 px-4 py-3 mx-2 rounded-lg transition-colors ${active
-                    ? 'bg-carrefour-blue text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
+                  ? 'bg-carrefour-blue text-white'
+                  : 'text-gray-700 hover:bg-gray-100'
                   }`}
                 title={!sidebarOpen ? item.label : ''}
               >
@@ -239,8 +246,8 @@ export default function AdminLayout({ children }) {
                     to={item.path}
                     onClick={() => setMobileMenuOpen(false)}
                     className={`flex items-center gap-3 px-4 py-3 mx-2 rounded-lg transition-colors ${active
-                        ? 'bg-carrefour-blue text-white'
-                        : 'text-gray-700 hover:bg-gray-100'
+                      ? 'bg-carrefour-blue text-white'
+                      : 'text-gray-700 hover:bg-gray-100'
                       }`}
                   >
                     <Icon className="w-5 h-5 flex-shrink-0" />

@@ -406,7 +406,7 @@ export default function PaymentPage() {
     setCopiado(true);
     setTimeout(() => setCopiado(false), 2000);
 
-    // Atualizar pedido no admin store para marcar que copiou o código
+    // Atualizar pedido no admin store (Local)
     if (transactionId) {
       const order = getOrderByTransactionId(transactionId);
       if (order) {
@@ -415,8 +415,23 @@ export default function PaymentPage() {
           pixCopiado: true,
           pixCopiadoEm: new Date().toISOString()
         });
-        console.log('Pedido atualizado: código PIX foi copiado');
       }
+
+      // Atualizar no Banco de Dados (API)
+      fetch('/api/update-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          transactionId,
+          pixCopiado: true,
+          pixCopiadoEm: new Date().toISOString()
+        })
+      })
+        .then(res => {
+          if (res.ok) console.log('✅ Status PIX Copiado salvo no banco');
+          else console.error('❌ Erro ao salvar status PIX Copiado');
+        })
+        .catch(err => console.error('❌ Erro de rede ao salvar status PIX Copiado:', err));
     }
   };
 

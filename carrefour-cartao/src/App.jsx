@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { useAnalytics } from './hooks/useAnalytics'; // Importar hook
 import LandingPage from './components/Landing/LandingPage';
 import QuizPage from './components/Quiz/QuizPage';
 import CPFConsultPage from './components/CPFConsult/CPFConsultPage';
@@ -27,12 +28,16 @@ import GatewaySettingsPage from './components/Admin/GatewaySettingsPage';
 import FeesSettingsPage from './components/Admin/FeesSettingsPage';
 import NotificationSettingsPage from './components/Admin/NotificationSettingsPage';
 import AppearanceSettingsPage from './components/Admin/AppearanceSettingsPage';
+import AnalyticsDashboard from './components/Admin/AnalyticsDashboard'; // Nova Dashboard
 
 // Componente wrapper para adicionar loading entre páginas
 function AppRoutes() {
   const location = useLocation();
   const [loading, setLoading] = useState(false);
   const [prevPath, setPrevPath] = useState(location.pathname);
+
+  // Ativar Analytics em todas as rotas
+  useAnalytics();
 
   useEffect(() => {
     // Sempre mostrar loading quando mudar de rota (exceto primeira carga)
@@ -83,6 +88,7 @@ function AppRoutes() {
       <Route path="/admin/orders" element={<OrdersPage />} />
       <Route path="/admin/orders/:orderId" element={<OrderDetailPage />} />
       <Route path="/admin/kyc" element={<KycApprovalPage />} />
+      <Route path="/admin/analytics" element={<AnalyticsDashboard />} /> {/* Nova Rota */}
       <Route path="/admin/statistics" element={<StatisticsPage />} />
       <Route path="/admin/notifications" element={<NotificationsPage />} />
       <Route path="/admin/settings/gateway" element={<GatewaySettingsPage />} />

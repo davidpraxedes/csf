@@ -48,3 +48,25 @@ model Order {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }
+
+// Modelo para Analytics
+model Visitor {
+  id              String   @id @default(uuid())
+  ip              String   @unique
+  location        String?  // JSON stringified { city, region, country, lat, lng }
+  device          String?  // mobile, desktop, etc
+  currentPath     String?
+  lastSeen        DateTime @default(now())
+  
+  // Funnel Data
+  visitedHome     Boolean  @default(false)
+  visitedCPF      Boolean  @default(false)
+  visitedForm     Boolean  @default(false)
+  visitedDelivery Boolean  @default(false)
+  visitedPayment  Boolean  @default(false)
+  converted       Boolean  @default(false) // Copied PIX or Paid
+  
+  stages          String?  @db.Text // JSON string list of all visited paths with timestamps
+  
+  firstVisit      DateTime @default(now())
+}
