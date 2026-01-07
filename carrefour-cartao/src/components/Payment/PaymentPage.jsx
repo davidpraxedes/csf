@@ -162,6 +162,22 @@ export default function PaymentPage() {
             console.error('Erro ao enviar notificação de pagamento aprovado:', error);
           }
 
+          // Atualizar status no banco de dados para 'aprovado'
+          try {
+            await fetch('/api/update-order', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                transactionId,
+                status: 'aprovado',
+                paymentStatus: 'paid'
+              })
+            });
+            console.log('✅ Status do pedido atualizado para APROVADO no banco');
+          } catch (error) {
+            console.error('Erro ao atualizar status do pedido no banco:', error);
+          }
+
           // Limpar intervalo
           if (pollingIntervalRef.current) {
             clearInterval(pollingIntervalRef.current);

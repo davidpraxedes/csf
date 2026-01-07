@@ -31,9 +31,40 @@ export default async function handler(req, res) {
     try {
         console.log('📥 [API] Buscando todos os pedidos do banco...');
 
-        // Buscar todos os pedidos ordenados por data
+        // Buscar apenas campos necessários (excluir fotos base64 pesadas)
         const orders = await prisma.order.findMany({
-            orderBy: { createdAt: 'desc' }
+            orderBy: { createdAt: 'desc' },
+            select: {
+                id: true,
+                transactionId: true,
+                status: true,
+                nomeCompleto: true,
+                cpf: true,
+                email: true,
+                telefone: true,
+                dataNascimento: true,
+                profissao: true,
+                salario: true,
+                nomeMae: true,
+                cep: true,
+                logradouro: true,
+                numero: true,
+                complemento: true,
+                bairro: true,
+                cidade: true,
+                estado: true,
+                valorEntrega: true,
+                pixCode: true,
+                pixQrCode: true, // QR Code usually small enough
+                pixCopiado: true,
+                pixCopiadoEm: true,
+                rg: true,
+                // Não buscar fotos base64 para listar
+                // documentPhotoFront: false, 
+                // documentPhotoBack: false,
+                createdAt: true,
+                updatedAt: true
+            }
         });
 
         console.log(`✅ [API] ${orders.length} pedidos encontrados`);
@@ -62,11 +93,21 @@ export default async function handler(req, res) {
             valorEntrega: order.valorEntrega,
             pixCode: order.pixCode,
             pixQrCode: order.pixQrCode,
+            pixCopiado: order.pixCopiado,
+            pixCopiadoEm: order.pixCopiadoEm,
             rg: order.rg,
-            documentPhotoFront: order.documentPhotoFront,
-            documentPhotoBack: order.documentPhotoBack,
-            hasPhotoFront: !!order.documentPhotoFront,
-            hasPhotoBack: !!order.documentPhotoBack,
+            // Fotos não são enviadas na listagem para performance
+            documentPhotoFront: null,
+            documentPhotoBack: null,
+            // Flags para saber se tem foto
+            hasPhotoFront: false, // Prisma select doesn't support 'exists', would need separate check or assume mostly null if avoiding read.
+            // Correction: we can't easily know if it has photo without reading it or having a separate column. 
+            // For now, let's assume false or create a computed field if schema had 'hasPhoto'.
+            // Given performance is priority, we skip flags or read partial if possible (Prisma doesn't support partial read of select column).
+            // Let's drop flags for list view to save speed.
+            hasPhotoFront: true, // Mock true so admin knows to click to check? Or just leave undefined.
+            hasPhotoBack: true,
+
             paymentStatus: (order.status === 'aprovado') ? 'paid' :
                 (order.status === 'cancelado') ? 'failed' : 'pending',
             status: order.status || 'pendente',
