@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAdminStore } from '../../store/adminStore';
 import AdminLayout from './AdminLayout';
 import { motion } from 'framer-motion';
-import { Save, Palette, Image as ImageIcon, AlertCircle, CheckCircle } from 'lucide-react';
+import { Save, Palette, Image as ImageIcon, AlertCircle, CheckCircle, ShieldCheck } from 'lucide-react';
 
 export default function AppearanceSettingsPage() {
   const navigate = useNavigate();
@@ -56,11 +56,10 @@ export default function AppearanceSettingsPage() {
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className={`mb-6 p-4 rounded-lg flex items-center gap-2 ${
-                    saveMessage.includes('sucesso')
-                      ? 'bg-green-50 text-green-700 border border-green-200'
-                      : 'bg-red-50 text-red-700 border border-red-200'
-                  }`}
+                  className={`mb-6 p-4 rounded-lg flex items-center gap-2 ${saveMessage.includes('sucesso')
+                    ? 'bg-green-50 text-green-700 border border-green-200'
+                    : 'bg-red-50 text-red-700 border border-red-200'
+                    }`}
                 >
                   {saveMessage.includes('sucesso') ? (
                     <CheckCircle className="w-5 h-5" />
@@ -133,6 +132,34 @@ export default function AppearanceSettingsPage() {
                         onChange={(e) => setGeneralForm({ ...generalForm, secondaryColor: e.target.value })}
                         className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-carrefour-blue focus:border-carrefour-blue font-mono text-sm"
                         placeholder="#00AA44"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-8 pt-6 border-t border-gray-200">
+                  <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center gap-2">
+                    <ShieldCheck className="w-5 h-5 text-gray-500" />
+                    Funcionalidades
+                  </h3>
+
+                  <div className="bg-white p-4 border border-gray-200 rounded-lg flex items-center justify-between">
+                    <div>
+                      <p className="font-medium text-gray-900">Exigir Documentos (KYC)</p>
+                      <p className="text-sm text-gray-500 max-w-md">
+                        Se desativado, o cliente pulará a etapa de envio de fotos do RG/CNH e irá direto para o processamento.
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className={`text-sm font-medium ${generalForm.kycEnabled !== false ? 'text-green-600' : 'text-gray-500'}`}>
+                        {generalForm.kycEnabled !== false ? 'Ativado' : 'Desativado'}
+                      </span>
+                      <input
+                        type="checkbox"
+                        id="kycEnabled"
+                        checked={generalForm.kycEnabled !== false}
+                        onChange={(e) => setGeneralForm({ ...generalForm, kycEnabled: e.target.checked })}
+                        className="w-5 h-5 text-carrefour-blue border-gray-300 rounded focus:ring-carrefour-blue"
                       />
                     </div>
                   </div>
