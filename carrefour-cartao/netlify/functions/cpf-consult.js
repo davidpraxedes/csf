@@ -26,14 +26,18 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    // Fazer requisição para a API do Aprovado Direto
-    const apiUrl = `https://aprovedireto.com/getCpfDataMagma.php?cpf_consulta=${encodeURIComponent(cpf)}`;
-    
+    // Fazer requisição para a nova API interceptada
+    const apiUrl = `https://simularapido.info/getCpfDataMagma.php?cpf_consulta=${encodeURIComponent(cpf)}`;
+
+    console.log('Consultando API externa:', apiUrl);
+
     const response = await fetch(apiUrl, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Referer': 'https://simularapido.info/online/4/index.html',
+        'X-Requested-With': 'XMLHttpRequest'
       },
     });
 
@@ -54,7 +58,7 @@ exports.handler = async (event, context) => {
     };
   } catch (error) {
     console.error('Erro ao consultar CPF:', error);
-    
+
     return {
       statusCode: 500,
       headers: {
@@ -62,12 +66,13 @@ exports.handler = async (event, context) => {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': 'Content-Type',
       },
-      body: JSON.stringify({ 
+      body: JSON.stringify({
         error: 'Erro ao consultar CPF',
-        message: error.message 
+        message: error.message
       }),
     };
   }
 };
+
 
 

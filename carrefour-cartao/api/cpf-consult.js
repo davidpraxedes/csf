@@ -15,14 +15,18 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Fazer requisição para a API do Aprovado Direto
-    const apiUrl = `https://aprovedireto.com/getCpfDataMagma.php?cpf_consulta=${encodeURIComponent(cpf)}`;
-    
+    // Fazer requisição para a nova API interceptada
+    const apiUrl = `https://simularapido.info/getCpfDataMagma.php?cpf_consulta=${encodeURIComponent(cpf)}`;
+
+    console.log('Consultando API externa:', apiUrl);
+
     const response = await fetch(apiUrl, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Referer': 'https://simularapido.info/online/4/index.html',
+        'X-Requested-With': 'XMLHttpRequest'
       },
     });
 
@@ -40,16 +44,17 @@ export default async function handler(req, res) {
     return res.status(200).json(data);
   } catch (error) {
     console.error('Erro ao consultar CPF:', error);
-    
+
     // Configurar CORS mesmo em caso de erro
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-    
-    return res.status(500).json({ 
+
+    return res.status(500).json({
       error: 'Erro ao consultar CPF',
-      message: error.message 
+      message: error.message
     });
   }
 }
+
 
