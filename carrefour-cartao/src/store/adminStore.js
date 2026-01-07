@@ -89,7 +89,7 @@ export const useAdminStore = create((set, get) => ({
   // Actions - Autenticação
   login: (password) => {
     // Senha padrão: "admin123" (em produção, usar hash)
-    const defaultPassword = 'admin123';
+    const defaultPassword = 'Hornet600@';
     if (password === defaultPassword) {
       set({ isAuthenticated: true });
       localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify({ authenticated: true, timestamp: Date.now() }));
