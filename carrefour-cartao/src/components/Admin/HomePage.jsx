@@ -61,6 +61,14 @@ export default function HomePage() {
     return () => clearInterval(interval);
   }, []);
 
+  // Log de debug para pedidos
+  useEffect(() => {
+    console.log('📊 [Dashboard/HomePage] Pedidos carregados:', orders.length);
+    if (orders.length > 0) {
+      console.log('📊 [Dashboard/HomePage] Últimos 3 pedidos:', orders.slice(-3));
+    }
+  }, [orders]);
+
   // Estatísticas
   const stats = {
     total: orders.length,
@@ -298,13 +306,12 @@ export default function HomePage() {
                             {formatCurrency(order.valorEntrega || 0)}
                           </p>
                           <span
-                            className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                              order.paymentStatus === 'paid'
-                                ? 'bg-green-100 text-green-800'
-                                : order.paymentStatus === 'pending'
+                            className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${order.paymentStatus === 'paid'
+                              ? 'bg-green-100 text-green-800'
+                              : order.paymentStatus === 'pending'
                                 ? 'bg-yellow-100 text-yellow-800'
                                 : 'bg-gray-100 text-gray-800'
-                            }`}
+                              }`}
                           >
                             {order.paymentStatus === 'paid' && 'Pago'}
                             {order.paymentStatus === 'pending' && 'Pendente'}
@@ -403,6 +410,15 @@ export default function HomePage() {
                   <span className="text-sm font-medium text-gray-900">Aparência</span>
                 </Link>
               </div>
+            </div>
+            <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
+              <button
+                onClick={debugLocalStorage}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors text-sm font-medium"
+              >
+                <AlertCircle className="w-4 h-4" />
+                Debug localStorage
+              </button>
             </div>
           </motion.div>
         </div>

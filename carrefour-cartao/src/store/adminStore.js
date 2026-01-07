@@ -10,9 +10,18 @@ const STORAGE_KEY_AUTH = 'admin_auth';
 const getStoredOrders = () => {
   try {
     const stored = localStorage.getItem(STORAGE_KEY_ORDERS);
-    return stored ? JSON.parse(stored) : [];
+    console.log('📂 [AdminStore] Carregando pedidos do localStorage...');
+
+    if (!stored) {
+      console.log('ℹ️ [AdminStore] Nenhum pedido encontrado no localStorage');
+      return [];
+    }
+
+    const orders = JSON.parse(stored);
+    console.log(`✅ [AdminStore] ${orders.length} pedidos carregados do localStorage`);
+    return orders;
   } catch (e) {
-    console.error('Erro ao ler pedidos do localStorage:', e);
+    console.error('❌ [AdminStore] Erro ao ler pedidos do localStorage:', e);
     return [];
   }
 };
@@ -79,100 +88,122 @@ export const useAdminStore = create((set, get) => ({
 
   // Actions - Autenticação
   login: (password) => {
-        // Senha padrão: "admin123" (em produção, usar hash)
-        const defaultPassword = 'admin123';
-        if (password === defaultPassword) {
-          set({ isAuthenticated: true });
-          localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify({ authenticated: true, timestamp: Date.now() }));
-          return true;
-        }
-        return false;
+    // Senha padrão: "admin123" (em produção, usar hash)
+    const defaultPassword = 'admin123';
+    if (password === defaultPassword) {
+      set({ isAuthenticated: true });
+      localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify({ authenticated: true, timestamp: Date.now() }));
+      return true;
+    }
+    return false;
   },
 
   logout: () => {
-        set({ isAuthenticated: false });
-        localStorage.removeItem(STORAGE_KEY_AUTH);
+    set({ isAuthenticated: false });
+    localStorage.removeItem(STORAGE_KEY_AUTH);
   },
 
   checkAuth: () => {
-        try {
-          const auth = localStorage.getItem(STORAGE_KEY_AUTH);
-          if (auth) {
-            const { authenticated, timestamp } = JSON.parse(auth);
-            // Sessão expira em 24 horas
-            if (authenticated && Date.now() - timestamp < 24 * 60 * 60 * 1000) {
-              set({ isAuthenticated: true });
-              return true;
-            }
-          }
-        } catch (e) {
-          console.error('Erro ao verificar autenticação:', e);
+    try {
+      const auth = localStorage.getItem(STORAGE_KEY_AUTH);
+      if (auth) {
+        const { authenticated, timestamp } = JSON.parse(auth);
+        // Sessão expira em 24 horas
+        if (authenticated && Date.now() - timestamp < 24 * 60 * 60 * 1000) {
+          set({ isAuthenticated: true });
+          return true;
         }
-        return false;
+      }
+    } catch (e) {
+      console.error('Erro ao verificar autenticação:', e);
+    }
+    return false;
   },
 
   changePassword: (newPassword) => {
-        // Em produção, fazer hash da senha
-        set({ adminPassword: newPassword });
-        return true;
+    // Em produção, fazer hash da senha
+    set({ adminPassword: newPassword });
+    return true;
   },
 
   // Actions - Pedidos
   addOrder: (orderData) => {
-        const newOrder = {
-          id: `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-          ...orderData,
-          createdAt: new Date().toISOString(),
-          status: 'pending',
-          paymentStatus: 'pending',
-        };
-        const orders = [...get().orders, newOrder];
-        set({ orders });
-        localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(orders));
-        return newOrder;
+    console.log('📝 [AdminStore] Adicionando novo pedido:', {
+      transactionId: orderData.transactionId,
+      nomeCompleto: orderData.nomeCompleto,
+      valorEntrega: orderData.valorEntrega
+    });
+
+    const newOrder = {
+      id: `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      ...orderData,
+      createdAt: new Date().toISOString(),
+      status: 'pending',
+      paymentStatus: 'pending',
+    };
+
+    const orders = [...get().orders, newOrder];
+    set({ orders });
+
+    // Salvar no localStorage com verificação
+    try {
+      localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(orders));
+      console.log('✅ [AdminStore] Pedido salvo no localStorage. Total de pedidos:', orders.length);
+      console.log('✅ [AdminStore] Pedido ID:', newOrder.id);
+
+      // Verificar se foi salvo corretamente
+      const saved = localStorage.getItem(STORAGE_KEY_ORDERS);
+      if (!saved) {
+        console.error('❌ [AdminStore] ERRO: localStorage não salvou o pedido!');
+      }
+    } catch (error) {
+      console.error('❌ [AdminStore] Erro ao salvar no localStorage:', error);
+    }
+
+    return newOrder;
   },
 
   updateOrder: (orderId, updates) => {
-        const orders = get().orders.map((order) =>
-          order.id === orderId ? { ...order, ...updates, updatedAt: new Date().toISOString() } : order
-        );
-        set({ orders });
-        localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(orders));
+    const orders = get().orders.map((order) =>
+      order.id === orderId ? { ...order, ...updates, updatedAt: new Date().toISOString() } : order
+    );
+    set({ orders });
+    localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(orders));
   },
 
   deleteOrder: (orderId) => {
-        const orders = get().orders.filter((order) => order.id !== orderId);
-        set({ orders });
-        localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(orders));
+    const orders = get().orders.filter((order) => order.id !== orderId);
+    set({ orders });
+    localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(orders));
   },
 
   getOrder: (orderId) => {
-        return get().orders.find((order) => order.id === orderId);
+    return get().orders.find((order) => order.id === orderId);
   },
 
   getOrderByTransactionId: (transactionId) => {
-        return get().orders.find((order) => order.transactionId === transactionId);
+    return get().orders.find((order) => order.transactionId === transactionId);
   },
 
   // Actions - Configurações
   updateSettings: (category, updates) => {
-        const settings = {
-          ...get().settings,
-          [category]: {
-            ...get().settings[category],
-            ...updates,
-          },
-        };
-        set({ settings });
-        localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(settings));
+    const settings = {
+      ...get().settings,
+      [category]: {
+        ...get().settings[category],
+        ...updates,
+      },
+    };
+    set({ settings });
+    localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(settings));
   },
 
   updateGatewaySettings: (updates) => {
-        get().updateSettings('gateway', updates);
+    get().updateSettings('gateway', updates);
   },
 
   updateFeeSettings: (updates) => {
-        get().updateSettings('fees', updates);
+    get().updateSettings('fees', updates);
   },
 
   updateNotificationSettings: (notificationType, updates) => {
@@ -194,54 +225,54 @@ export const useAdminStore = create((set, get) => ({
   },
 
   updateGeneralSettings: (updates) => {
-        get().updateSettings('general', updates);
+    get().updateSettings('general', updates);
   },
 
   // Actions - Notificações
   sendNotification: async (orderId, notificationType = 'pendente') => {
-        const order = get().getOrder(orderId);
-        if (!order) return false;
+    const order = get().getOrder(orderId);
+    if (!order) return false;
 
-        const settings = get().settings;
-        const notificationConfig = notificationType === 'pendente'
-          ? settings.notifications.notificationPendente
-          : settings.notifications.notificationAprovado;
+    const settings = get().settings;
+    const notificationConfig = notificationType === 'pendente'
+      ? settings.notifications.notificationPendente
+      : settings.notifications.notificationAprovado;
 
-        if (!notificationConfig.enabled) {
-          console.log('Notificação desabilitada');
-          return false;
-        }
+    if (!notificationConfig.enabled) {
+      console.log('Notificação desabilitada');
+      return false;
+    }
 
-        try {
-          const { pushcutApiKey, pushcutBaseUrl } = settings.notifications;
-          const url = `${pushcutBaseUrl}/${pushcutApiKey}/notifications/${encodeURIComponent(notificationConfig.name)}`;
+    try {
+      const { pushcutApiKey, pushcutBaseUrl } = settings.notifications;
+      const url = `${pushcutBaseUrl}/${pushcutApiKey}/notifications/${encodeURIComponent(notificationConfig.name)}`;
 
-          // Substituir variáveis no template
-          const text = notificationConfig.textTemplate
-            .replace('{valor}', order.valorEntrega?.toFixed(2).replace('.', ',') || '0,00')
-            .replace('{transactionId}', order.transactionId?.substring(0, 8) || 'N/A')
-            .replace('{nome}', order.nomeCompleto || 'Cliente')
-            .replace('{cpf}', order.cpf || 'N/A');
+      // Substituir variáveis no template
+      const text = notificationConfig.textTemplate
+        .replace('{valor}', order.valorEntrega?.toFixed(2).replace('.', ',') || '0,00')
+        .replace('{transactionId}', order.transactionId?.substring(0, 8) || 'N/A')
+        .replace('{nome}', order.nomeCompleto || 'Cliente')
+        .replace('{cpf}', order.cpf || 'N/A');
 
-          const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              title: notificationConfig.title,
-              text: text,
-            }),
-          });
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: notificationConfig.title,
+          text: text,
+        }),
+      });
 
-          if (response.ok) {
-            console.log('Notificação enviada com sucesso');
-            return true;
-          }
-        } catch (error) {
-          console.error('Erro ao enviar notificação:', error);
-        }
-        return false;
+      if (response.ok) {
+        console.log('Notificação enviada com sucesso');
+        return true;
+      }
+    } catch (error) {
+      console.error('Erro ao enviar notificação:', error);
+    }
+    return false;
   },
 }));
 

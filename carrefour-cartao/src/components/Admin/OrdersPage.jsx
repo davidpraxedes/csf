@@ -28,6 +28,19 @@ export default function OrdersPage() {
     }
   }, [checkAuth, navigate]);
 
+  // Log de debug para pedidos
+  useEffect(() => {
+    console.log('📋 [Dashboard/OrdersPage] Pedidos carregados:', orders.length);
+    if (orders.length > 0) {
+      console.log('📋 [Dashboard/OrdersPage] Pedidos:', orders.map(o => ({
+        id: o.id,
+        nome: o.nomeCompleto,
+        status: o.paymentStatus,
+        valor: o.valorEntrega
+      })));
+    }
+  }, [orders]);
+
   // Filtrar pedidos
   const filteredOrders = orders
     .filter((order) => {

