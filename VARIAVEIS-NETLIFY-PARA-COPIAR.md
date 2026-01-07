@@ -100,3 +100,4 @@ VITE_FACEBOOK_PIXEL_ID = 1216763333745021
 
 ⚠️ **Lembre-se**: Substitua a chave `sk_live_SUA_CHAVE_REAL_AQUI` pela sua chave real do VennoxPay!
 
+

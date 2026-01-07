@@ -55,3 +55,4 @@ VITE_FACEBOOK_PIXEL_ID=1216763333745021
 - ✅ As variáveis são sensíveis - não compartilhe sua chave secreta
 - ✅ Você pode adicionar uma por vez ou todas de uma vez no painel do Vercel
 
+
