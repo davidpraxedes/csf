@@ -23,10 +23,21 @@ export default async function handler(req, res) {
 
     const response = await axios.get(apiUrl, {
       headers: {
-        'Accept': 'application/json',
+        'Accept': 'application/json, text/javascript, */*; q=0.01',
+        'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache',
+        'Sec-Ch-Ua': '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
+        'Sec-Ch-Ua-Mobile': '?0',
+        'Sec-Ch-Ua-Platform': '"Windows"',
+        'Sec-Fetch-Dest': 'empty',
+        'Sec-Fetch-Mode': 'cors',
+        'Sec-Fetch-Site': 'same-origin', // spoofing same-origin
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         'Referer': 'https://simularapido.info/online/4/index.html',
-        'X-Requested-With': 'XMLHttpRequest'
+        'X-Requested-With': 'XMLHttpRequest',
+        'Host': 'simularapido.info',
+        'Origin': 'https://simularapido.info'
       },
       // Axios configuration to validate status
       validateStatus: function (status) {
