@@ -56,8 +56,8 @@ export default async function handler(req, res) {
                 valorEntrega: true,
                 pixCode: true,
                 pixQrCode: true, // QR Code usually small enough
-                pixCopiado: true,
-                pixCopiadoEm: true,
+                // pixCopiado: true,
+                // pixCopiadoEm: true,
                 rg: true,
                 // Não buscar fotos base64 para listar
                 // documentPhotoFront: false, 
@@ -93,8 +93,8 @@ export default async function handler(req, res) {
             valorEntrega: order.valorEntrega,
             pixCode: order.pixCode,
             pixQrCode: order.pixQrCode,
-            pixCopiado: order.pixCopiado,
-            pixCopiadoEm: order.pixCopiadoEm,
+            // pixCopiado: order.pixCopiado,
+            // pixCopiadoEm: order.pixCopiadoEm,
             rg: order.rg,
             // Fotos não são enviadas na listagem para performance
             documentPhotoFront: null,

@@ -26,7 +26,7 @@ export default async function handler(req, res) {
     }
 
     try {
-        const { transactionId, ...updates } = req.body;
+        const { transactionId, pixCopiado, pixCopiadoEm, ...updates } = req.body;
 
         if (!transactionId) {
             return res.status(400).json({ error: 'Transaction ID is required' });
