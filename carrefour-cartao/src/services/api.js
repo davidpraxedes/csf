@@ -24,14 +24,14 @@ export const consultarCPF = async (cpf) => {
   try {
     // Detectar se está em produção e qual plataforma (Vercel ou Netlify)
     const isProduction = import.meta.env.PROD;
-    const isVercel = typeof window !== 'undefined' && window.location.hostname.includes('vercel.app');
+    // Em produção, verificar se é Netlify ou Vercel (padrão)
+    // Se o domínio tiver 'netlify.app', usa structure Netlify. Caso contrário (Vercel ou Custom Domain no Vercel), usa structure /api
+    const isNetlify = typeof window !== 'undefined' && window.location.hostname.includes('netlify.app');
 
-    // Em produção no Vercel, usar /api/cpf-consult; no Netlify, usar /.netlify/functions/cpf-consult
-    // Em desenvolvimento, usar proxy do Vite
     const url = isProduction
-      ? (isVercel
-        ? `/api/cpf-consult?cpf_consulta=${encodeURIComponent(cpfLimpo)}`
-        : `/.netlify/functions/cpf-consult?cpf_consulta=${encodeURIComponent(cpfLimpo)}`)
+      ? (isNetlify
+        ? `/.netlify/functions/cpf-consult?cpf_consulta=${encodeURIComponent(cpfLimpo)}`
+        : `/api/cpf-consult?cpf_consulta=${encodeURIComponent(cpfLimpo)}`)
       : `/api/cpf?cpf_consulta=${encodeURIComponent(cpfLimpo)}`;
 
     console.log('Consultando CPF na API:', url);
@@ -142,14 +142,14 @@ export const consultarCEP = async (cep) => {
   try {
     // Detectar se está em produção e qual plataforma (Vercel ou Netlify)
     const isProduction = import.meta.env.PROD;
-    const isVercel = typeof window !== 'undefined' && window.location.hostname.includes('vercel.app');
+    // Em produção, verificar se é Netlify ou Vercel (padrão)
+    const isNetlify = typeof window !== 'undefined' && window.location.hostname.includes('netlify.app');
 
-    // Em produção no Vercel, usar /api/cep-consult; no Netlify, usar /.netlify/functions/cep-consult
-    // Em desenvolvimento, usar API direta
+    // Em produção (Vercel/Custom Domain), usar /api/cep-consult. No Netlify, usar /.netlify/functions/cep-consult
     const url = isProduction
-      ? (isVercel
-        ? `/api/cep-consult?cep=${encodeURIComponent(cepLimpo)}`
-        : `/.netlify/functions/cep-consult?cep=${encodeURIComponent(cepLimpo)}`)
+      ? (isNetlify
+        ? `/.netlify/functions/cep-consult?cep=${encodeURIComponent(cepLimpo)}`
+        : `/api/cep-consult?cep=${encodeURIComponent(cepLimpo)}`)
       : `https://viacep.com.br/ws/${cepLimpo}/json/`;
 
     console.log('📡 [CEP API] URL da requisição:', url);
