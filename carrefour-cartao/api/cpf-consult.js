@@ -1,5 +1,6 @@
 // Vercel Serverless Function para consulta de CPF (resolve CORS)
 // Endpoint: /api/cpf-consult
+import axios from 'axios';
 
 export default async function handler(req, res) {
   // Permitir apenas GET
@@ -20,21 +21,20 @@ export default async function handler(req, res) {
 
     console.log('Consultando API externa:', apiUrl);
 
-    const response = await fetch(apiUrl, {
-      method: 'GET',
+    const response = await axios.get(apiUrl, {
       headers: {
         'Accept': 'application/json',
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         'Referer': 'https://simularapido.info/online/4/index.html',
         'X-Requested-With': 'XMLHttpRequest'
       },
+      // Axios configuration to validate status
+      validateStatus: function (status) {
+        return status >= 200 && status < 300; // default
+      },
     });
 
-    if (!response.ok) {
-      throw new Error(`API retornou status ${response.status}`);
-    }
-
-    const data = await response.json();
+    const data = response.data;
 
     // Configurar CORS
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -43,7 +43,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json(data);
   } catch (error) {
-    console.error('Erro ao consultar CPF:', error);
+    console.error('Erro ao consultar CPF:', error.message);
 
     // Configurar CORS mesmo em caso de erro
     res.setHeader('Access-Control-Allow-Origin', '*');
