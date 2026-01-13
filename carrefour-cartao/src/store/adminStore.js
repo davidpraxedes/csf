@@ -120,13 +120,53 @@ const getDefaultSettings = () => ({
 export const useAdminStore = create((set, get) => ({
   // Estado de autenticação
   isAuthenticated: false,
-  adminPassword: null, // Hash da senha (em produção, usar bcrypt)
+  adminPassword: null,
 
   // Pedidos
   orders: getStoredOrders(),
 
-  // Configurações
+  // Configurações e Estado de Carga
   settings: getStoredSettings(),
+  isLoadingSettings: false,
+
+  // ACTIONS
+
+  // Inicializar store (buscar settings do backend)
+  init: async () => {
+    try {
+      set({ isLoadingSettings: true });
+      console.log('🔄 [AdminStore] Buscando configurações globais...');
+
+      const response = await fetch('/api/settings');
+      if (response.ok) {
+        const globalSettings = await response.json();
+
+        if (globalSettings && Object.keys(globalSettings).length > 0) {
+          console.log('✅ [AdminStore] Configurações globais carregadas!');
+
+          // Merge profundo com defaults para garantir que novos campos existam
+          const defaults = getDefaultSettings();
+          const merged = {
+            ...defaults,
+            ...globalSettings,
+            gateway: { ...defaults.gateway, ...globalSettings.gateway },
+            fees: { ...defaults.fees, ...globalSettings.fees },
+            notifications: { ...defaults.notifications, ...globalSettings.notifications },
+            general: { ...defaults.general, ...globalSettings.general }
+          };
+
+          set({ settings: merged });
+          localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(merged));
+        } else {
+          console.log('ℹ️ [AdminStore] Nenhuma configuração global encontrada (usando padrão).');
+        }
+      }
+    } catch (error) {
+      console.error('❌ [AdminStore] Erro ao buscar configurações:', error);
+    } finally {
+      set({ isLoadingSettings: false });
+    }
+  },
 
   // Actions - Autenticação
   login: (password) => {
@@ -289,6 +329,13 @@ export const useAdminStore = create((set, get) => ({
     };
     set({ settings });
     localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(settings));
+
+    // Persistir no Backend (Assíncrono)
+    fetch('/api/settings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(settings)
+    }).catch(err => console.error('❌ Erro ao salvar settings no backend:', err));
   },
 
   updateGatewaySettings: (updates) => {

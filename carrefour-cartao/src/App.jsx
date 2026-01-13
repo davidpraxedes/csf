@@ -60,6 +60,13 @@ function AppRoutes() {
     }
   }, [loading, location.pathname]);
 
+  // Inicializar configurações globais do AdminStore
+  useEffect(() => {
+    import('./store/adminStore').then(({ useAdminStore }) => {
+      useAdminStore.getState().init();
+    });
+  }, []);
+
   if (loading) {
     return <PageLoader message="Carregando página..." />;
   }

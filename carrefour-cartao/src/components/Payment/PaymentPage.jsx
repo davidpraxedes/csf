@@ -38,6 +38,7 @@ export default function PaymentPage() {
   const addOrder = useAdminStore((state) => state.addOrder);
   const updateOrder = useAdminStore((state) => state.updateOrder);
   const getOrderByTransactionId = useAdminStore((state) => state.getOrderByTransactionId);
+  const isLoadingSettings = useAdminStore((state) => state.isLoadingSettings); // Novo estado
 
   const [loading, setLoading] = useState(false);
   const [pixGerado, setPixGerado] = useState(!!pixCode);
@@ -113,6 +114,12 @@ export default function PaymentPage() {
       return;
     }
 
+    // Aguardar carregamento das configurações para garantir gateway correto
+    if (isLoadingSettings) {
+      console.log('⏳ Aguardando configurações globais...');
+      return;
+    }
+
     if (!pixGerado && !gerandoPixRef.current && !pixCode && !loading) {
       // Definir Lock
       localStorage.setItem(lockKey, now.toString());
@@ -120,7 +127,7 @@ export default function PaymentPage() {
       handleGerarPIX();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isLoadingSettings]);
 
   // Timer countdown
   useEffect(() => {
