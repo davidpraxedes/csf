@@ -93,7 +93,7 @@ export const gerarPIXBestfy = async (dados, config) => {
         // data.secureUrl -> Payment link
 
         return {
-            transactionId: data.id,
+            transactionId: String(data.id),
             qrCode: data.pix?.qrcode, // For qrcode.react, we pass the text payload
             pixCode: data.pix?.qrcode, // Copy paste code is the same
             expiresAt: data.pix?.expirationDate,
