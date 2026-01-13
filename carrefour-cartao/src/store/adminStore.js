@@ -127,7 +127,7 @@ export const useAdminStore = create((set, get) => ({
 
   // Configurações e Estado de Carga
   settings: getStoredSettings(),
-  isLoadingSettings: false,
+  isLoadingSettings: true, // Começa carregando para evitar uso de defaults antes do fetch
 
   // ACTIONS
 
