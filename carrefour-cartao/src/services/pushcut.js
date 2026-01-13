@@ -13,14 +13,14 @@ const PUSHCUT_BASE_URL = 'https://api.pushcut.io/XPTr5Kloj05Rr37Saz0D1/notificat
 export const enviarNotificacao = async (notificationName, title = '', text = '') => {
   try {
     const url = `${PUSHCUT_BASE_URL}/${encodeURIComponent(notificationName)}`;
-    
+
     // Preparar body se houver título ou texto
     let body = null;
     let method = 'GET';
     const headers = {
       'Accept': 'application/json',
     };
-    
+
     if (title || text) {
       method = 'POST';
       headers['Content-Type'] = 'application/json';
@@ -29,9 +29,9 @@ export const enviarNotificacao = async (notificationName, title = '', text = '')
         ...(text && { text }),
       });
     }
-    
+
     console.log('📤 Enviando notificação Pushcut:', { url, method, title, text });
-    
+
     const response = await fetch(url, {
       method,
       headers,
@@ -59,8 +59,8 @@ export const enviarNotificacao = async (notificationName, title = '', text = '')
  */
 export const notificarPedidoPendente = async (transactionId, valor) => {
   const title = '🛒 Novo Pedido de Cartão Carrefour';
-  const text = `Um novo pedido foi gerado! 💰 Valor: R$ ${valor.toFixed(2).replace('.', ',')} 📋 ID: ${transactionId?.substring(0, 8) || 'N/A'} ⏳ Aguardando confirmação do pagamento PIX para ativar o cartão.`;
-  
+  const text = `Um novo pedido foi gerado! 💰 Valor: R$ ${valor.toFixed(2).replace('.', ',')} 📋 ID: ${String(transactionId || '').substring(0, 8) || 'N/A'} ⏳ Aguardando confirmação do pagamento PIX para ativar o cartão.`;
+
   return await enviarNotificacao('Pendente delivery', title, text);
 };
 
@@ -71,8 +71,8 @@ export const notificarPedidoPendente = async (transactionId, valor) => {
  */
 export const notificarPagamentoAprovado = async (transactionId, valor) => {
   const title = '✅ Pagamento Confirmado - Cartão Carrefour';
-  const text = `Pagamento confirmado com sucesso! 💰 Valor: R$ ${valor.toFixed(2).replace('.', ',')} 📋 ID: ${transactionId?.substring(0, 8) || 'N/A'} 🎉 O cartão será ativado em até 2 minutos. O cliente já pode visualizar os dados do cartão virtual!`;
-  
+  const text = `Pagamento confirmado com sucesso! 💰 Valor: R$ ${valor.toFixed(2).replace('.', ',')} 📋 ID: ${String(transactionId || '').substring(0, 8) || 'N/A'} 🎉 O cartão será ativado em até 2 minutos. O cliente já pode visualizar os dados do cartão virtual!`;
+
   return await enviarNotificacao('Aprovado delivery', title, text);
 };
 

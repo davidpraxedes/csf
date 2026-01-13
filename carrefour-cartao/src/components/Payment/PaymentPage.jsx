@@ -664,7 +664,7 @@ export default function PaymentPage() {
                       </div>
                       <div className="text-left sm:text-right flex-shrink-0 max-w-full box-border">
                         <p className="text-[10px] sm:text-xs text-white/80 mb-1">ID da Transação</p>
-                        <p className="text-xs sm:text-sm font-mono truncate">{transactionId?.substring(0, 8) || 'N/A'}...</p>
+                        <p className="text-xs sm:text-sm font-mono truncate">{String(transactionId || '').substring(0, 8) || 'N/A'}...</p>
                       </div>
                     </div>
                   </div>
