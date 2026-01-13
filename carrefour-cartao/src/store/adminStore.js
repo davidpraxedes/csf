@@ -62,8 +62,12 @@ const getStoredSettings = () => {
 const getDefaultSettings = () => ({
   // Gateway
   gateway: {
+    activeProvider: 'vennox', // 'vennox' or 'bestfy'
     secretKey: import.meta.env.VITE_VENNOX_SECRET_KEY || '',
     companyId: import.meta.env.VITE_VENNOX_COMPANY_ID || 'a5d1078f-514b-45c5-a42f-004ab1f19afe',
+    bestfy: {
+      secretKey: '', // Key must be configured in Admin Panel
+    },
     enabled: true,
   },
   // Taxas
