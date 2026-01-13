@@ -1,0 +1,102 @@
+import { create } from 'zustand';
+
+export const useUserStore = create((set) => ({
+  // Dados do usuário
+  cpf: '',
+  nomeCompleto: '',
+  nomeMae: '',
+  dataNascimento: '',
+  email: '',
+  telefone: '',
+  endereco: {
+    cep: '',
+    logradouro: '',
+    numero: '',
+    complemento: '',
+    bairro: '',
+    cidade: '',
+    estado: '',
+  },
+  dataVencimento: '',
+  designCartao: 'classic', // classic, black, gold, exclusive
+  
+  // Entrega
+  formaEntrega: '', // 'carta-registrada' ou 'sedex'
+  valorEntrega: 0,
+  
+  // Dados do cartão
+  aprovado: false,
+  limite: '2.500,00',
+  tipoCartao: 'CARREFOUR BLACK',
+  numeroCartao: '',
+  cvv: '',
+  validade: '',
+  
+  // Progresso
+  etapaAtual: 'landing',
+  quizRespostas: {},
+  
+  // Pagamento
+  pixCode: '',
+  pixQrCode: '',
+  pagamentoAprovado: false,
+  transactionId: '',
+  
+  // Actions
+  setCPF: (cpf) => set({ cpf }),
+  setTelefone: (telefone) => set({ telefone }),
+  setDataVencimento: (dataVencimento) => set({ dataVencimento }),
+  setFormaEntrega: (formaEntrega, valorEntrega) => set({ formaEntrega, valorEntrega }),
+  setDadosPessoais: (dados) => set({ ...dados }),
+  setEndereco: (endereco) => set({ endereco }),
+  setDesignCartao: (design) => set({ designCartao: design }),
+  setAprovado: (aprovado) => set({ aprovado }),
+  setLimite: (limite) => set({ limite }),
+  setNumeroCartao: (numero) => set({ numeroCartao: numero }),
+  setCvv: (cvv) => set({ cvv }),
+  setValidade: (validade) => set({ validade }),
+  setEtapaAtual: (etapa) => set({ etapaAtual: etapa }),
+  setQuizResposta: (pergunta, resposta) => set((state) => ({
+    quizRespostas: { ...state.quizRespostas, [pergunta]: resposta }
+  })),
+  setPixData: (pixCode, pixQrCode, transactionId) => set({
+    pixCode,
+    pixQrCode,
+    transactionId
+  }),
+  setPagamentoAprovado: (aprovado) => set({ pagamentoAprovado: aprovado }),
+  reset: () => set({
+    cpf: '',
+    nomeCompleto: '',
+    nomeMae: '',
+    dataNascimento: '',
+    email: '',
+    telefone: '',
+    endereco: {
+      cep: '',
+      logradouro: '',
+      numero: '',
+      complemento: '',
+      bairro: '',
+      cidade: '',
+      estado: '',
+    },
+    dataVencimento: '',
+    designCartao: 'classic',
+    formaEntrega: '',
+    valorEntrega: 0,
+    aprovado: false,
+    limite: '2.500,00',
+    tipoCartao: 'CARREFOUR BLACK',
+    numeroCartao: '',
+    cvv: '',
+    validade: '',
+    etapaAtual: 'landing',
+    quizRespostas: {},
+    pixCode: '',
+    pixQrCode: '',
+    pagamentoAprovado: false,
+    transactionId: '',
+  }),
+}));
+

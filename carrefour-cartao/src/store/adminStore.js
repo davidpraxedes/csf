@@ -322,7 +322,7 @@ export const useAdminStore = create((set, get) => ({
   fetchOrderDetails: async (orderId) => {
     try {
       console.log(`📥 [AdminStore] Buscando detalhes do pedido ${orderId}...`);
-      const response = await fetch(`/api/get-order?id=${orderId}`);
+      const response = await fetch(`/api/get-orders?id=${orderId}`);
 
       if (!response.ok) {
         throw new Error('Falha ao buscar detalhes do pedido');

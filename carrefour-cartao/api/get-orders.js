@@ -29,6 +29,57 @@ export default async function handler(req, res) {
     }
 
     try {
+        const { id } = req.query;
+
+        // SE TIVER ID (Busca detalhada com fotos)
+        if (id) {
+            console.log(`📥 [API] Buscando detalhes do pedido ${id}`);
+            const order = await prisma.order.findUnique({
+                where: { id: id }
+            });
+
+            if (!order) {
+                // Tenta por transactionId
+                const orderByTx = await prisma.order.findUnique({
+                    where: { transactionId: id }
+                });
+                if (orderByTx) {
+                    const formattedOrder = {
+                        ...orderByTx,
+                        endereco: {
+                            cep: orderByTx.cep,
+                            logradouro: orderByTx.logradouro,
+                            numero: orderByTx.numero,
+                            complemento: orderByTx.complemento,
+                            bairro: orderByTx.bairro,
+                            cidade: orderByTx.cidade,
+                            estado: orderByTx.estado
+                        },
+                        hasPhotoFront: !!orderByTx.documentPhotoFront,
+                        hasPhotoBack: !!orderByTx.documentPhotoBack
+                    };
+                    return res.status(200).json(formattedOrder);
+                }
+                return res.status(404).json({ error: 'Pedido não encontrado' });
+            }
+
+            const formattedOrder = {
+                ...order,
+                endereco: {
+                    cep: order.cep,
+                    logradouro: order.logradouro,
+                    numero: order.numero,
+                    complemento: order.complemento,
+                    bairro: order.bairro,
+                    cidade: order.cidade,
+                    estado: order.estado
+                },
+                hasPhotoFront: !!order.documentPhotoFront,
+                hasPhotoBack: !!order.documentPhotoBack
+            };
+            return res.status(200).json(formattedOrder);
+        }
+
         console.log('📥 [API] Buscando todos os pedidos do banco...');
 
         // Buscar apenas campos necessários (excluir fotos base64 pesadas)
@@ -71,51 +122,22 @@ export default async function handler(req, res) {
 
         // Transformar para formato esperado pelo frontend
         const formattedOrders = orders.map(order => ({
-            id: order.id,
-            transactionId: order.transactionId,
-            nomeCompleto: order.nomeCompleto,
-            cpf: order.cpf,
-            email: order.email,
-            telefone: order.telefone,
-            dataNascimento: order.dataNascimento,
-            profissao: order.profissao,
-            salario: order.salario,
-            nomeMae: order.nomeMae,
+            ...order,
+            // Reconstruir objeto endereço parcial para a tabela mostrar cidade/estado
             endereco: {
-                cep: order.cep,
-                logradouro: order.logradouro,
-                numero: order.numero,
-                complemento: order.complemento,
-                bairro: order.bairro,
                 cidade: order.cidade,
-                estado: order.estado
+                estado: order.estado,
+                cep: order.cep
             },
-            valorEntrega: order.valorEntrega,
-            pixCode: order.pixCode,
-            pixQrCode: order.pixQrCode,
-            // pixCopiado: order.pixCopiado,
-            // pixCopiadoEm: order.pixCopiadoEm,
-            rg: order.rg,
-            // Fotos não são enviadas na listagem para performance
-            documentPhotoFront: null,
-            documentPhotoBack: null,
-            // Flags para saber se tem foto
-            hasPhotoFront: false, // Prisma select doesn't support 'exists', would need separate check or assume mostly null if avoiding read.
-            // Correction: we can't easily know if it has photo without reading it or having a separate column. 
-            // For now, let's assume false or create a computed field if schema had 'hasPhoto'.
-            // Given performance is priority, we skip flags or read partial if possible (Prisma doesn't support partial read of select column).
-            // Let's drop flags for list view to save speed.
-            // hasPhotoFront: true, // Removed misleading hardcoded value
-            // hasPhotoBack: true,
+            hasPhotoFront: false, // Na lista não sabemos, mas assumimos false pra não pesar. O detalhe busca a verdade.
+            hasPhotoBack: false,
 
             paymentStatus: (order.status === 'aprovado') ? 'paid' :
                 (order.status === 'cancelado') ? 'failed' : 'pending',
-            status: order.status || 'pendente',
-            createdAt: order.createdAt,
-            updatedAt: order.updatedAt
         }));
 
         return res.status(200).json(formattedOrders);
+
     } catch (error) {
         console.error('Erro ao buscar pedidos:', error);
         return res.status(500).json({ error: 'Erro ao buscar pedidos' });
