@@ -36,7 +36,7 @@ export const gerarPIXBestfy = async (dados, config) => {
                 email: dados.customer.email || 'cliente@email.com',
                 document: {
                     number: cpfNumeros,
-                    type: 'cpf'
+                    type: 'CPF'
                 },
                 phone: dados.customer.phone?.replace(/\D/g, '')
             },
