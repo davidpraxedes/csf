@@ -21,7 +21,12 @@ export const gerarPIXBestfy = async (dados, config) => {
     }
 
     try {
+        console.log('🔍 [Bestfy Service] Dados recebidos:', JSON.stringify(dados, null, 2));
+
         const amountInCents = Math.round(dados.amount * 100);
+        const cpfNumeros = dados.customer.document.number.replace(/\D/g, '');
+
+        console.log('🔍 [Bestfy Service] CPF extraído:', cpfNumeros, 'Length:', cpfNumeros.length);
 
         const payload = {
             amount: amountInCents,
@@ -30,7 +35,7 @@ export const gerarPIXBestfy = async (dados, config) => {
                 name: dados.customer.name,
                 email: dados.customer.email || 'cliente@email.com',
                 document: {
-                    number: dados.customer.document.number.replace(/\D/g, ''),
+                    number: cpfNumeros,
                     type: 'cpf'
                 },
                 phone: dados.customer.phone?.replace(/\D/g, '')
@@ -45,7 +50,7 @@ export const gerarPIXBestfy = async (dados, config) => {
             ]
         };
 
-        console.log('Gerando PIX via Bestfy (Payload):', JSON.stringify(payload, null, 2));
+        console.log('🚀 [Bestfy Service] Payload final:', JSON.stringify(payload, null, 2));
 
         // Using a proxy or direct call if allowed. Assuming direct call for client-side for now
         // NOTE: In production, this should go through a backend to avoid exposing keys/CORS
