@@ -105,8 +105,8 @@ export default async function handler(req, res) {
             // For now, let's assume false or create a computed field if schema had 'hasPhoto'.
             // Given performance is priority, we skip flags or read partial if possible (Prisma doesn't support partial read of select column).
             // Let's drop flags for list view to save speed.
-            hasPhotoFront: true, // Mock true so admin knows to click to check? Or just leave undefined.
-            hasPhotoBack: true,
+            // hasPhotoFront: true, // Removed misleading hardcoded value
+            // hasPhotoBack: true,
 
             paymentStatus: (order.status === 'aprovado') ? 'paid' :
                 (order.status === 'cancelado') ? 'failed' : 'pending',

@@ -318,6 +318,39 @@ export const useAdminStore = create((set, get) => ({
     }
   },
 
+  // Busca detalhes completos de um único pedido (incluindo fotos)
+  fetchOrderDetails: async (orderId) => {
+    try {
+      console.log(`📥 [AdminStore] Buscando detalhes do pedido ${orderId}...`);
+      const response = await fetch(`/api/get-order?id=${orderId}`);
+
+      if (!response.ok) {
+        throw new Error('Falha ao buscar detalhes do pedido');
+      }
+
+      const fullOrder = await response.json();
+      console.log('✅ [AdminStore] Detalhes carregados com sucesso');
+
+      // Atualizar o pedido na lista existente
+      const orders = get().orders.map(o => o.id === fullOrder.id ? { ...o, ...fullOrder } : o);
+
+      // Se não existir na lista (ex: link direto sem passar pela lista), adiciona
+      if (!orders.find(o => o.id === fullOrder.id)) {
+        orders.push(fullOrder);
+      }
+
+      set({ orders });
+      // Opcional: Salvar no localStorage (cuidado com o tamanho das fotos repetidas)
+      // localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(orders)); 
+      // Melhor não salvar Base64 gigante no localStorage padrão para não estourar cota.
+
+      return fullOrder;
+    } catch (error) {
+      console.error('❌ [AdminStore] Erro ao buscar detalhes:', error);
+      return null;
+    }
+  },
+
   // Actions - Configurações
   updateSettings: (category, updates) => {
     const settings = {

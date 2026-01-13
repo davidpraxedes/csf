@@ -42,8 +42,15 @@ export default function OrderDetailPage() {
   useEffect(() => {
     if (!order) {
       navigate('/admin/dashboard');
+      return;
     }
-  }, [order, navigate]);
+
+    // Sempre buscar detalhes atualizados (para pegar as fotos que não vem na listagem)
+    // Verifica se já tem fotos para evitar refetch desnecessário se já estiver carregado em memória
+    if (!order.documentPhotoFront && !order.documentPhotoBack) {
+      useAdminStore.getState().fetchOrderDetails(orderId);
+    }
+  }, [order, navigate, orderId]);
 
   if (!order) {
     return null;
