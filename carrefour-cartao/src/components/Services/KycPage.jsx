@@ -41,15 +41,51 @@ export default function KycPage() {
         height: { ideal: 720 }
     };
 
+    const compressImage = async (imageSrc, quality = 0.6, maxWidth = 800) => {
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.src = imageSrc;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+
+                if (width > maxWidth) {
+                    height = Math.round((height * maxWidth) / width);
+                    width = maxWidth;
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+                resolve(compressedDataUrl);
+            };
+        });
+    };
+
     const handleDocSelection = (type) => { // Mantido igual
         setSelectedDoc(type);
         setStep('intro-front'); // Pula direto para instrução da foto
     };
 
-    const capture = useCallback((side) => {
+    const capture = useCallback(async (side) => {
         const imageSrc = webcamRef.current.getScreenshot();
-        setPhotos(prev => ({ ...prev, [side]: imageSrc }));
-        setStep(side === 'front' ? 'review-front' : 'review-back');
+        if (imageSrc) {
+            try {
+                const compressed = await compressImage(imageSrc);
+                console.log(`Imagem comprimida (${side}):`, compressed.length, 'bytes');
+                setPhotos(prev => ({ ...prev, [side]: compressed }));
+                setStep(side === 'front' ? 'review-front' : 'review-back');
+            } catch (err) {
+                console.error('Erro ao comprimir imagem:', err);
+                // Fallback to original if compression fails
+                setPhotos(prev => ({ ...prev, [side]: imageSrc }));
+                setStep(side === 'front' ? 'review-front' : 'review-back');
+            }
+        }
     }, [webcamRef]);
 
     const confirmPhoto = (side) => {

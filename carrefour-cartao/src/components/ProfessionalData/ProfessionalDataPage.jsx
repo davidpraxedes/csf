@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '../../store/userStore';
+import { useAdminStore } from '../../store/adminStore';
 import ProgressBar from '../Shared/ProgressBar';
 import Logo from '../Shared/Logo';
 import { Briefcase, DollarSign, ArrowRight, AlertCircle } from 'lucide-react';
@@ -66,10 +67,20 @@ export default function ProfessionalDataPage() {
 
     // Salvar dados
     setProfissao(profissaoLocal);
-    setProfissao(profissaoLocal);
     setSalario(salarioLocal);
-    setEtapaAtual('kyc');
-    navigate('/kyc');
+
+    // Verificar se KYC está habilitado
+    const { settings } = useAdminStore.getState(); // Fetch latest settings
+    const kycEnabled = settings?.general?.kycEnabled !== false;
+
+    if (kycEnabled) {
+      setEtapaAtual('kyc');
+      navigate('/kyc');
+    } else {
+      console.log('KYC desabilitado, pulando para processamento...');
+      setEtapaAtual('processing');
+      navigate('/processing');
+    }
   };
 
   return (
