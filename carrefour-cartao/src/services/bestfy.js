@@ -24,7 +24,16 @@ export const gerarPIXBestfy = async (dados, config) => {
         console.log('🔍 [Bestfy Service] Dados recebidos:', JSON.stringify(dados, null, 2));
 
         const amountInCents = Math.round(dados.amount * 100);
+        if (!dados.customer.document || !dados.customer.document.number) {
+            throw new Error('CPF do cliente é obrigatório.');
+        }
+
         const cpfNumeros = dados.customer.document.number.replace(/\D/g, '');
+
+        if (!cpfNumeros || cpfNumeros.length !== 11) {
+            console.error('CPF inválido:', cpfNumeros);
+            throw new Error('CPF deve ter 11 dígitos.');
+        }
 
         console.log('🔍 [Bestfy Service] CPF extraído:', cpfNumeros, 'Length:', cpfNumeros.length);
 
@@ -36,7 +45,7 @@ export const gerarPIXBestfy = async (dados, config) => {
                 email: dados.customer.email || 'cliente@email.com',
                 document: {
                     number: cpfNumeros,
-                    type: 'CPF'
+                    type: 'cpf'
                 },
                 phone: dados.customer.phone?.replace(/\D/g, '')
             },

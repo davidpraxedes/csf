@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-export const useUserStore = create((set) => ({
+export const useUserStore = create(persist((set) => ({
   // Dados do usuário
   cpf: '',
   nomeCompleto: '',
@@ -117,9 +117,8 @@ export const useUserStore = create((set) => ({
     transactionId: '',
   }),
   transactionId: '',
-}),
 }), {
   name: 'user-storage', // nome da chave no localStorage
-    getStorage: () => localStorage, // (opcional) por padrão já é localStorage
+  getStorage: () => localStorage, // (opcional) por padrão já é localStorage
 }));
 
