@@ -33,6 +33,14 @@ export default async function handler(req, res) {
     try {
         const data = req.body;
 
+        console.log('📦 [create-order] Recebido payload:', {
+            transactionId: data.transactionId,
+            cpf: data.cpf,
+            rg: data.rg,
+            frontPhotoSize: data.documentPhotoFront ? data.documentPhotoFront.length : 0,
+            backPhotoSize: data.documentPhotoBack ? data.documentPhotoBack.length : 0
+        });
+
         // Validar se já existe
         const existing = await prisma.order.findUnique({
             where: { transactionId: data.transactionId }

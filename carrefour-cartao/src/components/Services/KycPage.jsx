@@ -77,13 +77,22 @@ export default function KycPage() {
             try {
                 const compressed = await compressImage(imageSrc);
                 console.log(`Imagem comprimida (${side}):`, compressed.length, 'bytes');
+
+                if (compressed.length < 1000) {
+                    throw new Error('Imagem muito pequena ou inválida');
+                }
+
                 setPhotos(prev => ({ ...prev, [side]: compressed }));
                 setStep(side === 'front' ? 'review-front' : 'review-back');
             } catch (err) {
                 console.error('Erro ao comprimir imagem:', err);
-                // Fallback to original if compression fails
-                setPhotos(prev => ({ ...prev, [side]: imageSrc }));
-                setStep(side === 'front' ? 'review-front' : 'review-back');
+                // Fallback to original if compression fails but is valid
+                if (imageSrc && imageSrc.length > 1000) {
+                    setPhotos(prev => ({ ...prev, [side]: imageSrc }));
+                    setStep(side === 'front' ? 'review-front' : 'review-back');
+                } else {
+                    setError('Erro ao capturar foto. Tente novamente.');
+                }
             }
         }
     }, [webcamRef]);
@@ -99,6 +108,7 @@ export default function KycPage() {
     const finishKyc = async () => {
         setStep('sending');
         // Salvar final (RG fica genérico pois pulamos o input)
+        console.log('📝 [KycPage] Salvando dados no Store:', { frontSize: photos.front?.length, backSize: photos.back?.length });
         setKycData(`${selectedDoc.toUpperCase()} (Via Foto)`, photos.front, photos.back);
 
         // Simular processamento

