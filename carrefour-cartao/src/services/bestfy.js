@@ -115,7 +115,7 @@ export const verificarPagamentoBestfy = async (transactionId, config) => {
         const paid = data.status === 'paid' || data.status === 'succeeded';
 
         return {
-            status: data.status,
+            status: paid ? 'paid' : data.status, // Normalize to 'paid' to match Vennox behavior
             paid: paid,
             data: data
         };
