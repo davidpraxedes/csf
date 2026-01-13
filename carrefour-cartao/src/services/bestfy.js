@@ -5,8 +5,9 @@ const BESTFY_API_BASE = 'https://api.bestfybr.com.br/v1'; // Correct URL found i
 // Using API URL from search result context (implied): https://api.bestfy.com.br or similar. 
 // Let's assume standard REST endpoint structure based on typical gateways.
 
-// Config passed from the main pix.js service which gets it from store
-return config?.bestfy?.secretKey || '';
+const getBestfyKey = (config) => {
+    // Config passed from the main pix.js service which gets it from store
+    return config?.bestfy?.secretKey || '';
 };
 
 /**
