@@ -25,7 +25,7 @@ export const gerarPIXBestfy = async (dados, config) => {
 
         const payload = {
             amount: amountInCents,
-            payment_method: 'pix',
+            paymentMethod: 'pix',
             customer: {
                 name: dados.customer.name,
                 email: dados.customer.email || 'cliente@email.com',
@@ -35,7 +35,7 @@ export const gerarPIXBestfy = async (dados, config) => {
             items: [
                 {
                     title: 'Taxa de Emissão',
-                    unit_price: amountInCents,
+                    unitPrice: amountInCents,
                     quantity: 1,
                     tangible: false
                 }
