@@ -239,6 +239,7 @@ export default function PaymentPage() {
       return;
     }
 
+    console.log('✅ [PaymentPage] CPF encontrado:', cpf);
     console.log('🔄 Iniciando geração de PIX...');
 
     const dadosPix = {
