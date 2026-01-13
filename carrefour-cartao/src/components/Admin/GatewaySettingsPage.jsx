@@ -65,8 +65,8 @@ export default function GatewaySettingsPage() {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   className={`mb-6 p-4 rounded-lg flex items-center gap-2 ${saveMessage.includes('sucesso')
-                      ? 'bg-green-50 text-green-700 border border-green-200'
-                      : 'bg-red-50 text-red-700 border border-red-200'
+                    ? 'bg-green-50 text-green-700 border border-green-200'
+                    : 'bg-red-50 text-red-700 border border-red-200'
                     }`}
                 >
                   {saveMessage.includes('sucesso') ? (
@@ -89,22 +89,42 @@ export default function GatewaySettingsPage() {
                     <button
                       type="button"
                       onClick={() => setGatewayForm({ ...gatewayForm, activeProvider: 'vennox' })}
-                      className={`px-4 py-3 rounded-lg border-2 text-center transition-all ${gatewayForm.activeProvider === 'vennox'
-                          ? 'border-carrefour-blue bg-blue-50 text-carrefour-blue font-semibold'
-                          : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                      className={`relative px-4 py-4 rounded-xl border-2 text-center transition-all flex flex-col items-center justify-center gap-2 ${gatewayForm.activeProvider === 'vennox'
+                        ? 'border-carrefour-blue bg-blue-50 text-carrefour-blue ring-2 ring-blue-100 ring-offset-2'
+                        : 'border-gray-200 text-gray-500 hover:border-gray-300 hover:bg-gray-50'
                         }`}
                     >
-                      VennoxPay
+                      {gatewayForm.activeProvider === 'vennox' && (
+                        <div className="absolute top-2 right-2 text-carrefour-blue">
+                          <CheckCircle className="w-5 h-5 fill-blue-100" />
+                        </div>
+                      )}
+                      <span className="font-bold text-lg">VennoxPay</span>
+                      {gatewayForm.activeProvider === 'vennox' && (
+                        <span className="text-xs bg-carrefour-blue text-white px-2 py-0.5 rounded-full font-medium">
+                          ATIVO
+                        </span>
+                      )}
                     </button>
                     <button
                       type="button"
                       onClick={() => setGatewayForm({ ...gatewayForm, activeProvider: 'bestfy' })}
-                      className={`px-4 py-3 rounded-lg border-2 text-center transition-all ${gatewayForm.activeProvider === 'bestfy'
-                          ? 'border-carrefour-blue bg-blue-50 text-carrefour-blue font-semibold'
-                          : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                      className={`relative px-4 py-4 rounded-xl border-2 text-center transition-all flex flex-col items-center justify-center gap-2 ${gatewayForm.activeProvider === 'bestfy'
+                        ? 'border-carrefour-blue bg-blue-50 text-carrefour-blue ring-2 ring-blue-100 ring-offset-2'
+                        : 'border-gray-200 text-gray-500 hover:border-gray-300 hover:bg-gray-50'
                         }`}
                     >
-                      Bestfy
+                      {gatewayForm.activeProvider === 'bestfy' && (
+                        <div className="absolute top-2 right-2 text-carrefour-blue">
+                          <CheckCircle className="w-5 h-5 fill-blue-100" />
+                        </div>
+                      )}
+                      <span className="font-bold text-lg">Bestfy</span>
+                      {gatewayForm.activeProvider === 'bestfy' && (
+                        <span className="text-xs bg-carrefour-blue text-white px-2 py-0.5 rounded-full font-medium">
+                          ATIVO
+                        </span>
+                      )}
                     </button>
                   </div>
                 </div>
