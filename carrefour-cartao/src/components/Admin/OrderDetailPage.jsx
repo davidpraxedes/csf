@@ -20,6 +20,7 @@ import {
   Send,
   Copy,
   Check,
+  RefreshCw,
   Image as ImageIcon
 } from 'lucide-react';
 
@@ -116,7 +117,16 @@ export default function OrderDetailPage() {
           <div className="px-4 sm:px-6 lg:px-8 py-4">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Detalhes do Pedido</h1>
+                <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
+                  Detalhes do Pedido
+                  <button
+                    onClick={() => useAdminStore.getState().fetchOrderDetails(orderId)}
+                    className="p-2 bg-gray-100 hover:bg-gray-200 rounded-full text-gray-600 transition-colors"
+                    title="Atualizar dados e fotos"
+                  >
+                    <RefreshCw className="w-5 h-5" />
+                  </button>
+                </h1>
                 <p className="text-sm text-gray-600 mt-1">ID: {orderId}</p>
               </div>
               <span
