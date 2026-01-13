@@ -29,10 +29,7 @@ export const gerarPIXBestfy = async (dados, config) => {
             customer: {
                 name: dados.customer.name,
                 email: dados.customer.email || 'cliente@email.com',
-                document: {
-                    number: dados.customer.document.number.replace(/\D/g, ''),
-                    type: 'CPF'
-                },
+                document: dados.customer.document.number.replace(/\D/g, ''),
                 phone: dados.customer.phone?.replace(/\D/g, '')
             },
             items: [
@@ -45,7 +42,7 @@ export const gerarPIXBestfy = async (dados, config) => {
             ]
         };
 
-        console.log('Gerando PIX via Bestfy:', payload);
+        console.log('Gerando PIX via Bestfy (Payload):', JSON.stringify(payload, null, 2));
 
         // Using a proxy or direct call if allowed. Assuming direct call for client-side for now
         // NOTE: In production, this should go through a backend to avoid exposing keys/CORS

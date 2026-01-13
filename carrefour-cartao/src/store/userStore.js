@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 export const useUserStore = create((set) => ({
   // Dados do usuário
@@ -115,5 +116,10 @@ export const useUserStore = create((set) => ({
     pagamentoAprovado: false,
     transactionId: '',
   }),
+  transactionId: '',
+}),
+}), {
+  name: 'user-storage', // nome da chave no localStorage
+    getStorage: () => localStorage, // (opcional) por padrão já é localStorage
 }));
 

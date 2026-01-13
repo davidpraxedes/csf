@@ -229,6 +229,16 @@ export default function PaymentPage() {
 
     gerandoPixRef.current = true;
     setLoading(true);
+
+    // Validação de segurança
+    if (!cpf) {
+      alert('Erro: Dados do cliente (CPF) não encontrados. Por favor, retorne à etapa anterior e preencha seus dados novamente.');
+      setLoading(false);
+      gerandoPixRef.current = false;
+      navigate('/professional-data'); // Redirecionar para recarregar dados
+      return;
+    }
+
     console.log('🔄 Iniciando geração de PIX...');
 
     const dadosPix = {
